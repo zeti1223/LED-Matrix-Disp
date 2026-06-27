@@ -5,7 +5,7 @@ Ez a projekt egy WS2812B LED mátrix vezérlőszoftvert tartalmaz Arduino-hoz.
 ## Tartalom
 
 - `LEDMatrixDisp.ino` - Arduino sketch a LED mátrix vezérléséhez
-- `app.py` - egyszerű PC-s vezérlő szkript soros kapcsolaton keresztül
+- `web_ui/` - Web UI backend és statikus frontend (új)
 
 ## Hardver
 
@@ -36,21 +36,40 @@ Ez a projekt egy WS2812B LED mátrix vezérlőszoftvert tartalmaz Arduino-hoz.
 - `H` - segédlet
 - `M 0/1` - tükrözés kikapcsolása/bekapcsolása
 
-## PC-s vezérlés Python-nal
+## PC-s vezérlés Python-nal (Web UI)
 
-1. Telepítsd a `pyserial` és `PySide6` csomagokat:
+1. Telepítsd a szükséges Python-csomagokat a projekt virtuális környezetébe:
 
-   ```bash
-   pip install -r requirements.txt
-   ```
+```bash
+python -m venv .venv
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-2. Futtasd az `app.py`-t:
+2. Indítsd el a webes backendet:
 
-   ```bash
-   python app.py
-   ```
+```bash
+python web_ui/backend.py
+```
 
-3. A program Qt-alapú grafikus felületen indul, ahol kiválaszthatod a soros portot és vezérelheted a LED mátrixot.
+3. Nyisd meg a böngészőt: http://localhost:5000 és használd a vezérlőt.
+
+Megjegyzés: ha már van működő `app.py`-d korábbi Qt-alkalmazással, azt eltávolítottam a projektből, mert a Web UI-t használjuk tovább.
+
+### Web UI (új)
+
+Egy egyszerű Web UI-t is készítettem, amely HTTP + WebSocket proxyként kommunikál a helyi soros porttal.
+
+Futtatás:
+
+```bash
+pip install -r requirements.txt
+python web_ui/backend.py
+```
+
+Majd nyisd meg a böngészőt: http://localhost:5000
+
+Az oldal lehetővé teszi a portválasztást, minta, szín és fényerő küldését, valamint a soros kimenet megtekintését.
 
 ## Megjegyzés
 
