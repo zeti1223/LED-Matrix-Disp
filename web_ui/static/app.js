@@ -6,6 +6,15 @@ function appendConsole(text) {
     const el = $('console');
     el.textContent += text;
     el.scrollTop = el.scrollHeight;
+    setConsoleLastLine();
+}
+// update data-last attribute to show last line when collapsed
+function setConsoleLastLine() {
+    const el = $('console');
+    if (!el) return;
+    const lines = el.textContent.trim().split(/\r?\n/).filter(l=>l.length>0);
+    const last = lines.length ? lines[lines.length-1] : '';
+    el.dataset.last = last;
 }
 
 function refreshPorts() {
@@ -55,6 +64,24 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const patEl = $('pattern');
     if (patEl) patEl.addEventListener('change', () => { updatePreviewState(); });
+
+    // Strobe controls: update preview on change (on/off, speed + fill)
+    const strobeControls = ['strobe-on','strobe-speed','strobe-duty'];
+    strobeControls.forEach(id => {
+        const el = $(id);
+        if (!el) return;
+        el.addEventListener('input', () => { updatePreviewState(); });
+        el.addEventListener('change', () => { updatePreviewState(); });
+    });
+
+    // Speed label live update (show Hz)
+    const speedEl = $('strobe-speed');
+    const speedValEl = $('strobe-speed-val');
+    function updateSpeedLabel(v) { if (speedValEl) speedValEl.textContent = v + ' Hz'; }
+    if (speedEl) {
+        updateSpeedLabel(speedEl.value);
+        speedEl.addEventListener('input', (e) => { updateSpeedLabel(e.target.value); });
+    }
 
     // Toggle console visibility
     const toggleConsoleBtn = $('toggle-console');
@@ -124,6 +151,9 @@ function getSelectedState() {
         g: parseInt($('g').value || 0),
         b: parseInt($('b').value || 0),
         brightness: parseInt($('brightness').value || 128),
+        strobeOn: $('strobe-on') ? !!$('strobe-on').checked : false,
+        strobeSpeed: $('strobe-speed') ? parseInt($('strobe-speed').value || 8) : 8,
+        strobeFill: $('strobe-duty') ? parseInt($('strobe-duty').value || 50) : 50,
     };
 }
 
@@ -137,9 +167,13 @@ function startPreview() {
     const s = getSelectedState();
     previewState.pattern = s.pattern;
     previewState.r = s.r; previewState.g = s.g; previewState.b = s.b; previewState.brightness = s.brightness;
+    previewState.strobeOn = s.strobeOn;
+    previewState.strobeSpeed = s.strobeSpeed;
+    previewState.strobeFill = s.strobeFill;
     previewState.step = 0;
     if (previewAnim) cancelAnimationFrame(previewAnim);
     function loop() {
+        previewState.now = Date.now();
         renderPreviewFrame(previewState);
         const frame = buildFramePixels(previewState);
         sendFrame(frame);
@@ -174,32 +208,59 @@ function renderPreviewFrame(state) {
 function getPixelColor(state, x, y) {
     const bri = state.brightness / 255;
     const step = state.step;
+    // compute base color first
+    let color = [0,0,0];
     switch (state.pattern) {
         case 0:
-            return [state.r * bri, state.g * bri, state.b * bri];
+            color = [state.r * bri, state.g * bri, state.b * bri];
+            break;
         case 1: {
             const hue = (step * 4 + (x + y) * 8) % 360;
-            return hsvToRgb(hue / 360, 1, bri);
+            color = hsvToRgb(hue / 360, 1, bri);
+            break;
         }
         case 2: {
             const idx = (y * PREVIEW_W + x);
             const on = ((idx + Math.floor(step / 6)) % 3) === 0;
-            return on ? hsvToRgb(((idx * 10 + step) & 255) / 255, 1, bri) : [0, 0, 0];
+            color = on ? hsvToRgb(((idx * 10 + step) & 255) / 255, 1, bri) : [0,0,0];
+            break;
         }
         case 3: {
             const pos = Math.floor((step / 6) % (PREVIEW_W * 2));
             const scanX = pos < PREVIEW_W ? pos : (PREVIEW_W * 2 - 1 - pos);
-            return x === scanX ? hsvToRgb(((step * 5) & 255) / 255, 1, bri) : [0, 0, 0];
+            color = x === scanX ? hsvToRgb(((step * 5) & 255) / 255, 1, bri) : [0,0,0];
+            break;
         }
         case 4: {
             const total = PREVIEW_W * PREVIEW_H;
             const index = (step % total);
             const idx = y * PREVIEW_W + x;
-            return idx <= index ? hsvToRgb(((idx * 4 + step) & 255) / 255, 1, bri) : [0, 0, 0];
+            color = idx <= index ? hsvToRgb(((idx * 4 + step) & 255) / 255, 1, bri) : [0,0,0];
+            break;
+        }
+        case 5: {
+            // built-in strobe pattern (legacy) — use selected color
+            const flash = (Math.floor(step / 6) % 2) === 0;
+            color = flash ? [state.r * bri, state.g * bri, state.b * bri] : [0,0,0];
+            break;
         }
         default:
-            return [0, 0, 0];
+            color = [0,0,0];
     }
+
+    // Simple strobe on/off overlay: checkbox enables strobing of the animation
+    const enabled = !!state.strobeOn;
+    if (!enabled) return color;
+
+    const now = state.now || Date.now();
+    const speed = state.strobeSpeed || 8; // Hz
+    const duty = (state.strobeFill || state.strobeDuty || 50) / 100.0;
+    const periodMs = Math.max(1, 1000 / Math.max(1, speed));
+    const phase = (now % periodMs) / periodMs;
+    const strobeOn = phase < duty;
+
+    // overlay: when strobe phase is ON show the animation pixel, otherwise black
+    return strobeOn ? color : [0,0,0];
 }
 
 function buildFramePixels(state) {
@@ -217,6 +278,9 @@ function updatePreviewState() {
     const s = getSelectedState();
     previewState.pattern = s.pattern;
     previewState.r = s.r; previewState.g = s.g; previewState.b = s.b; previewState.brightness = s.brightness;
+    previewState.strobeOn = s.strobeOn;
+    previewState.strobeSpeed = s.strobeSpeed;
+    previewState.strobeFill = s.strobeFill;
     // if preview not running, start it; otherwise render one frame immediately
     if (!previewAnim) { startPreview(); }
     else if (ctx) { renderPreviewFrame(previewState); }
