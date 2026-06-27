@@ -59,7 +59,9 @@ void readSerialCommands() {
     if (c == '\n') {
       if (commandLine.length() > 0) {
         commandLine.trim();
-        parseCommand(commandLine);
+        if (commandLine.length() > 0) {
+          parseCommand(commandLine);
+        }
         commandLine = "";
       }
     } else {
@@ -105,8 +107,6 @@ void parseCommand(const String &line) {
     FastLED.show();
   } else if (cmd == 'H' || cmd == 'h' || cmd == '?') {
     printHelp();
-  } else {
-    Serial.println("Unknown command. Use FRAME <len> or H for help.");
   }
 }
 
