@@ -55,28 +55,28 @@ class LedMatrixController(QMainWindow):
         super().__init__()
         self.ser = None
         self.setWindowTitle('LED Matrix Disp Controller')
-        self.setMinimumSize(700, 580)
+        self.setMinimumSize(740, 620)
         self.setStyleSheet('''
-            QMainWindow { background: #121828; }
+            QWidget { background: #121828; color: #d7e0ff; }
             QLabel { color: #d7e0ff; font-size: 12px; }
-            QGroupBox { font-weight: 700; border: 1px solid #2f4064; border-radius: 12px; margin-top: 20px; color: #d7e0ff; }
+            QGroupBox { font-weight: 700; border: 1px solid #2f4064; border-radius: 14px; margin-top: 20px; color: #d7e0ff; background: #111d33; }
             QGroupBox::title { subcontrol-origin: margin; subcontrol-position: top left; padding: 0 14px; }
-            QPushButton { min-height: 36px; padding: 8px 18px; border-radius: 10px; font-weight: 600; }
-            QPushButton#primary { background: #3f66ff; color: white; border: none; }
-            QPushButton#primary:hover { background: #557dff; }
+            QPushButton { min-height: 36px; padding: 10px 18px; border-radius: 10px; font-weight: 600; }
+            QPushButton#primary { background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #3f66ff, stop:1 #5f7dff); color: white; border: none; }
+            QPushButton#primary:hover { background: qlineargradient(x1:0, y1:0, x2:1, y2:1, stop:0 #557dff, stop:1 #6f8dff); }
             QPushButton#secondary { background: #1f2a45; color: #d7e0ff; border: 1px solid #324364; }
             QPushButton#secondary:hover { background: #2b3a5f; }
             QPushButton#flat { background: transparent; color: #d7e0ff; border: 1px solid transparent; }
             QPushButton#flat:hover { border-color: #3f66ff; }
             QLineEdit, QComboBox { background: #161f29; color: #e3ebff; border: 1px solid #34486d; border-radius: 10px; padding: 8px 10px; }
+            QLineEdit:focus, QComboBox:focus { border-color: #3f66ff; }
             QComboBox QAbstractItemView { background: #161f29; color: #e3ebff; selection-background-color: #3f66ff; }
-            QTextEdit { background: #0f1727; color: #e3ebff; border: 1px solid #23314f; border-radius: 10px; }
-            QGroupBox { background: #111d33; }
+            QTextEdit { background: #0f1727; color: #e3ebff; border: 1px solid #23314f; border-radius: 10px; padding: 10px; }
             QSlider::groove:horizontal { height: 8px; border-radius: 4px; background: #283650; }
             QSlider::handle:horizontal { width: 18px; background: #3f66ff; margin: -5px 0; border-radius: 9px; }
-            QScrollBar:vertical { width: 8px; background: #161f34; margin: 0px 0px 0px 0px; }
+            QScrollBar:vertical { width: 8px; background: #161f34; margin: 0px; }
             QScrollBar::handle:vertical { background: #3f66ff; border-radius: 4px; }
-            QMessageBox, QColorDialog { background: #111d33; color: #e3ebff; }
+            QDialog, QMessageBox, QColorDialog { background: #111d33; color: #e3ebff; }
             QMessageBox QLabel, QColorDialog QLabel { color: #e3ebff; }
             QMessageBox QPushButton, QColorDialog QPushButton { background: #1f2a45; color: #e3ebff; border: 1px solid #324364; border-radius: 8px; }
             QMessageBox QPushButton:hover, QColorDialog QPushButton:hover { background: #2b3a5f; }
@@ -109,6 +109,9 @@ class LedMatrixController(QMainWindow):
         self.r_input.setMaximumWidth(60)
         self.g_input.setMaximumWidth(60)
         self.b_input.setMaximumWidth(60)
+        self.r_input.setAlignment(Qt.AlignCenter)
+        self.g_input.setAlignment(Qt.AlignCenter)
+        self.b_input.setAlignment(Qt.AlignCenter)
 
         self.connect_button.clicked.connect(self.toggle_connection)
         self.connect_button.setObjectName('primary')
@@ -127,7 +130,7 @@ class LedMatrixController(QMainWindow):
         connect_layout = QHBoxLayout(connect_group)
         connect_layout.setSpacing(14)
         connect_layout.addWidget(QLabel('Port:'))
-        self.port_combo.setMinimumWidth(320)
+        self.port_combo.setMinimumWidth(340)
         connect_layout.addWidget(self.port_combo, 1)
         connect_layout.addWidget(refresh_button)
         connect_layout.addWidget(self.connect_button)
@@ -202,6 +205,7 @@ class LedMatrixController(QMainWindow):
             button = QPushButton(text)
             button.setObjectName('secondary')
             button.setMinimumWidth(120)
+            button.setMinimumHeight(42)
             button.clicked.connect(lambda checked, c=cmd: self.send_command(c))
             command_layout.addWidget(button)
         command_layout.addStretch(1)
@@ -209,13 +213,19 @@ class LedMatrixController(QMainWindow):
         output_group = QGroupBox('Arduino output')
         output_layout = QVBoxLayout(output_group)
         self.output_text.setReadOnly(True)
-        self.output_text.setMinimumHeight(220)
+        self.output_text.setMinimumHeight(240)
+        self.output_text.setStyleSheet(self.output_text.styleSheet() + 'font-family: "Courier New", monospace; font-size: 12px;')
         output_layout.addWidget(self.output_text)
 
         main_widget = QWidget()
         main_layout = QVBoxLayout(main_widget)
         main_layout.setContentsMargins(18, 18, 18, 18)
         main_layout.setSpacing(18)
+
+        title_label = QLabel('LED Matrix Disp Controller')
+        title_label.setStyleSheet('font-size: 20px; font-weight: 700; color: #f4f8ff;')
+        title_label.setAlignment(Qt.AlignCenter)
+        main_layout.addWidget(title_label)
         main_layout.addWidget(connect_group)
         main_layout.addWidget(control_group)
         main_layout.addWidget(command_group)
