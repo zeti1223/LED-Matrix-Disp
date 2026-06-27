@@ -35,21 +35,23 @@ void setAllColor(const CRGB &color) {
 }
 
 void readSerialCommands() {
-  while (Serial.available() > 0) {
-    if (remainingFrameBytes > 0) {
-      int availableBytes = Serial.available();
-      int toRead = min(availableBytes, remainingFrameBytes);
-      int count = Serial.readBytes(frameBuffer + frameIndex, toRead);
-      frameIndex += count;
-      remainingFrameBytes -= count;
+  // Priority: read raw frame bytes if waiting
+  if (remainingFrameBytes > 0) {
+    int availableBytes = Serial.available();
+    int toRead = min(availableBytes, remainingFrameBytes);
+    int count = Serial.readBytes(frameBuffer + frameIndex, toRead);
+    frameIndex += count;
+    remainingFrameBytes -= count;
 
-      if (remainingFrameBytes == 0) {
-        applyFrame();
-        frameIndex = 0;
-      }
-      continue;
+    if (remainingFrameBytes == 0) {
+      applyFrame();
+      frameIndex = 0;
     }
+    return;  // Exit here - do NOT process text commands during frame read
+  }
 
+  // Text command processing
+  while (Serial.available() > 0) {
     char c = Serial.read();
     if (c == '\r') {
       continue;
