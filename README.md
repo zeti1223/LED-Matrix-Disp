@@ -38,10 +38,10 @@ Ez a projekt egy WS2812B LED mátrix vezérlőszoftvert tartalmaz Arduino-hoz.
 
 ## PC-s vezérlés Python-nal
 
-1. Telepítsd a `pyserial` csomagot:
+1. Telepítsd a `pyserial` és `PySide6` csomagokat:
 
    ```bash
-   pip install pyserial
+   pip install -r requirements.txt
    ```
 
 2. Futtasd az `app.py`-t:
@@ -50,7 +50,7 @@ Ez a projekt egy WS2812B LED mátrix vezérlőszoftvert tartalmaz Arduino-hoz.
    python app.py
    ```
 
-3. A program grafikus felületen indul, ahol kiválaszthatod a soros portot és vezérelheted a LED mátrixot.
+3. A program Qt-alapú grafikus felületen indul, ahol kiválaszthatod a soros portot és vezérelheted a LED mátrixot.
 
 ## Megjegyzés
 
