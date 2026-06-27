@@ -52,8 +52,20 @@
     </section>
 
     <section class="card">
-      <h3>Console</h3>
-      <pre id="console" class="console"></pre>
+      <div style="display:flex; gap:12px; align-items:flex-start; width:100%;">
+        <div style="flex:1">
+          <h3>Console</h3>
+          <pre id="console" class="console"></pre>
+        </div>
+        <div style="width:300px;">
+          <h3>Preview</h3>
+          <canvas id="preview" width="240" height="240" style="width:100%; background:#000; border-radius:6px; display:block"></canvas>
+          <div style="margin-top:8px; display:flex; gap:8px;">
+            <button id="preview-start">Start</button>
+            <button id="preview-stop">Stop</button>
+          </div>
+        </div>
+      </div>
     </section>
   </div>
 
