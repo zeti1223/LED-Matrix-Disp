@@ -44,21 +44,7 @@ document.addEventListener('DOMContentLoaded', () => {
         socket.emit('disconnect_port', {});
     });
 
-    $('send-pattern').addEventListener('click', () => {
-        updatePreviewState();
-        startPreview();
-    });
-
-    $('send-color').addEventListener('click', () => {
-        updatePreviewState();
-        startPreview();
-    });
-
-    $('send-brightness').addEventListener('click', () => {
-        updatePreviewState();
-        startPreview();
-    });
-
+    // Input change listeners
     ['r', 'g', 'b'].forEach(id => {
         const el = $(id);
         if (el) el.addEventListener('input', () => { updatePreviewState(); });
@@ -70,9 +56,31 @@ document.addEventListener('DOMContentLoaded', () => {
     const patEl = $('pattern');
     if (patEl) patEl.addEventListener('change', () => { updatePreviewState(); });
 
-    // Preview controls
-    $('preview-start').addEventListener('click', () => { startPreview(); });
-    $('preview-stop').addEventListener('click', () => { stopPreview(); });
+    // Toggle console visibility
+    const toggleConsoleBtn = $('toggle-console');
+    if (toggleConsoleBtn) {
+        toggleConsoleBtn.addEventListener('click', () => {
+            const consoleEl = $('console');
+            const isHidden = consoleEl.style.display === 'none';
+            consoleEl.style.display = isHidden ? 'block' : 'none';
+            toggleConsoleBtn.textContent = isHidden ? 'Hide' : 'Show';
+        });
+    }
+
+    // Toggle preview visibility
+    const togglePreviewBtn = $('toggle-preview');
+    if (togglePreviewBtn) {
+        togglePreviewBtn.addEventListener('click', () => {
+            const previewEl = $('preview');
+            const isHidden = previewEl.style.display === 'none';
+            previewEl.style.display = isHidden ? 'block' : 'none';
+            togglePreviewBtn.textContent = isHidden ? 'Hide' : 'Show';
+            if (isHidden && connected) startPreview();
+        });
+    }
+
+    // Auto-start preview on connect
+    startPreview();
 });
 
 socket.on('connect_result', (d) => {
