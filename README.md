@@ -52,7 +52,7 @@ pip install -r requirements.txt
 python web_ui/backend.py
 ```
 
-3. Nyisd meg a böngészőt: http://localhost:5000 és használd a vezérlőt.
+3. Nyisd meg a böngészőt: <http://localhost:5000> és használd a vezérlőt.
 
 Megjegyzés: ha már van működő `app.py`-d korábbi Qt-alkalmazással, azt eltávolítottam a projektből, mert a Web UI-t használjuk tovább.
 
@@ -67,7 +67,7 @@ pip install -r requirements.txt
 python web_ui/backend.py
 ```
 
-Majd nyisd meg a böngészőt: http://localhost:5000
+Majd nyisd meg a böngészőt: <http://localhost:5000>
 
 Az oldal lehetővé teszi a portválasztást, minta, szín és fényerő küldését, valamint a soros kimenet megtekintését.
 

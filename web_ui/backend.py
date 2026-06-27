@@ -29,7 +29,7 @@ class SerialManager:
 
     def connect(self, port, baud=115200, timeout=1):
         if serial is None:
-            return False, 'pyserial not installed'
+            return False, "pyserial not installed"
         with self.lock:
             try:
                 if self.ser and self.ser.is_open:
@@ -38,7 +38,7 @@ class SerialManager:
                 time.sleep(1)
                 self.ser.reset_input_buffer()
                 self.start_reader()
-                return True, f'Connected to {port}'
+                return True, f"Connected to {port}"
             except Exception as e:
                 self.ser = None
                 return False, str(e)
@@ -56,11 +56,11 @@ class SerialManager:
     def send(self, command: str):
         with self.lock:
             if not self.ser or not self.ser.is_open:
-                return False, 'Not connected'
+                return False, "Not connected"
             try:
-                data = (command.strip() + '\n').encode('utf-8')
+                data = (command.strip() + "\n").encode("utf-8")
                 self.ser.write(data)
-                return True, 'Sent'
+                return True, "Sent"
             except Exception as e:
                 return False, str(e)
 
@@ -84,11 +84,13 @@ class SerialManager:
                     time.sleep(0.1)
                     continue
                 while self.ser.in_waiting:
-                    data = self.ser.read(self.ser.in_waiting).decode('utf-8', errors='ignore')
+                    data = self.ser.read(self.ser.in_waiting).decode(
+                        "utf-8", errors="ignore"
+                    )
                     if data:
                         # emit to all connected socket clients
                         try:
-                            self.socketio.emit('serial_data', {'data': data})
+                            self.socketio.emit("serial_data", {"data": data})
                         except Exception:
                             pass
                 time.sleep(0.1)
@@ -97,50 +99,50 @@ class SerialManager:
 
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-static_folder = os.path.join(BASE_DIR, 'static')
+static_folder = os.path.join(BASE_DIR, "static")
 
-app = Flask(__name__, static_folder=static_folder, static_url_path='')
-socketio = SocketIO(app, cors_allowed_origins='*')
+app = Flask(__name__, static_folder=static_folder, static_url_path="")
+socketio = SocketIO(app, cors_allowed_origins="*")
 
 serial_mgr = SerialManager(socketio)
 
 
-@app.route('/')
+@app.route("/")
 def index():
-    return send_from_directory(static_folder, 'index.html')
+    return send_from_directory(static_folder, "index.html")
 
 
-@app.route('/ports')
+@app.route("/ports")
 def ports():
     return jsonify(serial_mgr.list_ports())
 
 
-@socketio.on('list_ports')
+@socketio.on("list_ports")
 def handle_list_ports():
     emit = socketio.emit
-    emit('ports', serial_mgr.list_ports())
+    emit("ports", serial_mgr.list_ports())
 
 
-@socketio.on('connect_port')
+@socketio.on("connect_port")
 def handle_connect_port(data):
-    port = data.get('port')
+    port = data.get("port")
     ok, msg = serial_mgr.connect(port)
-    socketio.emit('connect_result', {'ok': ok, 'msg': msg})
+    socketio.emit("connect_result", {"ok": ok, "msg": msg})
 
 
-@socketio.on('disconnect_port')
+@socketio.on("disconnect_port")
 def handle_disconnect_port():
     serial_mgr.disconnect()
-    socketio.emit('disconnect_result', {'ok': True})
+    socketio.emit("disconnect_result", {"ok": True})
 
 
-@socketio.on('send_command')
+@socketio.on("send_command")
 def handle_send_command(data):
-    cmd = data.get('command', '')
+    cmd = data.get("command", "")
     ok, msg = serial_mgr.send(cmd)
-    socketio.emit('send_result', {'ok': ok, 'msg': msg, 'command': cmd})
+    socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
 
 
-if __name__ == '__main__':
-    print('Starting web UI on http://localhost:5000')
-    socketio.run(app, host='0.0.0.0', port=5000)
+if __name__ == "__main__":
+    print("Starting web UI on http://localhost:5000")
+    socketio.run(app, host="0.0.0.0", port=5000)

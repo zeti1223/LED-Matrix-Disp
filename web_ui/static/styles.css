@@ -1,10 +1,73 @@
-body { font-family: Inter, Arial, sans-serif; background: #0f1727; color: #e6eef8; margin: 0; padding: 24px; }
-.container { max-width: 980px; margin: 0 auto; }
-h1 { text-align: center; margin-bottom: 18px; }
-.card { background: #111827; border: 1px solid #22314f; padding: 12px 16px; margin-bottom: 12px; border-radius: 10px; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-label { font-weight: 600; margin-right: 8px; }
-select, input[type=number], input[type=range] { background: #0b1220; color: #e6eef8; border: 1px solid #26344f; padding: 6px 8px; border-radius: 6px; }
-button { background: #1f2a45; color: #e6eef8; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; }
-button:hover { background: #263657; }
-.console { background: #071226; color: #dff1ff; padding: 12px; border-radius: 8px; height: 200px; overflow: auto; width: 100%; }
-#status { margin-left: 12px; font-weight: 600; }
+body {
+    font-family: Inter, Arial, sans-serif;
+    background: #0f1727;
+    color: #e6eef8;
+    margin: 0;
+    padding: 24px;
+
+}
+
+.container {
+    max-width: 980px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.card {
+    background: #111827;
+    border: 1px solid #22314f;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+label {
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+select,
+input[type=number],
+input[type=range] {
+    background: #0b1220;
+    color: #e6eef8;
+    border: 1px solid #26344f;
+    padding: 6px 8px;
+    border-radius: 6px;
+}
+
+button {
+    background: #1f2a45;
+    color: #e6eef8;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #263657;
+}
+
+.console {
+    background: #071226;
+    color: #dff1ff;
+    padding: 12px;
+    border-radius: 8px;
+    height: 200px;
+    overflow: auto;
+    width: 100%;
+}
+
+#status {
+    margin-left: 12px;
+    font-weight: 600;
+}
