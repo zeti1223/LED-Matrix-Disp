@@ -25,6 +25,10 @@ function debounce(fn, wait) { let t; return (...args) => { clearTimeout(t); t = 
 
 let canvas = null;
 let ctx = null;
+let connected = false;
+let frameSendEnabled = false;
+let lastFrameSent = 0;
+const FRAME_SEND_INTERVAL = 80;
 
 document.addEventListener('DOMContentLoaded', () => {
     refreshPorts();
@@ -41,47 +45,30 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     $('send-pattern').addEventListener('click', () => {
-        const p = $('pattern').value;
-        socket.emit('send_command', { command: `P ${p}` });
+        updatePreviewState();
+        startPreview();
     });
 
     $('send-color').addEventListener('click', () => {
-        const r = $('r').value || 0;
-        const g = $('g').value || 0;
-        const b = $('b').value || 0;
-        socket.emit('send_command', { command: `C ${r} ${g} ${b}` });
+        updatePreviewState();
+        startPreview();
     });
 
     $('send-brightness').addEventListener('click', () => {
-        const v = $('brightness').value;
-        socket.emit('send_command', { command: `B ${v}` });
+        updatePreviewState();
+        startPreview();
     });
-
-    // Auto-send on changes (debounced)
-    const autoSendColor = debounce(() => {
-        const r = $('r').value || 0;
-        const g = $('g').value || 0;
-        const b = $('b').value || 0;
-        socket.emit('send_command', { command: `C ${r} ${g} ${b}` });
-        appendConsole(`[autosend] C ${r} ${g} ${b}\n`);
-    }, 250);
 
     ['r', 'g', 'b'].forEach(id => {
         const el = $(id);
-        if (el) el.addEventListener('input', () => { autoSendColor(); updatePreviewState(); });
+        if (el) el.addEventListener('input', () => { updatePreviewState(); });
     });
 
-    const autoSendBrightness = debounce(() => {
-        const v = $('brightness').value || 0;
-        socket.emit('send_command', { command: `B ${v}` });
-        appendConsole(`[autosend] B ${v}\n`);
-    }, 200);
     const briEl = $('brightness');
-    if (briEl) briEl.addEventListener('input', () => { autoSendBrightness(); updatePreviewState(); });
+    if (briEl) briEl.addEventListener('input', () => { updatePreviewState(); });
 
-    // pattern change -> send immediately
     const patEl = $('pattern');
-    if (patEl) patEl.addEventListener('change', () => { const p = patEl.value; socket.emit('send_command', { command: `P ${p}` }); appendConsole(`[autosend] P ${p}\n`); updatePreviewState(); });
+    if (patEl) patEl.addEventListener('change', () => { updatePreviewState(); });
 
     // Preview controls
     $('preview-start').addEventListener('click', () => { startPreview(); });
@@ -89,11 +76,13 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 socket.on('connect_result', (d) => {
+    connected = !!d.ok;
     $('status').textContent = d.msg || JSON.stringify(d);
     appendConsole(`[connect] ${d.msg}\n`);
 });
 
 socket.on('disconnect_result', (d) => {
+    connected = false;
     $('status').textContent = 'Disconnected';
     appendConsole('[disconnect]\n');
 });
@@ -101,6 +90,14 @@ socket.on('disconnect_result', (d) => {
 socket.on('send_result', (d) => {
     appendConsole(`[sent] ${d.command} -> ${d.msg}\n`);
 });
+
+function sendFrame(frame) {
+    if (!connected || !frameSendEnabled) return;
+    const now = Date.now();
+    if (now - lastFrameSent < FRAME_SEND_INTERVAL) return;
+    lastFrameSent = now;
+    socket.emit('send_frame', { frame });
+}
 
 socket.on('serial_data', (d) => {
     appendConsole(d.data);
@@ -127,6 +124,7 @@ function startPreview() {
     if (!canvas) canvas = document.getElementById('preview');
     if (!canvas) return;
     if (!ctx) ctx = canvas.getContext('2d');
+    frameSendEnabled = true;
     // initialize
     const s = getSelectedState();
     previewState.pattern = s.pattern;
@@ -135,6 +133,8 @@ function startPreview() {
     if (previewAnim) cancelAnimationFrame(previewAnim);
     function loop() {
         renderPreviewFrame(previewState);
+        const frame = buildFramePixels(previewState);
+        sendFrame(frame);
         previewState.step = (previewState.step + 1) % 1024;
         previewAnim = requestAnimationFrame(loop);
     }
@@ -144,6 +144,7 @@ function startPreview() {
 function stopPreview() {
     if (previewAnim) cancelAnimationFrame(previewAnim);
     previewAnim = null;
+    frameSendEnabled = false;
 }
 
 function renderPreviewFrame(state) {
@@ -153,53 +154,55 @@ function renderPreviewFrame(state) {
     const cellH = Math.floor(h / PREVIEW_H);
     ctx.fillStyle = '#000'; ctx.fillRect(0, 0, w, h);
 
-    const bri = state.brightness / 255;
-    const step = state.step;
-
     for (let y = 0; y < PREVIEW_H; y++) {
         for (let x = 0; x < PREVIEW_W; x++) {
-            let color = [0, 0, 0];
-            switch (state.pattern) {
-                case 0: // static
-                    color = [state.r * bri, state.g * bri, state.b * bri];
-                    break;
-                case 1: // rainbow
-                    {
-                        const hue = (step * 4 + (x + y) * 8) % 360;
-                        color = hsvToRgb(hue / 360, 1, bri);
-                    }
-                    break;
-                case 2: // theater chase
-                    {
-                        const idx = (y * PREVIEW_W + x);
-                        const on = ((idx + Math.floor(step / 6)) % 3) === 0;
-                        if (on) color = hsvToRgb(((idx * 10 + step) & 255) / 255, 1, bri);
-                        else color = [0, 0, 0];
-                    }
-                    break;
-                case 3: // scanner
-                    {
-                        const pos = Math.floor((step / 6) % (PREVIEW_W * 2));
-                        const scanX = pos < PREVIEW_W ? pos : (PREVIEW_W * 2 - 1 - pos);
-                        if (x === scanX) color = hsvToRgb(((step * 5) & 255) / 255, 1, bri);
-                        else color = [0, 0, 0];
-                    }
-                    break;
-                case 4: // color wipe
-                    {
-                        const total = PREVIEW_W * PREVIEW_H;
-                        const index = (step % total);
-                        const idx = y * PREVIEW_W + x;
-                        if (idx <= index) color = hsvToRgb(((idx * 4 + step) & 255) / 255, 1, bri);
-                        else color = [0, 0, 0];
-                    }
-                    break;
-            }
-            // draw cell
+            const color = getPixelColor(state, x, y);
             ctx.fillStyle = `rgb(${Math.round(color[0])},${Math.round(color[1])},${Math.round(color[2])})`;
             ctx.fillRect(x * cellW + 1, y * cellH + 1, cellW - 2, cellH - 2);
         }
     }
+}
+
+function getPixelColor(state, x, y) {
+    const bri = state.brightness / 255;
+    const step = state.step;
+    switch (state.pattern) {
+        case 0:
+            return [state.r * bri, state.g * bri, state.b * bri];
+        case 1: {
+            const hue = (step * 4 + (x + y) * 8) % 360;
+            return hsvToRgb(hue / 360, 1, bri);
+        }
+        case 2: {
+            const idx = (y * PREVIEW_W + x);
+            const on = ((idx + Math.floor(step / 6)) % 3) === 0;
+            return on ? hsvToRgb(((idx * 10 + step) & 255) / 255, 1, bri) : [0, 0, 0];
+        }
+        case 3: {
+            const pos = Math.floor((step / 6) % (PREVIEW_W * 2));
+            const scanX = pos < PREVIEW_W ? pos : (PREVIEW_W * 2 - 1 - pos);
+            return x === scanX ? hsvToRgb(((step * 5) & 255) / 255, 1, bri) : [0, 0, 0];
+        }
+        case 4: {
+            const total = PREVIEW_W * PREVIEW_H;
+            const index = (step % total);
+            const idx = y * PREVIEW_W + x;
+            return idx <= index ? hsvToRgb(((idx * 4 + step) & 255) / 255, 1, bri) : [0, 0, 0];
+        }
+        default:
+            return [0, 0, 0];
+    }
+}
+
+function buildFramePixels(state) {
+    const pixels = [];
+    for (let y = 0; y < PREVIEW_H; y++) {
+        for (let x = 0; x < PREVIEW_W; x++) {
+            const color = getPixelColor(state, x, y);
+            pixels.push(Math.round(color[0]), Math.round(color[1]), Math.round(color[2]));
+        }
+    }
+    return pixels;
 }
 
 function updatePreviewState() {

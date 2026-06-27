@@ -64,6 +64,16 @@ class SerialManager:
             except Exception as e:
                 return False, str(e)
 
+    def send_bytes(self, data: bytes):
+        with self.lock:
+            if not self.ser or not self.ser.is_open:
+                return False, "Not connected"
+            try:
+                self.ser.write(data)
+                return True, "Sent bytes"
+            except Exception as e:
+                return False, str(e)
+
     def start_reader(self):
         if self.reading:
             return
@@ -131,7 +141,7 @@ def handle_connect_port(data):
 
 
 @socketio.on("disconnect_port")
-def handle_disconnect_port():
+def handle_disconnect_port(data=None):
     serial_mgr.disconnect()
     socketio.emit("disconnect_result", {"ok": True})
 
@@ -141,6 +151,22 @@ def handle_send_command(data):
     cmd = data.get("command", "")
     ok, msg = serial_mgr.send(cmd)
     socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
+
+
+@socketio.on("send_frame")
+def handle_send_frame(data):
+    frame = data.get("frame")
+    if not isinstance(frame, list):
+        socketio.emit("send_result", {"ok": False, "msg": "Invalid frame format", "command": "FRAME"})
+        return
+    try:
+        payload = bytes(frame)
+    except Exception as e:
+        socketio.emit("send_result", {"ok": False, "msg": str(e), "command": "FRAME"})
+        return
+    header = f"FRAME {len(payload)}\n".encode("utf-8")
+    ok, msg = serial_mgr.send_bytes(header + payload)
+    socketio.emit("send_result", {"ok": ok, "msg": msg, "command": f"FRAME {len(payload)}"})
 
 
 if __name__ == "__main__":
