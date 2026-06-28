@@ -45,12 +45,49 @@ h1 {
     flex-wrap: wrap;
 }
 
+#brightness {
+    width: 100%;
+    max-width: 100%;
+}
+
 .card.disabled {
     opacity: 0.55;
 }
 
 .card.disabled .card-body-inline {
     pointer-events: none;
+}
+
+/* When a card is collapsed, hide header-level controls (like strobe toggle) so headers are uniform */
+.collapsible-card.collapsed .strobe-header .strobe-toggle-btn,
+.collapsible-card.collapsed .panel-header .panel-actions>.toggle-btn,
+.collapsible-card.collapsed .panel-header .panel-actions>.card-toggle {
+    display: none !important;
+}
+
+/* Ensure the collapse button itself remains visible in header (we hide only extra controls) */
+.collapsible-card.collapsed .panel-header .card-toggle {
+    display: inline-block !important;
+}
+
+/* Make all collapsed cards the same height */
+.collapsible-card {
+    transition: height 180ms ease, max-height 180ms ease, padding 180ms ease;
+}
+
+.collapsible-card.collapsed {
+    height: 48px;
+    max-height: 48px;
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
+.collapsible-card .panel-header,
+.collapsible-card .strobe-header {
+    height: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .pattern-group {
