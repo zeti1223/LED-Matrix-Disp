@@ -58,16 +58,10 @@ h1 {
     pointer-events: none;
 }
 
-/* When a card is collapsed, hide header-level controls (like strobe toggle) so headers are uniform */
+/* When a card is collapsed, hide extra header-level controls so headers stay compact. */
 .collapsible-card.collapsed .strobe-header .strobe-toggle-btn,
-.collapsible-card.collapsed .panel-header .panel-actions>.toggle-btn,
-.collapsible-card.collapsed .panel-header .panel-actions>.card-toggle {
+.collapsible-card.collapsed .panel-header .panel-actions>.toggle-btn:not(.card-toggle) {
     display: none !important;
-}
-
-/* Ensure the collapse button itself remains visible in header (we hide only extra controls) */
-.collapsible-card.collapsed .panel-header .card-toggle {
-    display: inline-block !important;
 }
 
 /* Make all collapsed cards the same height */
