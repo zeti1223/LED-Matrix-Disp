@@ -1,21 +1,40 @@
 function refreshPorts() {
+    // prefer socket-driven updates when available
+    if (window.socket && window.socket.connected) {
+        try {
+            window.socket.emit('list_ports');
+            return;
+        } catch (e) {}
+    }
+
+    // fallback to HTTP
     fetch('/ports')
         .then(response => response.json())
         .then(list => {
-            const select = $('ports');
-            if (!select) return;
-            select.innerHTML = '';
-            list.forEach(port => {
-                const option = document.createElement('option');
-                option.value = port;
-                option.textContent = port;
-                select.appendChild(option);
-            });
-            appendConsole(list.length ? '[ports] refreshed\n' : '[ports] no ports found\n');
+            applyPorts(list);
+            try { if (window.socket && window.socket.connected) window.socket.emit('console', { text: '[ports] refreshed (http fallback)\n' }); } catch (e) {}
         })
         .catch(() => {
             appendConsole('[ports] error fetching ports\n');
+            try { if (window.socket && window.socket.connected) window.socket.emit('console', { text: '[ports] error fetching ports\n' }); } catch (e) {}
         });
+}
+
+function applyPorts(list) {
+    const select = $('ports');
+    if (!select) return;
+    select.innerHTML = '';
+    if (!list || !Array.isArray(list) || !list.length) {
+        appendConsole('[ports] no ports found\n');
+        return;
+    }
+    list.forEach(port => {
+        const option = document.createElement('option');
+        option.value = port;
+        option.textContent = port;
+        select.appendChild(option);
+    });
+    appendConsole('[ports] refreshed\n');
 }
 
 function getSelectedPattern() {

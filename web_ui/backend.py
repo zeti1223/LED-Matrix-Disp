@@ -2,6 +2,7 @@ import os
 import time
 import threading
 from queue import Queue, Empty
+import json
 
 from flask import Flask, send_from_directory, jsonify
 from flask_socketio import SocketIO
@@ -101,6 +102,11 @@ class SerialManager:
                         # emit to all connected socket clients
                         try:
                             self.socketio.emit("serial_data", {"data": data})
+                            # also broadcast to console listeners so clients' consoles stay in sync
+                            try:
+                                self.socketio.emit("console", {"text": data})
+                            except Exception:
+                                pass
                         except Exception:
                             pass
                 time.sleep(0.1)
@@ -115,6 +121,97 @@ app = Flask(__name__, static_folder=static_folder, static_url_path="")
 socketio = SocketIO(app, cors_allowed_origins="*")
 
 serial_mgr = SerialManager(socketio)
+
+
+class PortsWatcher:
+    def __init__(self, interval=3.0):
+        self.interval = interval
+        self.thread = None
+        self.running = False
+        self.last = []
+
+    def start(self):
+        if self.thread and self.thread.is_alive():
+            return
+        self.running = True
+        self.thread = threading.Thread(target=self._loop, daemon=True)
+        self.thread.start()
+
+    def stop(self):
+        self.running = False
+        if self.thread:
+            self.thread.join(timeout=0.5)
+            self.thread = None
+
+    def _loop(self):
+        while self.running:
+            try:
+                current = serial_mgr.list_ports()
+                if current != self.last:
+                    self.last = current
+                    try:
+                        socketio.emit("ports", current)
+                    except Exception:
+                        pass
+                time.sleep(self.interval)
+            except Exception:
+                time.sleep(self.interval)
+
+
+ports_watcher = PortsWatcher()
+ports_watcher.start()
+
+
+class StateManager:
+    def __init__(self, path=None):
+        self.lock = threading.Lock()
+        self.path = path or os.path.join(BASE_DIR, "state.json")
+        self.default = {
+            "pattern": 0,
+            "r": 255,
+            "g": 255,
+            "b": 255,
+            "brightness": 128,
+            "strobeOn": False,
+            "strobeSpeed": 8,
+            "strobeFill": 50,
+        }
+        self._state = self.default.copy()
+        self._load()
+
+    def _load(self):
+        try:
+            if os.path.exists(self.path):
+                with open(self.path, "r", encoding="utf-8") as f:
+                    data = json.load(f)
+                    if isinstance(data, dict):
+                        self._state.update(data)
+        except Exception:
+            pass
+
+    def _save(self):
+        try:
+            with open(self.path, "w", encoding="utf-8") as f:
+                json.dump(self._state, f)
+        except Exception:
+            pass
+
+    def get_state(self):
+        with self.lock:
+            return self._state.copy()
+
+    def update_state(self, updates: dict):
+        if not isinstance(updates, dict):
+            return self.get_state()
+        with self.lock:
+            for k, v in updates.items():
+                if k in self.default:
+                    self._state[k] = v
+            self._save()
+            return self._state.copy()
+
+
+state_mgr = StateManager()
 
 
 @app.route("/")
@@ -172,6 +269,28 @@ def handle_send_frame(data):
     socketio.emit(
         "send_result", {"ok": ok, "msg": msg, "command": f"FRAME {len(payload)}"}
     )
+
+
+@socketio.on("get_state")
+def handle_get_state():
+    socketio.emit("state", state_mgr.get_state())
+
+
+@socketio.on("update_state")
+def handle_update_state(data):
+    new = state_mgr.update_state(data or {})
+    # broadcast updated canonical state to all clients
+    socketio.emit("state", new)
+
+
+@socketio.on("console")
+def handle_console(data):
+    try:
+        text = data.get("text", "") if isinstance(data, dict) else str(data)
+        if text:
+            socketio.emit("console", {"text": text})
+    except Exception:
+        pass
 
 
 if __name__ == "__main__":

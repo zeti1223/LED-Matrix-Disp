@@ -10,3 +10,4 @@ __pycache__/
 *.log
 *.tmp
 *.bak
+/web_ui/state.json

@@ -48,6 +48,11 @@ function startPreview() {
     }
 
     previewAnim = requestAnimationFrame(loop);
+
+    // notify server of our current state
+    if (window.sendState) {
+        try { window.sendState(getSelectedState()); } catch (e) {}
+    }
 }
 
 function stopPreview() {
@@ -162,7 +167,42 @@ function updatePreviewState() {
     } else if (ctx) {
         renderPreviewFrame(previewState);
     }
+
+    // send updated UI state to server (throttled by socket.js)
+    if (window.sendState && !window.suppressStateEmit) {
+        try { window.sendState(state); } catch (e) {}
+    }
 }
+
+
+// apply a canonical state received from server to local controls
+window.applyServerState = function(s) {
+    if (!s || typeof s !== 'object') return;
+    window.suppressStateEmit = true;
+    try {
+        if (typeof s.pattern !== 'undefined') {
+            setSelectedPattern(parseInt(s.pattern || 0, 10));
+            // ensure controls that depend on pattern (like color inputs) are updated
+            if (typeof syncPatternDependentControls === 'function') {
+                try { syncPatternDependentControls(); } catch (e) {}
+            }
+        }
+        if (typeof s.r !== 'undefined' && typeof s.g !== 'undefined' && typeof s.b !== 'undefined') {
+            setColorInputsFromRGB(parseInt(s.r || 0,10), parseInt(s.g || 0,10), parseInt(s.b || 0,10));
+        }
+        if (typeof s.brightness !== 'undefined') {
+            const b = $('brightness'); if (b) b.value = parseInt(s.brightness || 0,10);
+        }
+        if (typeof s.strobeOn !== 'undefined') setStrobeEnabled(!!s.strobeOn);
+        if (typeof s.strobeSpeed !== 'undefined') { const el = $('strobe-speed'); if (el) el.value = parseInt(s.strobeSpeed||8,10); }
+        if (typeof s.strobeFill !== 'undefined') { const el = $('strobe-duty'); if (el) el.value = parseInt(s.strobeFill||50,10); }
+
+        // update rendered preview
+        updatePreviewState();
+    } finally {
+        setTimeout(() => { window.suppressStateEmit = false; }, 120);
+    }
+};
 
 function hsvToRgb(h, s, v) {
     let r = 0;
