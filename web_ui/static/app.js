@@ -33,9 +33,25 @@ function getSelectedPattern() {
     return activeButton ? parseInt(activeButton.dataset.pattern || '0', 10) : 0;
 }
 
+function swapClasses(element, addClasses, removeClasses) {
+    if (!element) return;
+    removeClasses.forEach(cls => element.classList.remove(cls));
+    addClasses.forEach(cls => element.classList.add(cls));
+}
+
 function setSelectedPattern(pattern) {
     document.querySelectorAll('.pattern-btn').forEach(button => {
-        button.classList.toggle('active', parseInt(button.dataset.pattern || '0', 10) === pattern);
+        const isActive = parseInt(button.dataset.pattern || '0', 10) === pattern;
+        button.classList.toggle('active', isActive);
+        swapClasses(
+            button,
+            isActive
+                ? ['border-cyan-400/50', 'bg-cyan-400/15', 'text-cyan-100', 'shadow-lg', 'shadow-cyan-500/10']
+                : ['border-slate-700', 'bg-slate-800/70', 'text-slate-200'],
+            isActive
+                ? ['border-slate-700', 'bg-slate-800/70', 'text-slate-200']
+                : ['border-cyan-400/50', 'bg-cyan-400/15', 'text-cyan-100', 'shadow-lg', 'shadow-cyan-500/10']
+        );
     });
 }
 
@@ -50,13 +66,27 @@ function setStrobeEnabled(enabled) {
     button.classList.toggle('active', enabled);
     button.setAttribute('aria-pressed', enabled ? 'true' : 'false');
     button.textContent = enabled ? 'Strobe on' : 'Strobe off';
+    swapClasses(
+        button,
+        enabled
+            ? ['border-cyan-400/40', 'bg-cyan-400/15', 'text-cyan-100', 'shadow-lg', 'shadow-cyan-500/10']
+            : ['border-slate-700', 'bg-slate-800/70', 'text-slate-200'],
+        enabled
+            ? ['border-slate-700', 'bg-slate-800/70', 'text-slate-200']
+            : ['border-cyan-400/40', 'bg-cyan-400/15', 'text-cyan-100', 'shadow-lg', 'shadow-cyan-500/10']
+    );
 }
 
 function setColorControlsDisabled(disabled) {
     const colorCard = document.querySelector('[data-card-id="color"]');
     if (colorCard) {
-        colorCard.classList.toggle('disabled', disabled);
+        colorCard.classList.toggle('opacity-50', disabled);
         colorCard.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+    }
+
+    const colorBody = colorCard ? colorCard.querySelector('.card-body') : null;
+    if (colorBody) {
+        colorBody.classList.toggle('pointer-events-none', disabled);
     }
 
     ['r', 'g', 'b'].forEach(id => {
@@ -85,10 +115,24 @@ function hexToRgb(hex) {
 }
 
 function setColorMode(mode) {
-    document.querySelectorAll('.color-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    document.querySelectorAll('.color-mode-btn').forEach(b => {
+        const isActive = b.dataset.mode === mode;
+        b.classList.toggle('active', isActive);
+        swapClasses(
+            b,
+            isActive
+                ? ['bg-cyan-400', 'text-slate-950', 'shadow-md', 'shadow-cyan-500/20']
+                : ['text-slate-300', 'hover:bg-slate-800'],
+            isActive
+                ? ['text-slate-300', 'hover:bg-slate-800']
+                : ['bg-cyan-400', 'text-slate-950', 'shadow-md', 'shadow-cyan-500/20']
+        );
+    });
     const showHex = mode === 'hex';
-    document.querySelector('.hex-inputs').style.display = showHex ? 'flex' : 'none';
-    document.querySelector('.rgb-inputs').style.display = showHex ? 'none' : 'flex';
+    const hexInputs = document.querySelector('.hex-inputs');
+    const rgbInputs = document.querySelector('.rgb-inputs');
+    if (hexInputs) hexInputs.classList.toggle('hidden', !showHex);
+    if (rgbInputs) rgbInputs.classList.toggle('hidden', showHex);
 }
 
 function setColorInputsFromRGB(r, g, b) {
@@ -108,10 +152,34 @@ function setColorFromHex(hex) {
 function setCardCollapsed(card, collapsed) {
     if (!card) return;
     card.classList.toggle('collapsed', collapsed);
+    card.classList.toggle('p-5', !collapsed);
+    card.classList.toggle('px-5', collapsed);
+    card.classList.toggle('py-5', !collapsed);
+    card.classList.toggle('py-3', collapsed);
+    const body = card.querySelector('.card-body');
+    if (body) {
+        body.classList.toggle('max-h-0', collapsed);
+        body.classList.toggle('max-h-[1000px]', !collapsed);
+        body.classList.toggle('opacity-0', collapsed);
+        body.classList.toggle('opacity-100', !collapsed);
+        body.classList.toggle('pointer-events-none', collapsed);
+        body.classList.toggle('mt-0', collapsed);
+        body.classList.toggle('mt-4', !collapsed);
+        body.classList.toggle('mb-0', collapsed);
+        body.classList.toggle('mb-4', !collapsed);
+        body.classList.toggle('-translate-y-2', collapsed);
+        body.classList.toggle('translate-y-0', !collapsed);
+    }
+    if (card.dataset.cardId === 'strobe') {
+        const strobeButton = card.querySelector('#strobe-toggle');
+        if (strobeButton) {
+            strobeButton.classList.toggle('hidden', collapsed);
+        }
+    }
     const button = card.querySelector('.card-toggle');
     if (!button) return;
     button.classList.toggle('collapsed', collapsed);
-    button.innerHTML = '<span class="toggle-icon" aria-hidden="true"></span><span class="toggle-label">' + (collapsed ? 'Expand' : 'Collapse') + '</span>';
+    button.textContent = collapsed ? '▸ Expand' : '▾ Collapse';
     button.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
     button.setAttribute('aria-label', (collapsed ? 'Expand ' : 'Collapse ') + (card.dataset.cardId || 'panel'));
 }
