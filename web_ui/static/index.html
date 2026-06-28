@@ -99,31 +99,32 @@
                     </div>
                     <div
                         class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex flex-wrap items-center gap-4">
-                        <div class="color-mode inline-flex rounded-2xl border border-slate-700 bg-slate-950/60 p-1">
+                        <div
+                            class="color-mode inline-flex h-14 items-stretch rounded-2xl border border-slate-700 bg-slate-950/60 p-1">
                             <button type="button"
-                                class="color-mode-btn rounded-xl px-4 py-2 text-sm font-semibold transition"
+                                class="color-mode-btn h-full rounded-xl px-4 py-2 text-sm font-semibold transition"
                                 data-mode="rgb">RGB</button>
                             <button type="button"
-                                class="color-mode-btn rounded-xl px-4 py-2 text-sm font-semibold transition"
+                                class="color-mode-btn h-full rounded-xl px-4 py-2 text-sm font-semibold transition"
                                 data-mode="hex">Hex</button>
                         </div>
                         <div
-                            class="color-pickers flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-950/60 px-3 py-2">
+                            class="color-pickers flex h-14 items-center gap-2 rounded-2xl border border-slate-700 bg-slate-950/60 px-3 py-2">
                             <label for="os-color-picker" class="text-sm font-semibold text-slate-300">Picker</label>
                             <input id="os-color-picker" type="color" title="Open OS color picker"
                                 class="h-10 w-12 cursor-pointer rounded-lg border-0 bg-transparent p-0">
                         </div>
                         <div class="rgb-inputs color-inputs flex flex-wrap items-center gap-3">
                             <input id="r" type="number" min="0" max="255" value="255"
-                                class="w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                class="h-14 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
                             <input id="g" type="number" min="0" max="255" value="20"
-                                class="w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                class="h-14 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
                             <input id="b" type="number" min="0" max="255" value="255"
-                                class="w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                class="h-14 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
                         </div>
                         <div class="hex-inputs color-inputs hidden">
                             <input id="hex" type="text" maxlength="7" value="#ff14ff"
-                                class="w-40 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm uppercase text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                class="h-14 w-40 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm uppercase text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
                         </div>
                     </div>
                 </section>
@@ -216,6 +217,10 @@
     </main>
 
     <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/controls.js"></script>
+    <script src="js/socket.js"></script>
+    <script src="js/preview.js"></script>
     <script src="app.js"></script>
 </body>
 
