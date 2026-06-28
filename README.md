@@ -46,10 +46,10 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-2. Start the web backend:
+1. Start the web backend:
 
 ```bash
 python web_ui/backend.py
 ```
 
-3. Open your browser at <http://localhost:5000> and use the controller.
+1. Open your browser at <http://localhost:5000> and use the controller.

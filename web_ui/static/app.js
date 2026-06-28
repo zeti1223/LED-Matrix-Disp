@@ -12,8 +12,8 @@ function appendConsole(text) {
 function setConsoleLastLine() {
     const el = $('console');
     if (!el) return;
-    const lines = el.textContent.trim().split(/\r?\n/).filter(l=>l.length>0);
-    const last = lines.length ? lines[lines.length-1] : '';
+    const lines = el.textContent.trim().split(/\r?\n/).filter(l => l.length > 0);
+    const last = lines.length ? lines[lines.length - 1] : '';
     el.dataset.last = last;
 }
 
@@ -68,6 +68,41 @@ function setColorControlsDisabled(disabled) {
 function syncPatternDependentControls() {
     const pattern = getSelectedPattern();
     setColorControlsDisabled([1, 2, 3, 4].includes(pattern));
+}
+
+// Color helpers
+function clamp(v, a, b) { return Math.min(b, Math.max(a, Number(v) || 0)); }
+function padHex(n) { return n.toString(16).padStart(2, '0'); }
+function rgbToHex(r, g, b) { return '#' + padHex(r) + padHex(g) + padHex(b); }
+function hexToRgb(hex) {
+    if (!hex) return null;
+    const h = hex.replace('#', '');
+    if (h.length === 3) {
+        return { r: parseInt(h[0] + h[0], 16), g: parseInt(h[1] + h[1], 16), b: parseInt(h[2] + h[2], 16) };
+    }
+    if (h.length !== 6) return null;
+    return { r: parseInt(h.slice(0, 2), 16), g: parseInt(h.slice(2, 4), 16), b: parseInt(h.slice(4, 6), 16) };
+}
+
+function setColorMode(mode) {
+    document.querySelectorAll('.color-mode-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === mode));
+    const showHex = mode === 'hex';
+    document.querySelector('.hex-inputs').style.display = showHex ? 'flex' : 'none';
+    document.querySelector('.rgb-inputs').style.display = showHex ? 'none' : 'flex';
+}
+
+function setColorInputsFromRGB(r, g, b) {
+    const hexInput = $('hex');
+    if (hexInput) hexInput.value = rgbToHex(r, g, b);
+    ['r', 'g', 'b'].forEach((id, idx) => { const el = $(id); if (el) el.value = [r, g, b][idx]; });
+    // update OS picker
+    const os = $('os-color-picker'); if (os) os.value = rgbToHex(r, g, b);
+}
+
+function setColorFromHex(hex) {
+    const rgb = hexToRgb(hex);
+    if (!rgb) return;
+    setColorInputsFromRGB(rgb.r, rgb.g, rgb.b);
 }
 
 function setCardCollapsed(card, collapsed) {
@@ -126,6 +161,47 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Color mode buttons
+    document.querySelectorAll('.color-mode-btn').forEach(btn => {
+        btn.addEventListener('click', () => { setColorMode(btn.dataset.mode); });
+    });
+
+    // OS color picker
+    const osPicker = $('os-color-picker');
+    if (osPicker) {
+        osPicker.addEventListener('input', (e) => {
+            const hex = e.target.value;
+            setColorFromHex(hex);
+            updatePreviewState();
+        });
+    }
+
+    // Hex input
+    const hexInput = $('hex');
+    if (hexInput) {
+        hexInput.addEventListener('change', (e) => {
+            let v = e.target.value.trim(); if (!v.startsWith('#')) v = '#' + v; e.target.value = v.toLowerCase();
+            setColorFromHex(v);
+            updatePreviewState();
+        });
+    }
+
+    // RGB inputs
+    ['r', 'g', 'b'].forEach(id => {
+        const el = $(id);
+        if (!el) return;
+        el.addEventListener('input', () => {
+            const r = clamp($('r').value, 0, 255), g = clamp($('g').value, 0, 255), b = clamp($('b').value, 0, 255);
+            setColorInputsFromRGB(r, g, b);
+            updatePreviewState();
+        });
+    });
+
+    // initialize color inputs (sync picker and hex)
+    const initialR = clamp($('r').value, 0, 255), initialG = clamp($('g').value, 0, 255), initialB = clamp($('b').value, 0, 255);
+    setColorInputsFromRGB(initialR, initialG, initialB);
+    setColorMode('rgb');
+
     const strobeToggleBtn = $('strobe-toggle');
     if (strobeToggleBtn) {
         strobeToggleBtn.addEventListener('click', () => {
@@ -149,7 +225,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (briEl) briEl.addEventListener('input', () => { updatePreviewState(); });
 
     // Strobe controls: update preview on change (on/off, speed + fill)
-    const strobeControls = ['strobe-speed','strobe-duty'];
+    const strobeControls = ['strobe-speed', 'strobe-duty'];
     strobeControls.forEach(id => {
         const el = $(id);
         if (!el) return;
@@ -269,7 +345,7 @@ function getPixelColor(state, x, y) {
     const bri = state.brightness / 255;
     const step = state.step;
     // compute base color first
-    let color = [0,0,0];
+    let color = [0, 0, 0];
     switch (state.pattern) {
         case 0:
             color = [state.r * bri, state.g * bri, state.b * bri];
@@ -282,20 +358,20 @@ function getPixelColor(state, x, y) {
         case 2: {
             const idx = (y * PREVIEW_W + x);
             const on = ((idx + Math.floor(step / 6)) % 3) === 0;
-            color = on ? hsvToRgb(((idx * 10 + step) & 255) / 255, 1, bri) : [0,0,0];
+            color = on ? hsvToRgb(((idx * 10 + step) & 255) / 255, 1, bri) : [0, 0, 0];
             break;
         }
         case 3: {
             const pos = Math.floor((step / 6) % (PREVIEW_W * 2));
             const scanX = pos < PREVIEW_W ? pos : (PREVIEW_W * 2 - 1 - pos);
-            color = x === scanX ? hsvToRgb(((step * 5) & 255) / 255, 1, bri) : [0,0,0];
+            color = x === scanX ? hsvToRgb(((step * 5) & 255) / 255, 1, bri) : [0, 0, 0];
             break;
         }
         case 4: {
             const total = PREVIEW_W * PREVIEW_H;
             const index = (step % total);
             const idx = y * PREVIEW_W + x;
-            color = idx <= index ? hsvToRgb(((idx * 4 + step) & 255) / 255, 1, bri) : [0,0,0];
+            color = idx <= index ? hsvToRgb(((idx * 4 + step) & 255) / 255, 1, bri) : [0, 0, 0];
             break;
         }
         case 5: {
@@ -312,7 +388,7 @@ function getPixelColor(state, x, y) {
             break;
         }
         default:
-            color = [0,0,0];
+            color = [0, 0, 0];
     }
 
     // Simple strobe on/off overlay: toggle button enables strobing of the animation
@@ -327,7 +403,7 @@ function getPixelColor(state, x, y) {
     const strobeOn = phase < duty;
 
     // overlay: when strobe phase is ON show the animation pixel, otherwise black
-    return strobeOn ? color : [0,0,0];
+    return strobeOn ? color : [0, 0, 0];
 }
 
 function buildFramePixels(state) {

@@ -79,6 +79,60 @@ h1 {
     color: #fff;
 }
 
+.color-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.color-mode {
+    display: flex;
+    gap: 8px;
+}
+
+.color-mode-btn {
+    background: #0f2133;
+    color: #dfeaff;
+    border: 1px solid #26344f;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.color-mode-btn.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: #fff;
+}
+
+.color-pickers input[type=color] {
+    width: 40px;
+    height: 32px;
+    padding: 0;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.color-inputs input[type=text] {
+    background: #0b1220;
+    color: #e6eef8;
+    border: 1px solid #26344f;
+    padding: 6px 8px;
+    border-radius: 6px;
+    width: 120px;
+}
+
+.color-inputs input[type=number] {
+    width: 72px;
+}
+
+.card.disabled .color-controls {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
 .layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 320px;

@@ -50,11 +50,22 @@
                         <h3>Color</h3>
                         <button type="button" class="toggle-btn card-toggle" aria-expanded="true">Hide</button>
                     </div>
-                    <div class="card-body card-body-inline">
-                        <label>R G B</label>
-                        <input id="r" type="number" min="0" max="255" value="255">
-                        <input id="g" type="number" min="0" max="255" value="255">
-                        <input id="b" type="number" min="0" max="255" value="255">
+                    <div class="card-body card-body-inline color-controls">
+                        <div class="color-mode">
+                            <button type="button" class="color-mode-btn active" data-mode="rgb">RGB</button>
+                            <button type="button" class="color-mode-btn" data-mode="hex">Hex</button>
+                        </div>
+                        <div class="color-pickers">
+                            <input id="os-color-picker" type="color" title="Open OS color picker">
+                        </div>
+                        <div class="color-inputs rgb-inputs">
+                            <input id="r" type="number" min="0" max="255" value="255">
+                            <input id="g" type="number" min="0" max="255" value="20">
+                            <input id="b" type="number" min="0" max="255" value="255">
+                        </div>
+                        <div class="color-inputs hex-inputs" style="display:none;">
+                            <input id="hex" type="text" maxlength="7" value="#ff14ff">
+                        </div>
                     </div>
                 </section>
 
@@ -64,7 +75,6 @@
                         <button type="button" class="toggle-btn card-toggle" aria-expanded="true">Hide</button>
                     </div>
                     <div class="card-body card-body-inline">
-                        <label>Brightness</label>
                         <input id="brightness" type="range" min="0" max="255" value="255">
                     </div>
                 </section>
@@ -72,7 +82,8 @@
                 <section class="card collapsible-card" data-card-id="strobe">
                     <div class="strobe-header">
                         <h3>Strobe</h3>
-                        <button id="strobe-toggle" type="button" class="strobe-toggle-btn" aria-pressed="false">Strobe off</button>
+                        <button id="strobe-toggle" type="button" class="strobe-toggle-btn" aria-pressed="false">Strobe
+                            off</button>
                         <button type="button" class="toggle-btn card-toggle" aria-expanded="true">Hide</button>
                     </div>
                     <div class="card-body strobe-grid">
@@ -92,7 +103,8 @@
                 <section class="card panel-card collapsible-card" data-card-id="console">
                     <div class="panel-header">
                         <h3>Console</h3>
-                        <div class="panel-actions"><button id="toggle-console" class="toggle-btn card-toggle" aria-label="toggle console" aria-expanded="true">Hide</button></div>
+                        <div class="panel-actions"><button id="toggle-console" class="toggle-btn card-toggle"
+                                aria-label="toggle console" aria-expanded="true">Hide</button></div>
                     </div>
                     <div class="card-body">
                         <pre id="console" class="console" style="display:block;"></pre>
@@ -104,7 +116,8 @@
                 <section class="card panel-card preview-card collapsible-card" data-card-id="preview">
                     <div class="panel-header">
                         <h3>Preview</h3>
-                        <div class="panel-actions"><button id="toggle-preview" class="toggle-btn card-toggle" aria-label="toggle preview" aria-expanded="true">Hide</button></div>
+                        <div class="panel-actions"><button id="toggle-preview" class="toggle-btn card-toggle"
+                                aria-label="toggle preview" aria-expanded="true">Hide</button></div>
                     </div>
                     <div class="card-body">
                         <canvas id="preview" width="240" height="240"></canvas>

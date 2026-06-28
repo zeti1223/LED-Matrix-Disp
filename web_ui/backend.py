@@ -157,7 +157,10 @@ def handle_send_command(data):
 def handle_send_frame(data):
     frame = data.get("frame")
     if not isinstance(frame, list):
-        socketio.emit("send_result", {"ok": False, "msg": "Invalid frame format", "command": "FRAME"})
+        socketio.emit(
+            "send_result",
+            {"ok": False, "msg": "Invalid frame format", "command": "FRAME"},
+        )
         return
     try:
         payload = bytes(frame)
@@ -166,7 +169,9 @@ def handle_send_frame(data):
         return
     header = f"FRAME {len(payload)}\n".encode("utf-8")
     ok, msg = serial_mgr.send_bytes(header + payload)
-    socketio.emit("send_result", {"ok": ok, "msg": msg, "command": f"FRAME {len(payload)}"})
+    socketio.emit(
+        "send_result", {"ok": ok, "msg": msg, "command": f"FRAME {len(payload)}"}
+    )
 
 
 if __name__ == "__main__":
