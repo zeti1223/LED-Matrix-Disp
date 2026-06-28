@@ -24,9 +24,8 @@ function refreshPorts() {
         list.forEach(p => {
             const opt = document.createElement('option'); opt.value = p; opt.textContent = p; sel.appendChild(opt);
         });
-        if (list.length) $('status').textContent = 'Ports refreshed';
-        else $('status').textContent = 'No ports found';
-    }).catch(e => { $('status').textContent = 'Error fetching ports'; });
+        appendConsole(list.length ? '[ports] refreshed\n' : '[ports] no ports found\n');
+    }).catch(e => { appendConsole('[ports] error fetching ports\n'); });
 }
 
 function getSelectedPattern() {
@@ -53,6 +52,38 @@ function setStrobeEnabled(enabled) {
     button.textContent = enabled ? 'Strobe on' : 'Strobe off';
 }
 
+function setColorControlsDisabled(disabled) {
+    const colorCard = document.querySelector('[data-card-id="color"]');
+    if (colorCard) {
+        colorCard.classList.toggle('disabled', disabled);
+        colorCard.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+    }
+
+    ['r', 'g', 'b'].forEach(id => {
+        const input = $(id);
+        if (input) input.disabled = disabled;
+    });
+}
+
+function syncPatternDependentControls() {
+    const pattern = getSelectedPattern();
+    setColorControlsDisabled([1, 2, 3, 4].includes(pattern));
+}
+
+function setCardCollapsed(card, collapsed) {
+    if (!card) return;
+    card.classList.toggle('collapsed', collapsed);
+    const button = card.querySelector('.card-toggle');
+    if (!button) return;
+    button.textContent = collapsed ? 'Show' : 'Hide';
+    button.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+}
+
+function toggleCard(card) {
+    if (!card) return;
+    setCardCollapsed(card, !card.classList.contains('collapsed'));
+}
+
 // simple debounce helper
 function debounce(fn, wait) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); }; }
 
@@ -68,6 +99,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     setSelectedPattern(0);
     setStrobeEnabled(false);
+    syncPatternDependentControls();
 
     $('refresh').addEventListener('click', refreshPorts);
 
@@ -89,6 +121,7 @@ document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.pattern-btn').forEach(button => {
         button.addEventListener('click', () => {
             setSelectedPattern(parseInt(button.dataset.pattern || '0', 10));
+            syncPatternDependentControls();
             updatePreviewState();
         });
     });
@@ -100,6 +133,17 @@ document.addEventListener('DOMContentLoaded', () => {
             updatePreviewState();
         });
     }
+
+    document.querySelectorAll('.card-toggle').forEach(button => {
+        button.addEventListener('click', () => {
+            const card = button.closest('.collapsible-card');
+            if (card && button.id !== 'strobe-toggle') {
+                toggleCard(card);
+            }
+        });
+    });
+
+    document.querySelectorAll('.collapsible-card').forEach(card => setCardCollapsed(card, false));
 
     const briEl = $('brightness');
     if (briEl) briEl.addEventListener('input', () => { updatePreviewState(); });
@@ -120,29 +164,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (speedEl) {
         updateSpeedLabel(speedEl.value);
         speedEl.addEventListener('input', (e) => { updateSpeedLabel(e.target.value); });
-    }
-
-    // Toggle console visibility
-    const toggleConsoleBtn = $('toggle-console');
-    if (toggleConsoleBtn) {
-        toggleConsoleBtn.addEventListener('click', () => {
-            const consoleEl = $('console');
-            const isHidden = consoleEl.style.display === 'none';
-            consoleEl.style.display = isHidden ? 'block' : 'none';
-            toggleConsoleBtn.textContent = isHidden ? 'Hide' : 'Show';
-        });
-    }
-
-    // Toggle preview visibility
-    const togglePreviewBtn = $('toggle-preview');
-    if (togglePreviewBtn) {
-        togglePreviewBtn.addEventListener('click', () => {
-            const previewEl = $('preview');
-            const isHidden = previewEl.style.display === 'none';
-            previewEl.style.display = isHidden ? 'block' : 'none';
-            togglePreviewBtn.textContent = isHidden ? 'Hide' : 'Show';
-            if (isHidden && connected) startPreview();
-        });
     }
 
     // Auto-start preview on connect

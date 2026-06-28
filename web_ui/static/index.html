@@ -13,46 +13,69 @@
         <h1>LED Matrix Disp - Web UI</h1>
         <div class="layout">
             <div class="controls-column">
-                <section class="card">
-                    <label>Serial port:</label>
-                    <select id="ports"></select>
-                    <button id="refresh">Refresh</button>
-                    <button id="connect">Connect</button>
-                    <button id="disconnect">Disconnect</button>
-                    <div id="status">Disconnected</div>
-                </section>
-
-                <section class="card">
-                    <label>Pattern:</label>
-                    <div class="pattern-group" role="group" aria-label="Pattern selection">
-                        <button type="button" class="pattern-btn active" data-pattern="0">Static color</button>
-                        <button type="button" class="pattern-btn" data-pattern="1">Rainbow</button>
-                        <button type="button" class="pattern-btn" data-pattern="2">Theater chase</button>
-                        <button type="button" class="pattern-btn" data-pattern="3">Scanner</button>
-                        <button type="button" class="pattern-btn" data-pattern="4">Color wipe</button>
-                        <button type="button" class="pattern-btn" data-pattern="5">Pulse</button>
-                        <button type="button" class="pattern-btn" data-pattern="6">Checker</button>
+                <section class="card collapsible-card" data-card-id="serial">
+                    <div class="panel-header">
+                        <h3>Serial port</h3>
+                        <button type="button" class="toggle-btn card-toggle" aria-expanded="true">Hide</button>
+                    </div>
+                    <div class="card-body card-body-inline">
+                        <select id="ports"></select>
+                        <button id="refresh">Refresh</button>
+                        <button id="connect">Connect</button>
+                        <button id="disconnect">Disconnect</button>
+                        <div id="status">Disconnected</div>
                     </div>
                 </section>
 
-                <section class="card">
-                    <label>Color (R G B):</label>
-                    <input id="r" type="number" min="0" max="255" value="255">
-                    <input id="g" type="number" min="0" max="255" value="255">
-                    <input id="b" type="number" min="0" max="255" value="255">
+                <section class="card collapsible-card" data-card-id="pattern">
+                    <div class="panel-header">
+                        <h3>Pattern</h3>
+                        <button type="button" class="toggle-btn card-toggle" aria-expanded="true">Hide</button>
+                    </div>
+                    <div class="card-body">
+                        <div class="pattern-group" role="group" aria-label="Pattern selection">
+                            <button type="button" class="pattern-btn active" data-pattern="0">Static color</button>
+                            <button type="button" class="pattern-btn" data-pattern="1">Rainbow</button>
+                            <button type="button" class="pattern-btn" data-pattern="2">Theater chase</button>
+                            <button type="button" class="pattern-btn" data-pattern="3">Scanner</button>
+                            <button type="button" class="pattern-btn" data-pattern="4">Color wipe</button>
+                            <button type="button" class="pattern-btn" data-pattern="5">Pulse</button>
+                            <button type="button" class="pattern-btn" data-pattern="6">Checker</button>
+                        </div>
+                    </div>
                 </section>
 
-                <section class="card">
-                    <label>Brightness:</label>
-                    <input id="brightness" type="range" min="0" max="255" value="255">
+                <section class="card collapsible-card" data-card-id="color">
+                    <div class="panel-header">
+                        <h3>Color</h3>
+                        <button type="button" class="toggle-btn card-toggle" aria-expanded="true">Hide</button>
+                    </div>
+                    <div class="card-body card-body-inline">
+                        <label>R G B</label>
+                        <input id="r" type="number" min="0" max="255" value="255">
+                        <input id="g" type="number" min="0" max="255" value="255">
+                        <input id="b" type="number" min="0" max="255" value="255">
+                    </div>
                 </section>
 
-                <section class="card">
+                <section class="card collapsible-card" data-card-id="brightness">
+                    <div class="panel-header">
+                        <h3>Brightness</h3>
+                        <button type="button" class="toggle-btn card-toggle" aria-expanded="true">Hide</button>
+                    </div>
+                    <div class="card-body card-body-inline">
+                        <label>Brightness</label>
+                        <input id="brightness" type="range" min="0" max="255" value="255">
+                    </div>
+                </section>
+
+                <section class="card collapsible-card" data-card-id="strobe">
                     <div class="strobe-header">
-                        <label>Strobe</label>
+                        <h3>Strobe</h3>
                         <button id="strobe-toggle" type="button" class="strobe-toggle-btn" aria-pressed="false">Strobe off</button>
+                        <button type="button" class="toggle-btn card-toggle" aria-expanded="true">Hide</button>
                     </div>
-                    <div class="strobe-grid">
+                    <div class="card-body strobe-grid">
                         <div class="strobe-sliders">
                             <div>
                                 <label>Speed: <span id="strobe-speed-val">8 Hz</span></label>
@@ -66,22 +89,26 @@
                     </div>
                 </section>
 
-                <section class="card panel-card">
+                <section class="card panel-card collapsible-card" data-card-id="console">
                     <div class="panel-header">
                         <h3>Console</h3>
-                        <div class="panel-actions"><button id="toggle-console" class="toggle-btn" aria-label="toggle console">Hide</button></div>
+                        <div class="panel-actions"><button id="toggle-console" class="toggle-btn card-toggle" aria-label="toggle console" aria-expanded="true">Hide</button></div>
                     </div>
-                    <pre id="console" class="console" style="display:block;"></pre>
+                    <div class="card-body">
+                        <pre id="console" class="console" style="display:block;"></pre>
+                    </div>
                 </section>
             </div>
 
             <aside class="preview-column">
-                <section class="card panel-card preview-card">
+                <section class="card panel-card preview-card collapsible-card" data-card-id="preview">
                     <div class="panel-header">
                         <h3>Preview</h3>
-                        <div class="panel-actions"><button id="toggle-preview" class="toggle-btn" aria-label="toggle preview">Hide</button></div>
+                        <div class="panel-actions"><button id="toggle-preview" class="toggle-btn card-toggle" aria-label="toggle preview" aria-expanded="true">Hide</button></div>
                     </div>
-                    <canvas id="preview" width="240" height="240"></canvas>
+                    <div class="card-body">
+                        <canvas id="preview" width="240" height="240"></canvas>
+                    </div>
                 </section>
             </aside>
         </div>

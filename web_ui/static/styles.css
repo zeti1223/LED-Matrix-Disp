@@ -24,9 +24,33 @@ h1 {
     margin-bottom: 12px;
     border-radius: 10px;
     display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+.collapsible-card.collapsed .card-body {
+    display: none;
+}
+
+.card-body {
+    width: 100%;
+}
+
+.card-body-inline {
+    display: flex;
     gap: 8px;
     align-items: center;
     flex-wrap: wrap;
+}
+
+.card.disabled {
+    opacity: 0.55;
+}
+
+.card.disabled .card-body-inline {
+    pointer-events: none;
 }
 
 .pattern-group {
@@ -94,7 +118,7 @@ h1 {
     gap: 12px;
 }
 
-.strobe-header > label {
+.strobe-header>label {
     margin-right: 0;
 }
 
@@ -118,7 +142,7 @@ h1 {
     background: linear-gradient(180deg, #3b82f6, #2563eb);
     border-color: #3b82f6;
     color: #fff;
-    box-shadow: 0 0 0 1px rgba(59,130,246,0.18), 0 10px 24px rgba(37,99,235,0.24);
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.18), 0 10px 24px rgba(37, 99, 235, 0.24);
 }
 
 .strobe-sliders {
@@ -127,7 +151,7 @@ h1 {
     gap: 12px;
 }
 
-.strobe-sliders > div {
+.strobe-sliders>div {
     display: grid;
     gap: 6px;
 }
@@ -176,29 +200,99 @@ button:hover {
 }
 
 /* UI polish: tokens, panel header, collapsed preview/console */
-:root{
+:root {
     --accent: #3b82f6;
     --muted: #8aa0bf;
-    --card-border: rgba(34,49,79,0.6);
+    --card-border: rgba(34, 49, 79, 0.6);
 }
 
-.card{
-    border-radius:12px;
+.card {
+    border-radius: 12px;
 }
 
-.panel-card{ display:flex; flex-direction:column; align-items:stretch; gap:8px; }
-.panel-header{ display:flex; align-items:center; gap:8px; width:100%; }
-.panel-header h3{ margin:0; font-size:1.05rem; font-weight:700; }
-.panel-actions{ margin-left:auto; display:flex; gap:6px; align-items:center; }
-.toggle-btn{ background:transparent; border-radius:6px; padding:6px; border:none; color:var(--muted); cursor:pointer; }
-.toggle-btn:hover{ color:var(--accent); background:rgba(59,130,246,0.06); }
-.toggle-btn.rotated{ transform:rotate(180deg); }
+.panel-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+}
 
-.panel-card .console{ box-sizing:border-box; width:100%; max-width:100%; max-height:420px; transition:max-height 220ms ease, opacity 180ms ease; }
-.panel-card.collapsed .console{ max-height:44px; overflow:hidden; opacity:0.98; }
-.panel-card.collapsed .console::before{ content: attr(data-last); display:block; color:var(--muted); padding:10px; font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace; font-size:0.9rem; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+.panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
 
-.panel-card canvas{ width:100%; display:block; background:#000; border-radius:8px; box-shadow: 0 8px 20px rgba(0,0,0,0.45) inset; border:1px solid rgba(255,255,255,0.03); }
+.panel-header h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.panel-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.toggle-btn {
+    background: transparent;
+    border-radius: 6px;
+    padding: 6px;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+}
+
+.toggle-btn:hover {
+    color: var(--accent);
+    background: rgba(59, 130, 246, 0.06);
+}
+
+.toggle-btn.rotated {
+    transform: rotate(180deg);
+}
+
+.card-toggle {
+    margin-left: auto;
+}
+
+.panel-card .console {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    max-height: 420px;
+    transition: max-height 220ms ease, opacity 180ms ease;
+}
+
+.panel-card.collapsed .console {
+    max-height: 44px;
+    overflow: hidden;
+    opacity: 0.98;
+}
+
+.panel-card.collapsed .console::before {
+    content: attr(data-last);
+    display: block;
+    color: var(--muted);
+    padding: 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.panel-card canvas {
+    width: 100%;
+    display: block;
+    background: #000;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45) inset;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
 
 @media (max-width: 900px) {
     .layout {
