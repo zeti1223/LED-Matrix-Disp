@@ -29,6 +29,32 @@ h1 {
     flex-wrap: wrap;
 }
 
+.pattern-group {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.pattern-btn {
+    background: #1f2a45;
+    color: #e6eef8;
+    border: 1px solid #26344f;
+    padding: 8px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.pattern-btn:hover {
+    background: #263657;
+}
+
+.pattern-btn.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: #fff;
+}
+
 .layout {
     display: grid;
     grid-template-columns: minmax(0, 1fr) 320px;

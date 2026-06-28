@@ -24,14 +24,13 @@
 
                 <section class="card">
                     <label>Pattern:</label>
-                    <select id="pattern">
-                        <option value="0">0 - Static color</option>
-                        <option value="1">1 - Rainbow</option>
-                        <option value="2">2 - Theater chase</option>
-                        <option value="3">3 - Scanner</option>
-                        <option value="4">4 - Color wipe</option>
-                        <option value="5">5 - Strobe</option>
-                    </select>
+                    <div class="pattern-group" role="group" aria-label="Pattern selection">
+                        <button type="button" class="pattern-btn active" data-pattern="0">Static color</button>
+                        <button type="button" class="pattern-btn" data-pattern="1">Rainbow</button>
+                        <button type="button" class="pattern-btn" data-pattern="2">Theater chase</button>
+                        <button type="button" class="pattern-btn" data-pattern="3">Scanner</button>
+                        <button type="button" class="pattern-btn" data-pattern="4">Color wipe</button>
+                    </div>
                 </section>
 
                 <section class="card">
@@ -43,7 +42,7 @@
 
                 <section class="card">
                     <label>Brightness:</label>
-                    <input id="brightness" type="range" min="0" max="255" value="128">
+                    <input id="brightness" type="range" min="0" max="255" value="255">
                 </section>
 
                 <section class="card">

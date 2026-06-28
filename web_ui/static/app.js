@@ -29,6 +29,17 @@ function refreshPorts() {
     }).catch(e => { $('status').textContent = 'Error fetching ports'; });
 }
 
+function getSelectedPattern() {
+    const activeButton = document.querySelector('.pattern-btn.active');
+    return activeButton ? parseInt(activeButton.dataset.pattern || '0', 10) : 0;
+}
+
+function setSelectedPattern(pattern) {
+    document.querySelectorAll('.pattern-btn').forEach(button => {
+        button.classList.toggle('active', parseInt(button.dataset.pattern || '0', 10) === pattern);
+    });
+}
+
 // simple debounce helper
 function debounce(fn, wait) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); }; }
 
@@ -41,6 +52,8 @@ const FRAME_SEND_INTERVAL = 80;
 
 document.addEventListener('DOMContentLoaded', () => {
     refreshPorts();
+
+    setSelectedPattern(0);
 
     $('refresh').addEventListener('click', refreshPorts);
 
@@ -59,11 +72,15 @@ document.addEventListener('DOMContentLoaded', () => {
         if (el) el.addEventListener('input', () => { updatePreviewState(); });
     });
 
+    document.querySelectorAll('.pattern-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            setSelectedPattern(parseInt(button.dataset.pattern || '0', 10));
+            updatePreviewState();
+        });
+    });
+
     const briEl = $('brightness');
     if (briEl) briEl.addEventListener('input', () => { updatePreviewState(); });
-
-    const patEl = $('pattern');
-    if (patEl) patEl.addEventListener('change', () => { updatePreviewState(); });
 
     // Strobe controls: update preview on change (on/off, speed + fill)
     const strobeControls = ['strobe-on','strobe-speed','strobe-duty'];
@@ -146,7 +163,7 @@ let previewState = { pattern: 0, r: 255, g: 255, b: 255, brightness: 128, step: 
 
 function getSelectedState() {
     return {
-        pattern: parseInt($('pattern').value || 0),
+        pattern: getSelectedPattern(),
         r: parseInt($('r').value || 0),
         g: parseInt($('g').value || 0),
         b: parseInt($('b').value || 0),
@@ -236,12 +253,6 @@ function getPixelColor(state, x, y) {
             const index = (step % total);
             const idx = y * PREVIEW_W + x;
             color = idx <= index ? hsvToRgb(((idx * 4 + step) & 255) / 255, 1, bri) : [0,0,0];
-            break;
-        }
-        case 5: {
-            // built-in strobe pattern (legacy) — use selected color
-            const flash = (Math.floor(step / 6) % 2) === 0;
-            color = flash ? [state.r * bri, state.g * bri, state.b * bri] : [0,0,0];
             break;
         }
         default:
