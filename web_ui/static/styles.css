@@ -87,11 +87,38 @@ h1 {
     gap: 12px;
 }
 
-.strobe-toggle {
+.strobe-header {
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: 8px;
-    margin: 0;
+    gap: 12px;
+}
+
+.strobe-header > label {
+    margin-right: 0;
+}
+
+.strobe-toggle-btn {
+    justify-self: start;
+    background: linear-gradient(180deg, #1f2a45, #182235);
+    color: #dfeaff;
+    border: 1px solid #30415f;
+    padding: 10px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.strobe-toggle-btn:hover {
+    background: linear-gradient(180deg, #263657, #1f2a45);
+}
+
+.strobe-toggle-btn.active {
+    background: linear-gradient(180deg, #3b82f6, #2563eb);
+    border-color: #3b82f6;
+    color: #fff;
+    box-shadow: 0 0 0 1px rgba(59,130,246,0.18), 0 10px 24px rgba(37,99,235,0.24);
 }
 
 .strobe-sliders {

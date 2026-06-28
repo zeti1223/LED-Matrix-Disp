@@ -40,6 +40,19 @@ function setSelectedPattern(pattern) {
     });
 }
 
+function getStrobeEnabled() {
+    const button = $('strobe-toggle');
+    return !!(button && button.classList.contains('active'));
+}
+
+function setStrobeEnabled(enabled) {
+    const button = $('strobe-toggle');
+    if (!button) return;
+    button.classList.toggle('active', enabled);
+    button.setAttribute('aria-pressed', enabled ? 'true' : 'false');
+    button.textContent = enabled ? 'Strobe on' : 'Strobe off';
+}
+
 // simple debounce helper
 function debounce(fn, wait) { let t; return (...args) => { clearTimeout(t); t = setTimeout(() => fn(...args), wait); }; }
 
@@ -54,6 +67,7 @@ document.addEventListener('DOMContentLoaded', () => {
     refreshPorts();
 
     setSelectedPattern(0);
+    setStrobeEnabled(false);
 
     $('refresh').addEventListener('click', refreshPorts);
 
@@ -79,11 +93,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    const strobeToggleBtn = $('strobe-toggle');
+    if (strobeToggleBtn) {
+        strobeToggleBtn.addEventListener('click', () => {
+            setStrobeEnabled(!getStrobeEnabled());
+            updatePreviewState();
+        });
+    }
+
     const briEl = $('brightness');
     if (briEl) briEl.addEventListener('input', () => { updatePreviewState(); });
 
     // Strobe controls: update preview on change (on/off, speed + fill)
-    const strobeControls = ['strobe-on','strobe-speed','strobe-duty'];
+    const strobeControls = ['strobe-speed','strobe-duty'];
     strobeControls.forEach(id => {
         const el = $(id);
         if (!el) return;
@@ -168,7 +190,7 @@ function getSelectedState() {
         g: parseInt($('g').value || 0),
         b: parseInt($('b').value || 0),
         brightness: parseInt($('brightness').value || 128),
-        strobeOn: $('strobe-on') ? !!$('strobe-on').checked : false,
+        strobeOn: getStrobeEnabled(),
         strobeSpeed: $('strobe-speed') ? parseInt($('strobe-speed').value || 8) : 8,
         strobeFill: $('strobe-duty') ? parseInt($('strobe-duty').value || 50) : 50,
     };
@@ -272,7 +294,7 @@ function getPixelColor(state, x, y) {
             color = [0,0,0];
     }
 
-    // Simple strobe on/off overlay: checkbox enables strobing of the animation
+    // Simple strobe on/off overlay: toggle button enables strobing of the animation
     const enabled = !!state.strobeOn;
     if (!enabled) return color;
 
