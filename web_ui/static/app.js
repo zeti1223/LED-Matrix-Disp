@@ -255,6 +255,19 @@ function getPixelColor(state, x, y) {
             color = idx <= index ? hsvToRgb(((idx * 4 + step) & 255) / 255, 1, bri) : [0,0,0];
             break;
         }
+        case 5: {
+            const pulse = (Math.sin(step / 6) + 1) / 2;
+            color = [state.r * bri * pulse, state.g * bri * pulse, state.b * bri * pulse];
+            break;
+        }
+        case 6: {
+            const checker = ((x + y + Math.floor(step / 8)) % 2) === 0;
+            const wave = 0.35 + 0.65 * ((Math.sin((x * 1.4) + (y * 1.1) + step / 5) + 1) / 2);
+            color = checker
+                ? [state.r * bri * wave, state.g * bri * wave, state.b * bri * wave]
+                : hsvToRgb(((step * 3 + x * 12 + y * 12) & 255) / 255, 0.75, bri * 0.65);
+            break;
+        }
         default:
             color = [0,0,0];
     }
