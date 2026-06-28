@@ -25,116 +25,190 @@
 
         <div class="grid gap-2 xl:grid-cols-[minmax(0,1fr)_22rem]">
             <section class="space-y-2">
-                <section class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl" data-card-id="serial">
+                <section
+                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    data-card-id="serial">
                     <div class="panel-header flex items-center gap-3">
                         <h3 class="text-lg font-semibold text-white">Serial port</h3>
-                        <button type="button" class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100" aria-expanded="true">▾ Collapse</button>
+                        <button type="button"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            aria-expanded="true">▾ Collapse</button>
                     </div>
-                    <div class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex flex-wrap items-center gap-3">
-                        <select id="ports" class="min-w-[12rem] rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none ring-0 transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"></select>
-                        <button id="refresh" class="rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-700">Refresh</button>
-                        <button id="connect" class="rounded-xl border border-emerald-400/20 bg-emerald-500/15 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/25">Connect</button>
-                        <button id="disconnect" class="rounded-xl border border-rose-400/20 bg-rose-500/15 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/25">Disconnect</button>
-                        <div id="status" class="ml-0 rounded-full border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm font-semibold text-slate-300 sm:ml-auto">Disconnected</div>
+                    <div
+                        class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex flex-wrap items-center gap-3">
+                        <select id="ports"
+                            class="min-w-[12rem] rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none ring-0 transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20"></select>
+                        <button id="refresh"
+                            class="rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-700">Refresh</button>
+                        <button id="connect"
+                            class="rounded-xl border border-emerald-400/20 bg-emerald-500/15 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/25">Connect</button>
+                        <button id="disconnect"
+                            class="rounded-xl border border-rose-400/20 bg-rose-500/15 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/25">Disconnect</button>
+                        <div id="status"
+                            class="ml-0 rounded-full border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm font-semibold text-slate-300 sm:ml-auto">
+                            Disconnected</div>
                     </div>
                 </section>
 
-                <section class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl" data-card-id="pattern">
+                <section
+                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    data-card-id="pattern">
                     <div class="panel-header flex items-center gap-3">
                         <h3 class="text-lg font-semibold text-white">Pattern</h3>
-                        <button type="button" class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100" aria-expanded="true">▾ Collapse</button>
+                        <button type="button"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            aria-expanded="true">▾ Collapse</button>
                     </div>
-                    <div class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none">
-                        <div class="pattern-group grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3" role="group" aria-label="Pattern selection">
-                            <button type="button" class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700" data-pattern="0">Static color</button>
-                            <button type="button" class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700" data-pattern="1">Rainbow</button>
-                            <button type="button" class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700" data-pattern="2">Theater chase</button>
-                            <button type="button" class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700" data-pattern="3">Scanner</button>
-                            <button type="button" class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700" data-pattern="4">Color wipe</button>
-                            <button type="button" class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700" data-pattern="5">Pulse</button>
-                            <button type="button" class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700" data-pattern="6">Checker</button>
+                    <div
+                        class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none">
+                        <div class="pattern-group grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3" role="group"
+                            aria-label="Pattern selection">
+                            <button type="button"
+                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-pattern="0">Static color</button>
+                            <button type="button"
+                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-pattern="1">Rainbow</button>
+                            <button type="button"
+                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-pattern="2">Theater chase</button>
+                            <button type="button"
+                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-pattern="3">Scanner</button>
+                            <button type="button"
+                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-pattern="4">Color wipe</button>
+                            <button type="button"
+                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-pattern="5">Pulse</button>
+                            <button type="button"
+                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-pattern="6">Checker</button>
                         </div>
                     </div>
                 </section>
 
-                <section class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl" data-card-id="color">
+                <section
+                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    data-card-id="color">
                     <div class="panel-header flex items-center gap-3">
                         <h3 class="text-lg font-semibold text-white">Color</h3>
-                        <button type="button" class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100" aria-expanded="true">▾ Collapse</button>
+                        <button type="button"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            aria-expanded="true">▾ Collapse</button>
                     </div>
-                    <div class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex flex-wrap items-center gap-4">
+                    <div
+                        class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex flex-wrap items-center gap-4">
                         <div class="color-mode inline-flex rounded-2xl border border-slate-700 bg-slate-950/60 p-1">
-                            <button type="button" class="color-mode-btn rounded-xl px-4 py-2 text-sm font-semibold transition" data-mode="rgb">RGB</button>
-                            <button type="button" class="color-mode-btn rounded-xl px-4 py-2 text-sm font-semibold transition" data-mode="hex">Hex</button>
+                            <button type="button"
+                                class="color-mode-btn rounded-xl px-4 py-2 text-sm font-semibold transition"
+                                data-mode="rgb">RGB</button>
+                            <button type="button"
+                                class="color-mode-btn rounded-xl px-4 py-2 text-sm font-semibold transition"
+                                data-mode="hex">Hex</button>
                         </div>
-                        <div class="color-pickers flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-950/60 px-3 py-2">
+                        <div
+                            class="color-pickers flex items-center gap-2 rounded-2xl border border-slate-700 bg-slate-950/60 px-3 py-2">
                             <label for="os-color-picker" class="text-sm font-semibold text-slate-300">Picker</label>
-                            <input id="os-color-picker" type="color" title="Open OS color picker" class="h-10 w-12 cursor-pointer rounded-lg border-0 bg-transparent p-0">
+                            <input id="os-color-picker" type="color" title="Open OS color picker"
+                                class="h-10 w-12 cursor-pointer rounded-lg border-0 bg-transparent p-0">
                         </div>
                         <div class="rgb-inputs color-inputs flex flex-wrap items-center gap-3">
-                            <input id="r" type="number" min="0" max="255" value="255" class="w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
-                            <input id="g" type="number" min="0" max="255" value="20" class="w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
-                            <input id="b" type="number" min="0" max="255" value="255" class="w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                            <input id="r" type="number" min="0" max="255" value="255"
+                                class="w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                            <input id="g" type="number" min="0" max="255" value="20"
+                                class="w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                            <input id="b" type="number" min="0" max="255" value="255"
+                                class="w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
                         </div>
                         <div class="hex-inputs color-inputs hidden">
-                            <input id="hex" type="text" maxlength="7" value="#ff14ff" class="w-40 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm uppercase text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                            <input id="hex" type="text" maxlength="7" value="#ff14ff"
+                                class="w-40 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm uppercase text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
                         </div>
                     </div>
                 </section>
 
-                <section class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl" data-card-id="brightness">
+                <section
+                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    data-card-id="brightness">
                     <div class="panel-header flex items-center gap-3">
                         <h3 class="text-lg font-semibold text-white">Brightness</h3>
-                        <button type="button" class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100" aria-expanded="true">▾ Collapse</button>
+                        <button type="button"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            aria-expanded="true">▾ Collapse</button>
                     </div>
-                    <div class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex items-center gap-4">
-                        <input id="brightness" type="range" min="0" max="255" value="255" class="w-full accent-cyan-400">
+                    <div
+                        class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex items-center gap-4">
+                        <input id="brightness" type="range" min="0" max="255" value="255"
+                            class="w-full accent-cyan-400">
                     </div>
                 </section>
 
-                <section class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl" data-card-id="strobe">
+                <section
+                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    data-card-id="strobe">
                     <div class="strobe-header flex flex-wrap items-center gap-3">
                         <h3 class="text-lg font-semibold text-white">Strobe</h3>
-                        <button id="strobe-toggle" type="button" class="strobe-toggle-btn inline-flex items-center rounded-full border border-slate-700 bg-slate-800/70 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100" aria-pressed="false">Strobe off</button>
-                        <button type="button" class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100" aria-expanded="true">▾ Collapse</button>
+                        <button id="strobe-toggle" type="button"
+                            class="strobe-toggle-btn inline-flex items-center rounded-full border border-slate-700 bg-slate-800/70 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            aria-pressed="false">Strobe off</button>
+                        <button type="button"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            aria-expanded="true">▾ Collapse</button>
                     </div>
-                    <div class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none grid gap-4">
+                    <div
+                        class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none grid gap-4">
                         <div class="grid gap-4 md:grid-cols-2">
                             <div class="grid gap-2 rounded-2xl border border-slate-800 bg-slate-950/50 p-4">
-                                <label for="strobe-speed" class="text-sm font-semibold text-slate-300">Speed: <span id="strobe-speed-val" class="text-cyan-200">8 Hz</span></label>
-                                <input id="strobe-speed" type="range" min="1" max="20" value="8" class="accent-cyan-400">
+                                <label for="strobe-speed" class="text-sm font-semibold text-slate-300">Speed: <span
+                                        id="strobe-speed-val" class="text-cyan-200">8 Hz</span></label>
+                                <input id="strobe-speed" type="range" min="1" max="20" value="8"
+                                    class="accent-cyan-400">
                             </div>
                             <div class="grid gap-2 rounded-2xl border border-slate-800 bg-slate-950/50 p-4">
                                 <label for="strobe-duty" class="text-sm font-semibold text-slate-300">Fill %</label>
-                                <input id="strobe-duty" type="range" min="1" max="99" value="50" class="accent-cyan-400">
+                                <input id="strobe-duty" type="range" min="1" max="99" value="50"
+                                    class="accent-cyan-400">
                             </div>
                         </div>
                     </div>
                 </section>
 
-                <section class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl" data-card-id="console">
+                <section
+                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    data-card-id="console">
                     <div class="panel-header flex items-center gap-3">
                         <h3 class="text-lg font-semibold text-white">Console</h3>
                         <div class="panel-actions ml-auto flex items-center gap-2">
-                            <button id="toggle-console" class="toggle-btn card-toggle inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100" aria-label="Collapse console" aria-expanded="true">▾ Collapse</button>
+                            <button id="toggle-console"
+                                class="toggle-btn card-toggle inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                                aria-label="Collapse console" aria-expanded="true">▾ Collapse</button>
                         </div>
                     </div>
-                    <div class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none">
-                        <pre id="console" class="console max-h-96 min-h-48 overflow-auto rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm leading-6 text-cyan-100 shadow-inner"></pre>
+                    <div
+                        class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none">
+                        <pre id="console"
+                            class="console max-h-96 min-h-48 overflow-auto rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm leading-6 text-cyan-100 shadow-inner"></pre>
                     </div>
                 </section>
             </section>
 
             <aside class="xl:sticky xl:top-6 xl:self-start">
-                <section class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl" data-card-id="preview">
+                <section
+                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    data-card-id="preview">
                     <div class="panel-header flex items-center gap-3">
                         <h3 class="text-lg font-semibold text-white">Preview</h3>
                         <div class="panel-actions ml-auto flex items-center gap-2">
-                            <button id="toggle-preview" class="toggle-btn card-toggle inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100" aria-label="Collapse preview" aria-expanded="true">▾ Collapse</button>
+                            <button id="toggle-preview"
+                                class="toggle-btn card-toggle inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                                aria-label="Collapse preview" aria-expanded="true">▾ Collapse</button>
                         </div>
                     </div>
-                    <div class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none">
-                        <canvas id="preview" width="240" height="240" class="aspect-square w-full rounded-2xl border border-slate-800 bg-slate-950 shadow-inner"></canvas>
+                    <div
+                        class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none">
+                        <canvas id="preview" width="240" height="240"
+                            class="aspect-square w-full rounded-2xl border border-slate-800 bg-slate-950 shadow-inner"></canvas>
                     </div>
                 </section>
             </aside>
