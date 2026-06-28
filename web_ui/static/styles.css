@@ -4,7 +4,6 @@ body {
     color: #e6eef8;
     margin: 0;
     padding: 24px;
-
 }
 
 .container {
@@ -60,7 +59,7 @@ h1 {
 
 /* When a card is collapsed, hide extra header-level controls so headers stay compact. */
 .collapsible-card.collapsed .strobe-header .strobe-toggle-btn,
-.collapsible-card.collapsed .panel-header .panel-actions>.toggle-btn:not(.card-toggle) {
+.collapsible-card.collapsed .panel-header .panel-actions > .toggle-btn:not(.card-toggle) {
     display: none !important;
 }
 
@@ -70,10 +69,10 @@ h1 {
 }
 
 .collapsible-card.collapsed {
-    height: 48px;
-    max-height: 48px;
-    padding-top: 8px;
-    padding-bottom: 8px;
+    height: 40px;
+    max-height: 40px;
+    padding-top: 6px;
+    padding-bottom: 6px;
 }
 
 .collapsible-card .panel-header,
@@ -87,6 +86,456 @@ h1 {
 .pattern-group {
     width: 100%;
     display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.pattern-btn {
+    background: #1f2a45;
+    color: #e6eef8;
+    border: 1px solid #26344f;
+    padding: 8px 12px;
+    border-radius: 999px;
+    cursor: pointer;
+}
+
+.pattern-btn:hover {
+    background: #263657;
+}
+
+.pattern-btn.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: #fff;
+}
+
+.color-controls {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.color-mode {
+    display: flex;
+    gap: 8px;
+}
+
+.color-mode-btn {
+    background: #0f2133;
+    color: #dfeaff;
+    border: 1px solid #26344f;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.color-mode-btn.active {
+    background: #3b82f6;
+    border-color: #3b82f6;
+    color: #fff;
+}
+
+.color-pickers input[type=color] {
+    width: 40px;
+    height: 32px;
+    padding: 0;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+}
+
+.color-inputs input[type=text] {
+    background: #0b1220;
+    color: #e6eef8;
+    border: 1px solid #26344f;
+    padding: 6px 8px;
+    border-radius: 6px;
+    width: 120px;
+}
+
+.color-inputs input[type=number] {
+    width: 72px;
+}
+
+.card.disabled .color-controls {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 320px;
+    gap: 16px;
+    align-items: start;
+}
+
+.controls-column,
+.preview-column {
+    min-width: 0;
+}
+
+.controls-column {
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-column {
+    position: sticky;
+    top: 24px;
+}
+
+.preview-card {
+    align-items: stretch;
+}
+
+.strobe-grid {
+    width: 100%;
+    display: grid;
+    gap: 12px;
+}
+
+.strobe-header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.strobe-header > label {
+    margin-right: 0;
+}
+
+.strobe-toggle-btn {
+    justify-self: start;
+    background: linear-gradient(180deg, #1f2a45, #182235);
+    color: #dfeaff;
+    border: 1px solid #30415f;
+    padding: 10px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: 700;
+    letter-spacing: 0.01em;
+}
+
+.strobe-toggle-btn:hover {
+    background: linear-gradient(180deg, #263657, #1f2a45);
+}
+
+.strobe-toggle-btn.active {
+    background: linear-gradient(180deg, #3b82f6, #2563eb);
+    border-color: #3b82f6;
+    color: #fff;
+    box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.18), 0 10px 24px rgba(37, 99, 235, 0.24);
+}
+
+.strobe-sliders {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.strobe-sliders > div {
+    display: grid;
+    gap: 6px;
+}
+
+label {
+    font-weight: 600;
+    margin-right: 8px;
+}
+
+select,
+input[type=number],
+input[type=range] {
+    background: #0b1220;
+    color: #e6eef8;
+    border: 1px solid #26344f;
+    padding: 6px 8px;
+    border-radius: 6px;
+}
+
+button {
+    background: #1f2a45;
+    color: #e6eef8;
+    border: none;
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #263657;
+}
+
+.console {
+    background: #071226;
+    color: #dff1ff;
+    padding: 12px;
+    border-radius: 8px;
+    height: 200px;
+    overflow: auto;
+    width: 100%;
+}
+
+#status {
+    margin-left: 12px;
+    font-weight: 600;
+}
+
+/* UI polish: tokens, panel header, collapsed preview/console */
+:root {
+    --accent: #3b82f6;
+    --muted: #8aa0bf;
+    --card-border: rgba(34, 49, 79, 0.6);
+}
+
+.card {
+    border-radius: 12px;
+}
+
+.panel-card {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 8px;
+}
+
+.panel-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 100%;
+}
+
+.panel-header h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 700;
+}
+
+.panel-actions {
+    margin-left: auto;
+    display: flex;
+    gap: 6px;
+    align-items: center;
+}
+
+.toggle-btn {
+    background: rgba(15, 33, 51, 0.82);
+    border-radius: 999px;
+    padding: 7px 12px;
+    border: 1px solid rgba(138, 160, 191, 0.18);
+    color: var(--muted);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    line-height: 1;
+    transition: transform 140ms ease, color 140ms ease, background 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+}
+
+.toggle-btn:hover {
+    color: var(--accent);
+    background: rgba(59, 130, 246, 0.12);
+    border-color: rgba(59, 130, 246, 0.26);
+    box-shadow: 0 6px 18px rgba(59, 130, 246, 0.12);
+    transform: translateY(-1px);
+}
+
+.toggle-btn.rotated {
+    transform: rotate(180deg);
+}
+
+.toggle-icon {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    flex: 0 0 10px;
+}
+
+.toggle-icon::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg) translateY(-1px);
+    transition: transform 140ms ease;
+}
+
+.toggle-btn.collapsed .toggle-icon::before {
+    transform: rotate(-45deg) translateY(1px);
+}
+
+.card-toggle {
+    margin-left: auto;
+}
+
+.panel-card .console {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 100%;
+    max-height: 420px;
+    transition: max-height 220ms ease, opacity 180ms ease;
+}
+
+.panel-card.collapsed .console {
+    max-height: 44px;
+    overflow: hidden;
+    opacity: 0.98;
+}
+
+.panel-card.collapsed .console::before {
+    content: attr(data-last);
+    display: block;
+    color: var(--muted);
+    padding: 10px;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, 'Roboto Mono', monospace;
+    font-size: 0.9rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.panel-card canvas {
+    width: 100%;
+    display: block;
+    background: #000;
+    border-radius: 8px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45) inset;
+    border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+@media (max-width: 900px) {
+    .layout {
+        grid-template-columns: 1fr;
+    }
+
+    .preview-column {
+        position: static;
+    }
+
+    .strobe-sliders {
+        grid-template-columns: 1fr;
+    }
+}
+body {
+    font-family: Inter, Arial, sans-serif;
+    background: #0f1727;
+    color: #e6eef8;
+    margin: 0;
+    padding: 24px;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 18px;
+}
+
+.card {
+    background: #111827;
+    border: 1px solid #22314f;
+    padding: 12px 16px;
+    margin-bottom: 12px;
+    border-radius: 10px;
+    display: flex;
+
+.toggle-icon {
+    position: relative;
+    width: 10px;
+    height: 10px;
+    flex: 0 0 10px;
+}
+
+.toggle-icon::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-right: 2px solid currentColor;
+    border-bottom: 2px solid currentColor;
+    transform: rotate(45deg) translateY(-1px);
+    transition: transform 140ms ease;
+}
+
+.toggle-btn.collapsed .toggle-icon::before {
+    transform: rotate(-45deg) translateY(1px);
+    flex-direction: column;
+    gap: 8px;
+    align-items: stretch;
+    flex-wrap: wrap;
+}
+
+.collapsible-card.collapsed .card-body {
+    display: none;
+}
+        flex-direction: column;
+        gap: 8px;
+        align-items: stretch;
+        flex-wrap: wrap;
+    }
+
+    .toggle-btn {
+        background: rgba(15, 33, 51, 0.82);
+        border-radius: 999px;
+        padding: 7px 12px;
+        border: 1px solid rgba(138, 160, 191, 0.18);
+        color: var(--muted);
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        font-weight: 700;
+        line-height: 1;
+        transition: transform 140ms ease, color 140ms ease, background 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
+    }
+
+    .toggle-btn:hover {
+        color: var(--accent);
+        background: rgba(59, 130, 246, 0.12);
+        border-color: rgba(59, 130, 246, 0.26);
+        box-shadow: 0 6px 18px rgba(59, 130, 246, 0.12);
+        transform: translateY(-1px);
+    }
+
+    .toggle-btn.rotated {
+        transform: rotate(180deg);
+    }
+
+    .toggle-icon {
+        position: relative;
+        width: 10px;
+        height: 10px;
+        flex: 0 0 10px;
+    }
+
+    .toggle-icon::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        border-right: 2px solid currentColor;
+        border-bottom: 2px solid currentColor;
+        transform: rotate(45deg) translateY(-1px);
+        transition: transform 140ms ease;
+    }
+
+    .toggle-btn.collapsed .toggle-icon::before {
+        transform: rotate(-45deg) translateY(1px);
+    }
+
+    .card.disabled {
+        opacity: 0.55;
+    }
+
+    .card.disabled .card-body-inline {
+        pointer-events: none;
+
     flex-wrap: wrap;
     gap: 8px;
 }

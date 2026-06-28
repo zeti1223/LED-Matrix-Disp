@@ -110,8 +110,10 @@ function setCardCollapsed(card, collapsed) {
     card.classList.toggle('collapsed', collapsed);
     const button = card.querySelector('.card-toggle');
     if (!button) return;
-    button.textContent = collapsed ? 'Show' : 'Hide';
+    button.classList.toggle('collapsed', collapsed);
+    button.innerHTML = '<span class="toggle-icon" aria-hidden="true"></span><span class="toggle-label">' + (collapsed ? 'Expand' : 'Collapse') + '</span>';
     button.setAttribute('aria-expanded', collapsed ? 'false' : 'true');
+    button.setAttribute('aria-label', (collapsed ? 'Expand ' : 'Collapse ') + (card.dataset.cardId || 'panel'));
 }
 
 function toggleCard(card) {
