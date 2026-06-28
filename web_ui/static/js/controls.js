@@ -4,7 +4,7 @@ function refreshPorts() {
         try {
             window.socket.emit('list_ports');
             return;
-        } catch (e) {}
+        } catch (e) { }
     }
 
     // fallback to HTTP
@@ -12,11 +12,11 @@ function refreshPorts() {
         .then(response => response.json())
         .then(list => {
             applyPorts(list);
-            try { if (window.socket && window.socket.connected) window.socket.emit('console', { text: '[ports] refreshed (http fallback)\n' }); } catch (e) {}
+            try { if (window.socket && window.socket.connected) window.socket.emit('console', { text: '[ports] refreshed (http fallback)\n' }); } catch (e) { }
         })
         .catch(() => {
             appendConsole('[ports] error fetching ports\n');
-            try { if (window.socket && window.socket.connected) window.socket.emit('console', { text: '[ports] error fetching ports\n' }); } catch (e) {}
+            try { if (window.socket && window.socket.connected) window.socket.emit('console', { text: '[ports] error fetching ports\n' }); } catch (e) { }
         });
 }
 

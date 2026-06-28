@@ -51,7 +51,7 @@ function startPreview() {
 
     // notify server of our current state
     if (window.sendState) {
-        try { window.sendState(getSelectedState()); } catch (e) {}
+        try { window.sendState(getSelectedState()); } catch (e) { }
     }
 }
 
@@ -170,13 +170,13 @@ function updatePreviewState() {
 
     // send updated UI state to server (throttled by socket.js)
     if (window.sendState && !window.suppressStateEmit) {
-        try { window.sendState(state); } catch (e) {}
+        try { window.sendState(state); } catch (e) { }
     }
 }
 
 
 // apply a canonical state received from server to local controls
-window.applyServerState = function(s) {
+window.applyServerState = function (s) {
     if (!s || typeof s !== 'object') return;
     window.suppressStateEmit = true;
     try {
@@ -184,18 +184,18 @@ window.applyServerState = function(s) {
             setSelectedPattern(parseInt(s.pattern || 0, 10));
             // ensure controls that depend on pattern (like color inputs) are updated
             if (typeof syncPatternDependentControls === 'function') {
-                try { syncPatternDependentControls(); } catch (e) {}
+                try { syncPatternDependentControls(); } catch (e) { }
             }
         }
         if (typeof s.r !== 'undefined' && typeof s.g !== 'undefined' && typeof s.b !== 'undefined') {
-            setColorInputsFromRGB(parseInt(s.r || 0,10), parseInt(s.g || 0,10), parseInt(s.b || 0,10));
+            setColorInputsFromRGB(parseInt(s.r || 0, 10), parseInt(s.g || 0, 10), parseInt(s.b || 0, 10));
         }
         if (typeof s.brightness !== 'undefined') {
-            const b = $('brightness'); if (b) b.value = parseInt(s.brightness || 0,10);
+            const b = $('brightness'); if (b) b.value = parseInt(s.brightness || 0, 10);
         }
         if (typeof s.strobeOn !== 'undefined') setStrobeEnabled(!!s.strobeOn);
-        if (typeof s.strobeSpeed !== 'undefined') { const el = $('strobe-speed'); if (el) el.value = parseInt(s.strobeSpeed||8,10); }
-        if (typeof s.strobeFill !== 'undefined') { const el = $('strobe-duty'); if (el) el.value = parseInt(s.strobeFill||50,10); }
+        if (typeof s.strobeSpeed !== 'undefined') { const el = $('strobe-speed'); if (el) el.value = parseInt(s.strobeSpeed || 8, 10); }
+        if (typeof s.strobeFill !== 'undefined') { const el = $('strobe-duty'); if (el) el.value = parseInt(s.strobeFill || 50, 10); }
 
         // update rendered preview
         updatePreviewState();

@@ -41,7 +41,7 @@ socket.on('connect', () => {
     try {
         socket.emit('get_state');
         socket.emit('list_ports');
-    } catch (e) {}
+    } catch (e) { }
 });
 
 // when server broadcasts canonical state, forward to page handler
@@ -54,7 +54,7 @@ socket.on('state', (data) => {
 // when server supplies ports, forward to controls
 socket.on('ports', (list) => {
     if (window.applyPorts && typeof window.applyPorts === 'function') {
-        try { window.applyPorts(list); } catch (e) {}
+        try { window.applyPorts(list); } catch (e) { }
     }
 });
 
@@ -63,7 +63,7 @@ socket.on('console', (data) => {
     const text = data && data.text ? data.text : '';
     if (!text) return;
     window.suppressConsoleEmit = true;
-    try { appendConsole(text); } catch (e) {}
+    try { appendConsole(text); } catch (e) { }
     setTimeout(() => { window.suppressConsoleEmit = false; }, 120);
 });
 
