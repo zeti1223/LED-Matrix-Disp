@@ -4,7 +4,10 @@ const PREVIEW_H = 8;
 let canvas = null;
 let ctx = null;
 let previewAnim = null;
-let previewState = { r: 255, g: 255, b: 255, brightness: 128, step: 0 };
+let previewState = { r: 255, g: 255, b: 255, brightness: 128, step: 0, displayMode: 0 };
+let currentAnimation = null;
+let animationFrameIndex = 0;
+let lastAnimationFrameTime = 0;
 
 function getSelectedState() {
     return {
@@ -76,11 +79,46 @@ function renderPreviewFrame(state) {
     ctx.fillStyle = '#000';
     ctx.fillRect(0, 0, width, height);
 
-    for (let y = 0; y < PREVIEW_H; y++) {
-        for (let x = 0; x < PREVIEW_W; x++) {
-            const color = getPixelColor(state, x, y);
-            ctx.fillStyle = `rgb(${Math.round(color[0])},${Math.round(color[1])},${Math.round(color[2])})`;
-            ctx.fillRect(x * cellWidth + 1, y * cellHeight + 1, cellWidth - 2, cellHeight - 2);
+    // If in animation mode (displayMode 2) and we have animation data
+    if (state.displayMode === 2 && currentAnimation && currentAnimation.frames && currentAnimation.frames.length > 0) {
+        const now = Date.now();
+        const delay = currentAnimation.delay || 100;
+        
+        if (now - lastAnimationFrameTime >= delay) {
+            animationFrameIndex = (animationFrameIndex + 1) % currentAnimation.frames.length;
+            lastAnimationFrameTime = now;
+        }
+        
+        const frame = currentAnimation.frames[animationFrameIndex];
+        const colorMap = {
+            '0': [0, 0, 0],
+            '1': [255, 0, 0],
+            '2': [0, 255, 0],
+            '3': [0, 0, 255],
+            '4': [255, 255, 0],
+            '5': [255, 0, 255],
+            '6': [0, 255, 255],
+            '7': [255, 255, 255]
+        };
+        
+        for (let y = 0; y < PREVIEW_H; y++) {
+            for (let x = 0; x < PREVIEW_W; x++) {
+                const ledIndex = y * PREVIEW_W + x;
+                const colorCode = frame[ledIndex] || '0';
+                const color = colorMap[colorCode] || [0, 0, 0];
+                const brightness = state.brightness / 255;
+                ctx.fillStyle = `rgb(${Math.round(color[0] * brightness)},${Math.round(color[1] * brightness)},${Math.round(color[2] * brightness)})`;
+                ctx.fillRect(x * cellWidth + 1, y * cellHeight + 1, cellWidth - 2, cellHeight - 2);
+            }
+        }
+    } else {
+        // Normal static color mode
+        for (let y = 0; y < PREVIEW_H; y++) {
+            for (let x = 0; x < PREVIEW_W; x++) {
+                const color = getPixelColor(state, x, y);
+                ctx.fillStyle = `rgb(${Math.round(color[0])},${Math.round(color[1])},${Math.round(color[2])})`;
+                ctx.fillRect(x * cellWidth + 1, y * cellHeight + 1, cellWidth - 2, cellHeight - 2);
+            }
         }
     }
 }
@@ -242,4 +280,12 @@ function hsvToRgb(h, s, v) {
     }
 
     return [r * 255, g * 255, b * 255];
+}
+
+// Set the current animation for preview
+function setPreviewAnimation(animation) {
+    currentAnimation = animation;
+    animationFrameIndex = 0;
+    lastAnimationFrameTime = Date.now();
+    previewState.displayMode = 2;
 }

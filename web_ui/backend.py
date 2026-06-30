@@ -4,7 +4,7 @@ import threading
 from queue import Queue, Empty
 import json
 
-from flask import Flask, send_from_directory, jsonify
+from flask import Flask, send_from_directory, jsonify, request
 from flask_socketio import SocketIO
 
 try:
@@ -116,6 +116,8 @@ class SerialManager:
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 static_folder = os.path.join(BASE_DIR, "static")
+animations_dir = os.path.join(BASE_DIR, "animations")
+os.makedirs(animations_dir, exist_ok=True)
 
 app = Flask(__name__, static_folder=static_folder, static_url_path="")
 socketio = SocketIO(app, cors_allowed_origins="*")
@@ -221,9 +223,62 @@ def index():
     return send_from_directory(static_folder, "index.html")
 
 
+@app.route("/animation-maker")
+def animation_maker():
+    return send_from_directory(static_folder, "animation-maker.html")
+
+
 @app.route("/ports")
 def ports():
     return jsonify(serial_mgr.list_ports())
+
+
+@app.route("/animations", methods=["GET"])
+def list_animations():
+    try:
+        animations = []
+        for filename in os.listdir(animations_dir):
+            if filename.endswith(".json"):
+                animations.append(filename[:-5])  # Remove .json extension
+        return jsonify(sorted(animations))
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/animations/<name>", methods=["GET"])
+def get_animation(name):
+    try:
+        filepath = os.path.join(animations_dir, f"{name}.json")
+        if not os.path.exists(filepath):
+            return jsonify({"error": "Animation not found"}), 404
+        with open(filepath, "r", encoding="utf-8") as f:
+            return jsonify(json.load(f))
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/animations/<name>", methods=["POST"])
+def save_animation(name):
+    try:
+        filepath = os.path.join(animations_dir, f"{name}.json")
+        data = request.get_json()
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(data, f, indent=2)
+        return jsonify({"ok": True, "msg": f"Saved {name}"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route("/animations/<name>", methods=["DELETE"])
+def delete_animation(name):
+    try:
+        filepath = os.path.join(animations_dir, f"{name}.json")
+        if not os.path.exists(filepath):
+            return jsonify({"error": "Animation not found"}), 404
+        os.remove(filepath)
+        return jsonify({"ok": True, "msg": f"Deleted {name}"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @socketio.on("list_ports")
@@ -291,37 +346,36 @@ def handle_set_display_mode(data):
 #     socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
 
 
-# Animation commands (commented out until Arduino implements animation patterns)
-# @socketio.on("set_animation_frame_count")
-# def handle_set_animation_frame_count(data):
-#     count = data.get("count", 0)
-#     cmd = f"as {count}"
-#     ok, msg = serial_mgr.send(cmd)
-#     socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
+@socketio.on("set_animation_frame_count")
+def handle_set_animation_frame_count(data):
+    count = data.get("count", 0)
+    cmd = f"as {count}"
+    ok, msg = serial_mgr.send(cmd)
+    socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
 
 
-# @socketio.on("set_animation_frame")
-# def handle_set_animation_frame(data):
-#     frame_index = data.get("frame_index", 0)
-#     frame_data = data.get("data", "")
-#     cmd = f"af {frame_index} {frame_data}"
-#     ok, msg = serial_mgr.send(cmd)
-#     socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
+@socketio.on("set_animation_frame")
+def handle_set_animation_frame(data):
+    frame_index = data.get("frame_index", 0)
+    frame_data = data.get("data", "")
+    cmd = f"af {frame_index} {frame_data}"
+    ok, msg = serial_mgr.send(cmd)
+    socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
 
 
-# @socketio.on("set_animation_delay")
-# def handle_set_animation_delay(data):
-#     delay = data.get("delay", 100)
-#     cmd = f"aw {delay}"
-#     ok, msg = serial_mgr.send(cmd)
-#     socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
+@socketio.on("set_animation_delay")
+def handle_set_animation_delay(data):
+    delay = data.get("delay", 100)
+    cmd = f"aw {delay}"
+    ok, msg = serial_mgr.send(cmd)
+    socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
 
 
-# @socketio.on("toggle_animation")
-# def handle_toggle_animation(data):
-#     cmd = "ap"
-#     ok, msg = serial_mgr.send(cmd)
-#     socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
+@socketio.on("toggle_animation")
+def handle_toggle_animation(data):
+    cmd = "ap"
+    ok, msg = serial_mgr.send(cmd)
+    socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
 
 
 @socketio.on("send_frame")

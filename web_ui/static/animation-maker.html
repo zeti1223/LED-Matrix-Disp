@@ -1,0 +1,160 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>LED Matrix Display - Animation Maker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="min-h-screen bg-slate-950 text-slate-100">
+    <div class="absolute inset-0 -z-10 overflow-hidden">
+        <div class="absolute left-[-8rem] top-[-8rem] h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl"></div>
+        <div class="absolute right-[-6rem] top-40 h-80 w-80 rounded-full bg-fuchsia-500/10 blur-3xl"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(15,23,42,0.9),rgba(2,6,23,1)_68%)]"></div>
+    </div>
+
+    <main id="app" class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">
+        <header class="rounded-3xl border border-slate-800/80 bg-slate-900/75 px-6 py-5 shadow-2xl backdrop-blur-xl">
+            <div class="flex items-center justify-between">
+                <div>
+                    <p class="text-sm font-semibold uppercase tracking-[0.35em] text-cyan-300/80">LED Matrix Display</p>
+                    <div class="mt-2">
+                        <h1 class="text-3xl font-black tracking-tight text-white sm:text-4xl">Animation Maker</h1>
+                    </div>
+                </div>
+                <a href="/" class="rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-700">
+                    ← Back to Main UI
+                </a>
+            </div>
+        </header>
+
+        <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_22rem]">
+            <section class="space-y-4">
+                <!-- Animation Settings -->
+                <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+                    <h3 class="text-lg font-semibold text-white mb-4">Animation Settings</h3>
+                    <div class="flex flex-wrap items-center gap-4">
+                        <div class="flex items-center gap-2">
+                            <label for="animation-name" class="text-sm font-semibold text-slate-300">Name:</label>
+                            <input id="animation-name" type="text" placeholder="my-animation"
+                                class="h-10 w-48 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <label for="frame-delay" class="text-sm font-semibold text-slate-300">Delay (ms):</label>
+                            <input id="frame-delay" type="number" min="10" max="5000" value="100"
+                                class="h-10 w-24 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                        </div>
+                        <button id="save-animation"
+                            class="rounded-xl border border-emerald-400/20 bg-emerald-500/15 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/25">
+                            Save Animation
+                        </button>
+                        <button id="load-animation"
+                            class="rounded-xl border border-cyan-400/20 bg-cyan-500/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/25">
+                            Load Animation
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Frame Editor -->
+                <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-white">Frame Editor</h3>
+                        <div class="flex items-center gap-2">
+                            <button id="add-frame"
+                                class="rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-1 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-700">
+                                + Add Frame
+                            </button>
+                            <button id="delete-frame"
+                                class="rounded-xl border border-rose-400/20 bg-rose-500/15 px-3 py-1 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/25">
+                                Delete Frame
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Color Palette -->
+                    <div class="mb-4">
+                        <label class="text-sm font-semibold text-slate-300 mb-2 block">Color:</label>
+                        <div class="flex flex-wrap gap-2" id="color-palette">
+                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="0" style="background-color: #000000;" title="Black (Off)"></button>
+                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="1" style="background-color: #ff0000;" title="Red"></button>
+                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="2" style="background-color: #00ff00;" title="Green"></button>
+                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="3" style="background-color: #0000ff;" title="Blue"></button>
+                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="4" style="background-color: #ffff00;" title="Yellow"></button>
+                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="5" style="background-color: #ff00ff;" title="Magenta"></button>
+                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="6" style="background-color: #00ffff;" title="Cyan"></button>
+                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="7" style="background-color: #ffffff;" title="White"></button>
+                        </div>
+                    </div>
+
+                    <!-- LED Grid -->
+                    <div class="flex justify-center mb-4">
+                        <div id="led-grid" class="grid grid-cols-8 gap-1 bg-slate-950 p-3 rounded-xl">
+                            <!-- LED cells will be generated by JavaScript -->
+                        </div>
+                    </div>
+
+                    <!-- Frame Navigation -->
+                    <div class="flex items-center justify-center gap-4">
+                        <button id="prev-frame"
+                            class="rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-700">
+                            ← Previous
+                        </button>
+                        <span id="frame-counter" class="text-lg font-semibold text-cyan-200">Frame 1 / 1</span>
+                        <button id="next-frame"
+                            class="rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-700">
+                            Next →
+                        </button>
+                    </div>
+                </section>
+
+                <!-- Animation Preview -->
+                <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-lg font-semibold text-white">Animation Preview</h3>
+                        <div class="flex items-center gap-2">
+                            <button id="play-preview"
+                                class="rounded-xl border border-emerald-400/20 bg-emerald-500/15 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/25">
+                                ▶ Play
+                            </button>
+                            <button id="stop-preview"
+                                class="rounded-xl border border-rose-400/20 bg-rose-500/15 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/25">
+                                ⏹ Stop
+                            </button>
+                        </div>
+                    </div>
+                    <div class="flex justify-center">
+                        <canvas id="preview-canvas" width="240" height="240"
+                            class="aspect-square w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950 shadow-inner"></canvas>
+                    </div>
+                </section>
+            </section>
+
+            <aside class="xl:sticky xl:top-6 xl:self-start space-y-4">
+                <!-- Frame List -->
+                <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+                    <h3 class="text-lg font-semibold text-white mb-4">Frames</h3>
+                    <div id="frame-list" class="space-y-2 max-h-96 overflow-auto">
+                        <!-- Frame thumbnails will be generated by JavaScript -->
+                    </div>
+                </section>
+
+                <!-- Export -->
+                <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+                    <h3 class="text-lg font-semibold text-white mb-4">Export</h3>
+                    <button id="download-json"
+                        class="w-full rounded-xl border border-cyan-400/20 bg-cyan-500/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/25">
+                        Download as JSON
+                    </button>
+                </section>
+            </aside>
+        </div>
+    </main>
+
+    <script src="https://cdn.socket.io/4.6.1/socket.io.min.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="animation-maker.js"></script>
+</body>
+
+</html>

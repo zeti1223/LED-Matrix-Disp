@@ -1,5 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     refreshPorts();
+    loadAnimations();
 
     // Pattern-related (commented out until Arduino implements patterns)
     // setSelectedPattern(0);
@@ -7,6 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // syncPatternDependentControls();
 
     $('refresh').addEventListener('click', refreshPorts);
+    $('refresh-animations').addEventListener('click', loadAnimations);
 
     $('connect').addEventListener('click', () => {
         const port = $('ports').value;
@@ -69,6 +71,11 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.value = value.toLowerCase();
             setColorFromHex(value);
             updatePreviewState();
+            // Send fill color command to Arduino
+            const rgb = hexToRgb(value);
+            if (rgb && window.sendFillColor) {
+                try { window.sendFillColor(rgb.r, rgb.g, rgb.b); } catch (e) { }
+            }
         });
     }
 
@@ -115,6 +122,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.querySelectorAll('.collapsible-card').forEach(card => setCardCollapsed(card, false));
 
+    // Animation controls
+    $('send-animation').addEventListener('click', sendSelectedAnimation);
+    $('toggle-animation-play').addEventListener('click', toggleAnimationPlay);
+
     const brightnessEl = $('brightness');
     if (brightnessEl) {
         brightnessEl.addEventListener('input', () => {
@@ -154,3 +165,89 @@ document.addEventListener('DOMContentLoaded', () => {
     startPreview();
 });
 
+async function loadAnimations() {
+    try {
+        const response = await fetch('/animations');
+        const animations = await response.json();
+        
+        const select = $('animation-select');
+        if (select) {
+            select.innerHTML = '<option value="">Select animation...</option>';
+            animations.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                option.textContent = name;
+                select.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading animations:', error);
+        appendConsole('[animations] error loading animations\n');
+    }
+}
+
+async function sendSelectedAnimation() {
+    const select = $('animation-select');
+    const animationName = select ? select.value : null;
+    
+    if (!animationName) {
+        alert('Please select an animation first');
+        return;
+    }
+    
+    try {
+        const response = await fetch(`/animations/${animationName}`);
+        const animation = await response.json();
+        
+        if (!response.ok) {
+            throw new Error(animation.error || 'Failed to load animation');
+        }
+        
+        // Set display mode to animation mode (mode 2)
+        if (window.sendDisplayMode) {
+            try { window.sendDisplayMode(2); } catch (e) { }
+        }
+        
+        // Send frame count
+        if (window.sendAnimationFrameCount) {
+            try { window.sendAnimationFrameCount(animation.frames.length); } catch (e) { }
+        }
+        
+        // Send each frame
+        if (window.sendAnimationFrame) {
+            animation.frames.forEach((frame, index) => {
+                const frameData = frame.join('');
+                try { window.sendAnimationFrame(index, frameData); } catch (e) { }
+            });
+        }
+        
+        // Send delay
+        if (window.sendAnimationDelay) {
+            try { window.sendAnimationDelay(animation.delay || 100); } catch (e) { }
+        }
+        
+        // Set preview to show animation
+        if (window.setPreviewAnimation) {
+            try { window.setPreviewAnimation(animation); } catch (e) { }
+        }
+        
+        // Wait a bit for Arduino to process all frames, then start playing
+        setTimeout(() => {
+            if (window.toggleAnimation) {
+                try { window.toggleAnimation(); } catch (e) { }
+            }
+        }, 500);
+        
+        appendConsole(`[animation] sent "${animationName}" with ${animation.frames.length} frames\n`);
+    } catch (error) {
+        console.error('Error sending animation:', error);
+        appendConsole(`[animation] error: ${error.message}\n`);
+    }
+}
+
+function toggleAnimationPlay() {
+    if (window.toggleAnimation) {
+        try { window.toggleAnimation(); } catch (e) { }
+        appendConsole('[animation] toggled play/pause\n');
+    }
+}
