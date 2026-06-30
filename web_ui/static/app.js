@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', () => {
-    refreshPorts();
     loadAnimations();
 
     // Pattern-related (commented out until Arduino implements patterns)
@@ -7,16 +6,33 @@ document.addEventListener('DOMContentLoaded', () => {
     // setStrobeEnabled(false);
     // syncPatternDependentControls();
 
-    $('refresh').addEventListener('click', refreshPorts);
     $('refresh-animations').addEventListener('click', loadAnimations);
+    $('upload-animation').addEventListener('click', () => {
+        $('upload-animation-input').click();
+    });
+    $('upload-animation-input').addEventListener('change', handleAnimationUpload);
 
-    $('connect').addEventListener('click', () => {
-        const port = $('ports').value;
-        socket.emit('connect_port', { port });
+    $('connect').addEventListener('click', async () => {
+        try {
+            await serialManager.requestPort();
+            await serialManager.connect();
+            const status = $('status');
+            if (status) status.textContent = 'Connected';
+        } catch (error) {
+            appendConsole(`[connect] Error: ${error.message}\n`);
+            const status = $('status');
+            if (status) status.textContent = `Error: ${error.message}`;
+        }
     });
 
-    $('disconnect').addEventListener('click', () => {
-        socket.emit('disconnect_port', {});
+    $('disconnect').addEventListener('click', async () => {
+        try {
+            await serialManager.disconnect();
+            const status = $('status');
+            if (status) status.textContent = 'Disconnected';
+        } catch (error) {
+            appendConsole(`[disconnect] Error: ${error.message}\n`);
+        }
     });
 
     ['r', 'g', 'b'].forEach(id => {
@@ -167,8 +183,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function loadAnimations() {
     try {
-        const response = await fetch('/animations');
-        const animations = await response.json();
+        // Load animations from localStorage
+        const animationsJson = localStorage.getItem('led_animations');
+        const animations = animationsJson ? JSON.parse(animationsJson) : [];
         
         const select = $('animation-select');
         if (select) {
@@ -186,6 +203,52 @@ async function loadAnimations() {
     }
 }
 
+async function handleAnimationUpload(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    
+    try {
+        const text = await file.text();
+        const animation = JSON.parse(text);
+        
+        if (!animation.name || !animation.frames || !Array.isArray(animation.frames)) {
+            throw new Error('Invalid animation file format');
+        }
+        
+        // Save to localStorage
+        const animationsJson = localStorage.getItem('led_animations_data');
+        const animationsData = animationsJson ? JSON.parse(animationsJson) : {};
+        animationsData[animation.name] = animation;
+        localStorage.setItem('led_animations_data', JSON.stringify(animationsData));
+        
+        // Update animation list
+        const animationsListJson = localStorage.getItem('led_animations');
+        const animationsList = animationsListJson ? JSON.parse(animationsListJson) : [];
+        if (!animationsList.includes(animation.name)) {
+            animationsList.push(animation.name);
+            localStorage.setItem('led_animations', JSON.stringify(animationsList));
+        }
+        
+        // Refresh the dropdown
+        loadAnimations();
+        
+        // Select the uploaded animation
+        const select = $('animation-select');
+        if (select) {
+            select.value = animation.name;
+        }
+        
+        appendConsole(`[animation] uploaded "${animation.name}"\n`);
+    } catch (error) {
+        console.error('Error uploading animation:', error);
+        appendConsole(`[animation] error: ${error.message}\n`);
+        alert(`Error uploading animation: ${error.message}`);
+    }
+    
+    // Reset file input
+    event.target.value = '';
+}
+
 async function sendSelectedAnimation() {
     const select = $('animation-select');
     const animationName = select ? select.value : null;
@@ -196,11 +259,13 @@ async function sendSelectedAnimation() {
     }
     
     try {
-        const response = await fetch(`/animations/${animationName}`);
-        const animation = await response.json();
+        // Load animation from localStorage
+        const animationsJson = localStorage.getItem('led_animations_data');
+        const animationsData = animationsJson ? JSON.parse(animationsJson) : {};
+        const animation = animationsData[animationName];
         
-        if (!response.ok) {
-            throw new Error(animation.error || 'Failed to load animation');
+        if (!animation) {
+            throw new Error('Animation not found');
         }
         
         // Set display mode to animation mode (mode 2)

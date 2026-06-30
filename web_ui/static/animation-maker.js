@@ -220,18 +220,33 @@ async function saveAnimation() {
     animation.delay = parseInt($('frame-delay').value, 10);
     
     try {
-        const response = await fetch(`/animations/${name}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(animation)
-        });
+        // Download as JSON file
+        const dataStr = JSON.stringify(animation, null, 2);
+        const dataBlob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(dataBlob);
         
-        const result = await response.json();
-        if (result.ok) {
-            alert(`Animation "${name}" saved successfully!`);
-        } else {
-            alert(`Error saving animation: ${result.error || result.msg}`);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `${name}.json`;
+        link.click();
+        
+        URL.revokeObjectURL(url);
+        
+        // Also save to localStorage for quick access
+        const animationsJson = localStorage.getItem('led_animations_data');
+        const animationsData = animationsJson ? JSON.parse(animationsJson) : {};
+        animationsData[name] = animation;
+        localStorage.setItem('led_animations_data', JSON.stringify(animationsData));
+        
+        // Update animation list
+        const animationsListJson = localStorage.getItem('led_animations');
+        const animationsList = animationsListJson ? JSON.parse(animationsListJson) : [];
+        if (!animationsList.includes(name)) {
+            animationsList.push(name);
+            localStorage.setItem('led_animations', JSON.stringify(animationsList));
         }
+        
+        alert(`Animation "${name}" saved and downloaded!`);
     } catch (error) {
         alert(`Error saving animation: ${error.message}`);
     }
@@ -242,10 +257,12 @@ async function loadAnimation() {
     if (!name) return;
     
     try {
-        const response = await fetch(`/animations/${name}`);
-        const result = await response.json();
+        // Load from localStorage
+        const animationsJson = localStorage.getItem('led_animations_data');
+        const animationsData = animationsJson ? JSON.parse(animationsJson) : {};
+        const result = animationsData[name];
         
-        if (response.ok) {
+        if (result) {
             animation = result;
             $('animation-name').value = animation.name || '';
             $('frame-delay').value = animation.delay || 100;
@@ -255,7 +272,7 @@ async function loadAnimation() {
             renderFrameList();
             alert(`Animation "${name}" loaded successfully!`);
         } else {
-            alert(`Error loading animation: ${result.error}`);
+            alert(`Animation "${name}" not found`);
         }
     } catch (error) {
         alert(`Error loading animation: ${error.message}`);

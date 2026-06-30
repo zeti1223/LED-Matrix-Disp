@@ -1,12 +1,11 @@
 # LED Matrix Disp
 
-This project contains WS2812B LED matrix control software for Arduino, plus a browser-based control panel for live control and preview.
+This project contains WS2812B LED matrix control software for Arduino, plus a browser-based control panel for live control and preview using WebSerial API.
 
 ## Contents
 
 - `LEDMatrixDisp/LEDMatrixDisp.ino` - Arduino sketch for driving the LED matrix
-- `web_ui/backend.py` - Flask + Socket.IO backend for the web UI
-- `web_ui/static/` - Tailwind-based browser UI and preview logic
+- `web_ui/static/` - Tailwind-based browser UI with WebSerial communication
 
 ## Hardware
 
@@ -22,48 +21,63 @@ This project contains WS2812B LED matrix control software for Arduino, plus a br
 3. Open `LEDMatrixDisp/LEDMatrixDisp.ino` in the Arduino IDE.
 4. Adjust `WIDTH`, `HEIGHT`, and `DATA_PIN` if you are using a different matrix.
 5. Upload the sketch to the Arduino.
-6. Make sure the board is connected over USB and available as a serial device.
+6. Make sure the board is connected over USB.
 
 ## Arduino serial protocol
 
-- `FRAME <len>` - send a raw RGB frame payload after the header
-- `C r g b` - set the entire matrix to a static RGB color
-- `H` or `?` - print the help text
+- `f r g b` - set the entire matrix to a static RGB color
+- `sb brightness` - set brightness (0-255)
+- `sm mode` - set display mode (0=static, 1=preview, 2=animation)
+- `o x y r g b` - set individual LED at position (x,y) to RGB color
+- `d` - display update (trigger refresh)
+- `as count` - set animation frame count
+- `af index data` - set animation frame at index with color data
+- `aw delay` - set animation delay in milliseconds
+- `ap` - toggle animation play/pause
 
-The web UI renders animation patterns in the browser and streams them to the Arduino as raw RGB frames.
+The web UI renders animation patterns in the browser and streams them to the Arduino using WebSerial.
 
 ## Web UI
 
-The browser UI is served by Flask and uses Tailwind via CDN. No front-end build step is required.
+The browser UI uses WebSerial API for direct serial communication from the browser. No backend server is required.
 
-1. Create and activate the project virtual environment:
+**Important:** WebSerial only works in Chromium-based browsers (Chrome, Edge, Opera) and requires HTTPS or localhost.
 
-```bash
-python -m venv .venv
-source .venv/bin/activate
-```
+### Using the Web UI
 
-2. Install the required Python packages:
+1. Open `web_ui/static/index.html` in a Chromium-based browser (Chrome, Edge, Opera).
+2. Click "Connect" to select and connect to your Arduino's serial port.
+3. Use the controls to set colors, brightness, and send animations.
+4. Use the Animation Maker (`animation-maker.html`) to create custom animations.
 
-```bash
-pip install -r requirements.txt
-```
+### Serving the Web UI (Optional)
 
-3. Start the web backend:
+If you want to serve the web UI locally:
 
 ```bash
-python web_ui/backend.py
+# Using npm (recommended)
+cd web_ui
+npm install
+npm start
+
+# Or using Python 3
+cd web_ui/static
+python -m http.server 8000
+
+# Then open http://localhost:8000 in your browser
 ```
 
-4. Open <http://localhost:5000> in your browser and use the controller.
+**Important:** WebSerial API only works on `localhost` or HTTPS. If you use an IP address (e.g., `http://192.168.0.202:8000`), it will not work. For remote access, you need to set up HTTPS.
 
 ## Web UI Features
 
-- Serial port selection, connect, and disconnect controls
+- WebSerial-based direct serial communication (no backend required)
+- Serial port connection via browser
 - Live preview of the selected pattern
-- Static color, rainbow, theater chase, scanner, color wipe, pulse, and checker patterns
-- RGB and hex color input modes
-- Brightness and strobe controls
+- Static color control with RGB and hex input modes
+- Brightness control
+- Animation system with localStorage persistence
+- Animation Maker for creating custom animations
 - Collapsible panels for a compact layout
 
 ## Credits

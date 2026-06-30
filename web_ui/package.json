@@ -1,0 +1,12 @@
+{
+  "name": "led-matrix-web-ui",
+  "version": "1.0.0",
+  "description": "Web UI for LED Matrix Display using WebSerial",
+  "scripts": {
+    "start": "http-server static -p 8000 -c-1 --cors",
+    "dev": "http-server static -p 8000 -c-1 --cors -o"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1"
+  }
+}

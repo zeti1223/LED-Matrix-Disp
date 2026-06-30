@@ -1,26 +1,14 @@
 function refreshPorts() {
-    // prefer socket-driven updates when available
-    if (window.socket && window.socket.connected) {
-        try {
-            window.socket.emit('list_ports');
-            return;
-        } catch (e) { }
-    }
-
-    // fallback to HTTP
-    fetch('/ports')
-        .then(response => response.json())
-        .then(list => {
-            applyPorts(list);
-            try { if (window.socket && window.socket.connected) window.socket.emit('console', { text: '[ports] refreshed (http fallback)\n' }); } catch (e) { }
-        })
-        .catch(() => {
-            appendConsole('[ports] error fetching ports\n');
-            try { if (window.socket && window.socket.connected) window.socket.emit('console', { text: '[ports] error fetching ports\n' }); } catch (e) { }
-        });
+    // WebSerial doesn't have a way to list ports without user interaction
+    // The port selection is done through navigator.serial.requestPort()
+    const select = $('ports');
+    if (!select) return;
+    select.innerHTML = '<option value="">Click Connect to select port</option>';
+    appendConsole('[ports] WebSerial: Click Connect to select a port\n');
 }
 
 function applyPorts(list) {
+    // Not used with WebSerial - kept for compatibility
     const select = $('ports');
     if (!select) return;
     select.innerHTML = '';
