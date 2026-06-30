@@ -46,27 +46,6 @@ function setSelectedPattern(pattern) {
     });
 }
 
-function getStrobeEnabled() {
-    const button = $('strobe-toggle');
-    return !!(button && button.classList.contains('active'));
-}
-
-function setStrobeEnabled(enabled) {
-    const button = $('strobe-toggle');
-    if (!button) return;
-    button.classList.toggle('active', enabled);
-    button.setAttribute('aria-pressed', enabled ? 'true' : 'false');
-    button.textContent = enabled ? 'Strobe on' : 'Strobe off';
-    swapClasses(
-        button,
-        enabled
-            ? ['border-cyan-400/40', 'bg-cyan-400/15', 'text-cyan-100', 'shadow-lg', 'shadow-cyan-500/10']
-            : ['border-slate-700', 'bg-slate-800/70', 'text-slate-200'],
-        enabled
-            ? ['border-slate-700', 'bg-slate-800/70', 'text-slate-200']
-            : ['border-cyan-400/40', 'bg-cyan-400/15', 'text-cyan-100', 'shadow-lg', 'shadow-cyan-500/10']
-    );
-}
 
 function setColorControlsDisabled(disabled) {
     const colorCard = document.querySelector('[data-card-id="color"]');
@@ -87,7 +66,7 @@ function setColorControlsDisabled(disabled) {
 }
 
 function syncPatternDependentControls() {
-    setColorControlsDisabled([1, 2, 3, 4].includes(getSelectedPattern()));
+    setColorControlsDisabled([0, 5].includes(getSelectedPattern()));
 }
 
 function setColorMode(mode) {
@@ -151,11 +130,6 @@ function setCardCollapsed(card, collapsed) {
         body.classList.toggle('mb-4', !collapsed);
         body.classList.toggle('-translate-y-2', collapsed);
         body.classList.toggle('translate-y-0', !collapsed);
-    }
-
-    if (card.dataset.cardId === 'strobe') {
-        const strobeButton = card.querySelector('#strobe-toggle');
-        if (strobeButton) strobeButton.classList.toggle('hidden', collapsed);
     }
 
     const button = card.querySelector('.card-toggle');

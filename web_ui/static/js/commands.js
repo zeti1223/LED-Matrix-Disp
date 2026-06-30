@@ -73,16 +73,26 @@ async function sendDisplayMode(mode) {
     }
 }
 
-// Pattern-related (commented out until Arduino implements patterns)
-// async function sendPattern(pattern) {
-//     if (!window.serialManager || !window.serialManager.isConnected()) return;
-//     try {
-//         await window.serialManager.send(`em ${pattern}`);
-//         appendConsole(`[sent] em ${pattern}\n`);
-//     } catch (error) {
-//         console.error('Error sending pattern:', error);
-//     }
-// }
+// Pattern-related
+async function sendPattern(pattern) {
+    if (!window.serialManager || !window.serialManager.isConnected()) return;
+    try {
+        await window.serialManager.send(`em ${pattern}`);
+        appendConsole(`[sent] em ${pattern}\n`);
+    } catch (error) {
+        console.error('Error sending pattern:', error);
+    }
+}
+
+async function sendEffectColor(r, g, b) {
+    if (!window.serialManager || !window.serialManager.isConnected()) return;
+    try {
+        await window.serialManager.send(`ec ${r} ${g} ${b}`);
+        appendConsole(`[sent] ec ${r} ${g} ${b}\n`);
+    } catch (error) {
+        console.error('Error sending effect color:', error);
+    }
+}
 
 // Animation commands
 async function sendAnimationFrameCount(count) {
@@ -128,8 +138,9 @@ async function toggleAnimation() {
 window.sendBrightness = sendBrightness;
 window.sendFillColor = sendFillColor;
 window.sendDisplayMode = sendDisplayMode;
-// window.sendPattern = sendPattern;
 window.sendAnimationFrameCount = sendAnimationFrameCount;
 window.sendAnimationFrame = sendAnimationFrame;
 window.sendAnimationDelay = sendAnimationDelay;
 window.toggleAnimation = toggleAnimation;
+window.sendPattern = sendPattern;
+window.sendEffectColor = sendEffectColor;

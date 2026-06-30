@@ -1,10 +1,8 @@
 document.addEventListener('DOMContentLoaded', () => {
     loadAnimations();
 
-    // Pattern-related (commented out until Arduino implements patterns)
-    // setSelectedPattern(0);
-    // setStrobeEnabled(false);
-    // syncPatternDependentControls();
+    setSelectedPattern(0);
+    syncPatternDependentControls();
 
     $('refresh-animations').addEventListener('click', loadAnimations);
     $('upload-animation').addEventListener('click', () => {
@@ -35,30 +33,21 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    ['r', 'g', 'b'].forEach(id => {
-        const el = $(id);
-        if (el) {
-            el.addEventListener('input', () => {
-                updatePreviewState();
-                // Send fill color command to Arduino
-                const r = parseInt($('r').value || 0, 10);
-                const g = parseInt($('g').value || 0, 10);
-                const b = parseInt($('b').value || 0, 10);
-                if (window.sendFillColor) {
-                    try { window.sendFillColor(r, g, b); } catch (e) { }
-                }
-            });
-        }
-    });
+    document.querySelectorAll('.pattern-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const pattern = parseInt(button.dataset.pattern || '0', 10);
+            setSelectedPattern(pattern);
+            syncPatternDependentControls();
+            updatePreviewState();
 
-    // Pattern-related (commented out until Arduino implements patterns)
-    // document.querySelectorAll('.pattern-btn').forEach(button => {
-    //     button.addEventListener('click', () => {
-    //         setSelectedPattern(parseInt(button.dataset.pattern || '0', 10));
-    //         syncPatternDependentControls();
-    //         updatePreviewState();
-    //     });
-    // });
+            if (window.sendDisplayMode) {
+                try { window.sendDisplayMode(1); } catch (e) { }
+            }
+            if (window.sendPattern) {
+                try { window.sendPattern(pattern); } catch (e) { }
+            }
+        });
+    });
 
     document.querySelectorAll('.color-mode-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -76,6 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rgb && window.sendFillColor) {
                 try { window.sendFillColor(rgb.r, rgb.g, rgb.b); } catch (e) { }
             }
+            if (rgb && window.sendEffectColor) {
+                try { window.sendEffectColor(rgb.r, rgb.g, rgb.b); } catch (e) { }
+            }
         });
     }
 
@@ -92,18 +84,31 @@ document.addEventListener('DOMContentLoaded', () => {
             if (rgb && window.sendFillColor) {
                 try { window.sendFillColor(rgb.r, rgb.g, rgb.b); } catch (e) { }
             }
+            if (rgb && window.sendEffectColor) {
+                try { window.sendEffectColor(rgb.r, rgb.g, rgb.b); } catch (e) { }
+            }
         });
     }
 
     ['r', 'g', 'b'].forEach(id => {
         const el = $(id);
         if (!el) return;
+
         el.addEventListener('input', () => {
-            const r = clamp($('r').value, 0, 255);
-            const g = clamp($('g').value, 0, 255);
-            const b = clamp($('b').value, 0, 255);
+            const r = clamp(parseInt($('r').value || 0, 10), 0, 255);
+            const g = clamp(parseInt($('g').value || 0, 10), 0, 255);
+            const b = clamp(parseInt($('b').value || 0, 10), 0, 255);
+
             setColorInputsFromRGB(r, g, b);
+
             updatePreviewState();
+
+            if (window.sendFillColor) {
+                try { window.sendFillColor(r, g, b); } catch (e) { }
+            }
+            if (window.sendEffectColor) {
+                try { window.sendEffectColor(r, g, b); } catch (e) { }
+            }
         });
     });
 
@@ -117,15 +122,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.sendFillColor) {
         try { window.sendFillColor(initialR, initialG, initialB); } catch (e) { }
     }
-
-    // Strobe-related (commented out until Arduino implements strobe)
-    // const strobeToggleBtn = $('strobe-toggle');
-    // if (strobeToggleBtn) {
-    //     strobeToggleBtn.addEventListener('click', () => {
-    //         setStrobeEnabled(!getStrobeEnabled());
-    //         updatePreviewState();
-    //     });
-    // }
 
     document.querySelectorAll('.card-toggle').forEach(button => {
         button.addEventListener('click', () => {
@@ -153,31 +149,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
     }
-
-    // Strobe-related (commented out until Arduino implements strobe)
-    // ['strobe-speed', 'strobe-duty'].forEach(id => {
-    //     const el = $(id);
-    //     if (!el) return;
-    //     el.addEventListener('input', () => {
-    //         updatePreviewState();
-    //     });
-    //     el.addEventListener('change', () => {
-    //         updatePreviewState();
-    //     });
-    // });
-
-    // const speedEl = $('strobe-speed');
-    // const speedValEl = $('strobe-speed-val');
-    // function updateSpeedLabel(value) {
-    //     if (speedValEl) speedValEl.textContent = value + ' Hz';
-    // }
-    // if (speedEl) {
-    //     updateSpeedLabel(speedEl.value);
-    //     speedEl.addEventListener('input', (e) => {
-    //         updateSpeedLabel(e.target.value);
-    //     });
-    // }
-
     startPreview();
 });
 
