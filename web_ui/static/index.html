@@ -28,6 +28,9 @@
                             <button id="tab-animation-maker"
                                 class="tab-btn rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:bg-slate-700"
                                 data-tab="animation-maker">Animation Maker</button>
+                            <button id="tab-marketplace"
+                                class="tab-btn rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:bg-slate-700"
+                                data-tab="marketplace">Marketplace</button>
                         </div>
                     </div>
                 </div>
@@ -156,7 +159,8 @@
                         class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex items-center gap-4">
                         <input id="effect-speed" type="range" min="1" max="1000" value="100"
                             class="w-full accent-cyan-400">
-                        <span id="effect-speed-value" class="text-sm font-semibold text-slate-300 min-w-[6rem] text-right">100 ms</span>
+                        <span id="effect-speed-value"
+                            class="text-sm font-semibold text-slate-300 min-w-[6rem] text-right">100 ms</span>
                     </div>
                 </section>
 
@@ -255,9 +259,9 @@
             tabButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const tab = btn.dataset.tab;
-                    if (tab === 'animation-maker') {
-                        window.location.href = '/animation-maker.html';
-                    }
+                    if (tab === 'control') window.location.href = '/';
+                    else if (tab === 'animation-maker') window.location.href = '/animation-maker.html';
+                    else if (tab === 'marketplace') window.location.href = '/marketplace.html';
                 });
             });
         });
