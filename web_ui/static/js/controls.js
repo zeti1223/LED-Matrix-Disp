@@ -83,10 +83,27 @@ function setAnimationControlsDisabled(disabled) {
     });
 }
 
+function setEffectSpeedControlsDisabled(disabled) {
+    const speedCard = document.querySelector('[data-card-id="effect-speed"]');
+    if (speedCard) {
+        speedCard.classList.toggle('opacity-50', disabled);
+        speedCard.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+    }
+
+    const speedBody = speedCard ? speedCard.querySelector('.card-body') : null;
+    if (speedBody) {
+        speedBody.classList.toggle('pointer-events-none', disabled);
+    }
+
+    const input = $('effect-speed');
+    if (input) input.disabled = disabled;
+}
+
 function syncPatternDependentControls() {
     const pattern = getSelectedPattern();
     setColorControlsDisabled([0, 5, 7].includes(pattern));
     setAnimationControlsDisabled(pattern !== 7);
+    setEffectSpeedControlsDisabled([6, 7].includes(pattern));
 }
 
 function setColorMode(mode) {
