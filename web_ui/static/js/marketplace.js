@@ -14,7 +14,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// Globális elérhetőség a HTML eseménykezelők számára
 window.downloadMarketAnimation = downloadMarketAnimation;
 window.shareLocalAnimation = shareLocalAnimation;
 
