@@ -82,4 +82,4 @@ python -m http.server 8000
 
 ## Credits
 
-- Arduino code from: https://github.com/FonixPython/LEDMatrix/ 
+- Arduino code forked from: https://github.com/FonixPython/LEDMatrix/ 

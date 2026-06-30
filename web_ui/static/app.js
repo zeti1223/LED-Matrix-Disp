@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', () => {
     loadAnimations();
 
-    setSelectedPattern(0);
+    setSelectedPattern(6);
     syncPatternDependentControls();
 
     $('refresh-animations').addEventListener('click', loadAnimations);
@@ -33,18 +33,65 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    function sendColorUpdate(r, g, b) {
+        const pattern = getSelectedPattern();
+        if (pattern === 6) {
+            if (window.sendFillColor) {
+                try { window.sendFillColor(r, g, b); } catch (e) { }
+            }
+        } else {
+            if (window.sendEffectColor) {
+                try { window.sendEffectColor(r, g, b); } catch (e) { }
+            }
+        }
+    }
+
     document.querySelectorAll('.pattern-btn').forEach(button => {
         button.addEventListener('click', () => {
             const pattern = parseInt(button.dataset.pattern || '0', 10);
             setSelectedPattern(pattern);
             syncPatternDependentControls();
+
+            // Sync preview state displayMode
+            if (window.previewState) {
+                if (pattern === 7) {
+                    window.previewState.displayMode = 2;
+                    // If an animation is selected, load it in the preview
+                    const select = $('animation-select');
+                    const animationName = select ? select.value : null;
+                    if (animationName) {
+                        const animationsJson = localStorage.getItem('led_animations_data');
+                        const animationsData = animationsJson ? JSON.parse(animationsJson) : {};
+                        const animation = animationsData[animationName];
+                        if (animation && window.setPreviewAnimation) {
+                            try { window.setPreviewAnimation(animation); } catch (e) { }
+                        }
+                    }
+                } else {
+                    window.previewState.displayMode = 1;
+                }
+            }
             updatePreviewState();
 
-            if (window.sendDisplayMode) {
-                try { window.sendDisplayMode(1); } catch (e) { }
-            }
-            if (window.sendPattern) {
-                try { window.sendPattern(pattern); } catch (e) { }
+            if (pattern === 7) {
+                if (window.sendDisplayMode) {
+                    try { window.sendDisplayMode(2); } catch (e) { }
+                }
+            } else {
+                if (window.sendDisplayMode) {
+                    try { window.sendDisplayMode(1); } catch (e) { }
+                }
+                if (window.sendPattern) {
+                    try { window.sendPattern(pattern); } catch (e) { }
+                }
+                if (pattern === 6) {
+                    const r = clamp(parseInt($('r').value || 0, 10), 0, 255);
+                    const g = clamp(parseInt($('g').value || 0, 10), 0, 255);
+                    const b = clamp(parseInt($('b').value || 0, 10), 0, 255);
+                    if (window.sendFillColor) {
+                        try { window.sendFillColor(r, g, b); } catch (e) { }
+                    }
+                }
             }
         });
     });
@@ -60,13 +107,9 @@ document.addEventListener('DOMContentLoaded', () => {
         osPicker.addEventListener('input', (e) => {
             setColorFromHex(e.target.value);
             updatePreviewState();
-            // Send fill color command to Arduino
             const rgb = hexToRgb(e.target.value);
-            if (rgb && window.sendFillColor) {
-                try { window.sendFillColor(rgb.r, rgb.g, rgb.b); } catch (e) { }
-            }
-            if (rgb && window.sendEffectColor) {
-                try { window.sendEffectColor(rgb.r, rgb.g, rgb.b); } catch (e) { }
+            if (rgb) {
+                sendColorUpdate(rgb.r, rgb.g, rgb.b);
             }
         });
     }
@@ -79,13 +122,9 @@ document.addEventListener('DOMContentLoaded', () => {
             e.target.value = value.toLowerCase();
             setColorFromHex(value);
             updatePreviewState();
-            // Send fill color command to Arduino
             const rgb = hexToRgb(value);
-            if (rgb && window.sendFillColor) {
-                try { window.sendFillColor(rgb.r, rgb.g, rgb.b); } catch (e) { }
-            }
-            if (rgb && window.sendEffectColor) {
-                try { window.sendEffectColor(rgb.r, rgb.g, rgb.b); } catch (e) { }
+            if (rgb) {
+                sendColorUpdate(rgb.r, rgb.g, rgb.b);
             }
         });
     }
@@ -100,15 +139,8 @@ document.addEventListener('DOMContentLoaded', () => {
             const b = clamp(parseInt($('b').value || 0, 10), 0, 255);
 
             setColorInputsFromRGB(r, g, b);
-
             updatePreviewState();
-
-            if (window.sendFillColor) {
-                try { window.sendFillColor(r, g, b); } catch (e) { }
-            }
-            if (window.sendEffectColor) {
-                try { window.sendEffectColor(r, g, b); } catch (e) { }
-            }
+            sendColorUpdate(r, g, b);
         });
     });
 
@@ -148,6 +180,28 @@ document.addEventListener('DOMContentLoaded', () => {
                 try { window.sendBrightness(brightness); } catch (e) { }
             }
         });
+    }
+
+    const effectSpeedEl = $('effect-speed');
+    if (effectSpeedEl) {
+        const updateSpeedValue = () => {
+            const delay = parseInt(effectSpeedEl.value || 100, 10);
+            const valueDisplay = $('effect-speed-value');
+            if (valueDisplay) {
+                valueDisplay.textContent = `${delay} ms`;
+            }
+            return delay;
+        };
+
+        effectSpeedEl.addEventListener('input', () => {
+            const delay = updateSpeedValue();
+            if (window.sendEffectSpeed) {
+                try { window.sendEffectSpeed(delay); } catch (e) { }
+            }
+        });
+
+        // Initialize display value
+        updateSpeedValue();
     }
     startPreview();
 });

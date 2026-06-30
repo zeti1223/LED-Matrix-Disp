@@ -134,6 +134,15 @@ async function toggleAnimation() {
         console.error('Error toggling animation:', error);
     }
 }
+async function sendEffectSpeed(delay) {
+    if (!window.serialManager || !window.serialManager.isConnected()) return;
+    try {
+        await window.serialManager.send(`es ${delay}`);
+        appendConsole(`[sent] es ${delay}\n`);
+    } catch (error) {
+        console.error('Error sending effect speed:', error);
+    }
+}
 
 window.sendBrightness = sendBrightness;
 window.sendFillColor = sendFillColor;
@@ -144,3 +153,4 @@ window.sendAnimationDelay = sendAnimationDelay;
 window.toggleAnimation = toggleAnimation;
 window.sendPattern = sendPattern;
 window.sendEffectColor = sendEffectColor;
+window.sendEffectSpeed = sendEffectSpeed;

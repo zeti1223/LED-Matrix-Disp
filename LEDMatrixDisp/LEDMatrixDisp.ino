@@ -10,14 +10,26 @@
 CRGB leds[NUM_LEDS];
 
 byte displayMode = 0;
-byte effectMode = 0;
+byte effectMode = 6;
 int nextFrameDelay = 100;
 char animationBuffer[MAX_FRAMES][NUM_LEDS];
 int animationFrameCount = 0;
 bool animationIsPlaying = false;
 int animationCurrentFrame = 0;
 CRGB effectColor = CRGB(0,0,0);
+CRGB staticColor = CRGB(0,0,0);
 int rainbowStartingHue = 0;
+
+unsigned long lastUpdateTime = 0;
+
+int snakeCurrentLed = 0;
+int pulseCurrentBrightness = 0;
+bool pulseFadingUp = true;
+int scannerCurrentRow = 0;
+
+const int SERIAL_BUFFER_SIZE = 128;
+char serialBuffer[SERIAL_BUFFER_SIZE];
+int serialBufferIndex = 0;
 
 
 void setup() {
@@ -42,7 +54,6 @@ void playBootAnimation() {
     FastLED.show();
     delay(300);
 }
-
 
 void convertAnimationFrameBuffer(int frameIndex){
     for (int i = 0; i<NUM_LEDS; i++){
@@ -75,58 +86,73 @@ void convertAnimationFrameBuffer(int frameIndex){
     }
 }
 
-
-int coordinatesToLedAddress(int x, int y){
-    x++;y++;
-    int address = X*y;
-    if ((y%2)==0){address -=x;}
-    else {address-=X-x+1;}
-    return address;
+int coordinatesToLedAddress(int x, int y) {
+    if (y % 2 == 0) {
+        return y * X + x;
+    } else {
+        return y * X + (X - 1 - x);
+    }
 }
 
-void snakeEffect(){
-    for (int i = 0; i < NUM_LEDS; i++) {
-        fadeToBlackBy(leds, NUM_LEDS, 40);
-        leds[i] = effectColor;
-        FastLED.show();
-        delay(nextFrameDelay);
-    };
+void resetEffectState() {
+    snakeCurrentLed = 0;
+    pulseCurrentBrightness = 0;
+    pulseFadingUp = true;
+    scannerCurrentRow = 0;
+    lastUpdateTime = millis();
 }
 
-void pulseEffect(){
-    for (int brightness = 0; brightness <=100;brightness++) {
-        fill_solid(leds, NUM_LEDS, CRGB(
-            (effectColor.r*brightness)/100,
-            (effectColor.g*brightness)/100,
-            (effectColor.b*brightness)/100)
-        );
-        FastLED.show();
-        delay(min(100,nextFrameDelay));
-    };
-    for (int brightness = 100; brightness >=0;brightness--) {
-        fill_solid(leds, NUM_LEDS, CRGB(
-            (effectColor.r*brightness)/100,
-            (effectColor.g*brightness)/100,
-            (effectColor.b*brightness)/100)
-        );
-        FastLED.show();
-        delay(min(30,nextFrameDelay));
-    };
+void resetAnimationState() {
+    animationCurrentFrame = 0;
+    lastUpdateTime = millis();
 }
 
-void scammerEffect(){
-    for (int i = 0; i<Y;i++){
-        for (int x=0; x<X;x++){
-            if(i>=1){
-                leds[coordinatesToLedAddress(x,i-1)] = CRGB(0,0,0);
-            }
-            else {
-                leds[coordinatesToLedAddress(x,Y-1)] = CRGB(0,0,0);
-            }
-            leds[coordinatesToLedAddress(x,i)] = effectColor;
+void runSnakeStep() {
+    fadeToBlackBy(leds, NUM_LEDS, 40);
+    leds[snakeCurrentLed] = effectColor;
+    FastLED.show();
+    
+    snakeCurrentLed++;
+    if (snakeCurrentLed >= NUM_LEDS) {
+        snakeCurrentLed = 0;
+    }
+}
+
+void runPulseStep() {
+    fill_solid(leds, NUM_LEDS, CRGB(
+        (effectColor.r * pulseCurrentBrightness) / 100,
+        (effectColor.g * pulseCurrentBrightness) / 100,
+        (effectColor.b * pulseCurrentBrightness) / 100
+    ));
+    FastLED.show();
+    
+    if (pulseFadingUp) {
+        pulseCurrentBrightness++;
+        if (pulseCurrentBrightness >= 100) {
+            pulseFadingUp = false;
         }
-        FastLED.show();
-        delay(nextFrameDelay);
+    } else {
+        pulseCurrentBrightness--;
+        if (pulseCurrentBrightness <= 0) {
+            pulseFadingUp = true;
+        }
+    }
+}
+
+void runScannerStep() {
+    int prevRow = (scannerCurrentRow == 0) ? (Y - 1) : (scannerCurrentRow - 1);
+    for (int x = 0; x < X; x++) {
+        leds[coordinatesToLedAddress(x, prevRow)] = CRGB(0, 0, 0);
+    }
+    
+    for (int x = 0; x < X; x++) {
+        leds[coordinatesToLedAddress(x, scannerCurrentRow)] = effectColor;
+    }
+    FastLED.show();
+    
+    scannerCurrentRow++;
+    if (scannerCurrentRow >= Y) {
+        scannerCurrentRow = 0;
     }
 }
 
@@ -153,48 +179,62 @@ void applyCheckerEffect(){
 
 void rainbowFill(){
     fill_solid(leds,NUM_LEDS,CHSV(rainbowStartingHue, 255, 255));
+}
+
+void runRainbowStep() {
+    rainbowEffect();
+    FastLED.show();
+    rainbowStartingHue++;
+}
+
+void runRainbowCheckerStep() {
+    rainbowEffect();
+    applyCheckerEffect();
+    FastLED.show();
+    rainbowStartingHue++;
+}
+
+void runRainbowFillStep() {
+    rainbowFill();
+    FastLED.show();
+    rainbowStartingHue++;
+}
+
+void runStaticColorStep() {
+    fill_solid(leds, NUM_LEDS, staticColor);
     FastLED.show();
 }
 
-void renderEffects(){
+void renderEffectsStep(){
     switch (effectMode){
         case 0:
-            rainbowEffect();
-            FastLED.show();
-            rainbowStartingHue++;
-            delay(nextFrameDelay);
+            runRainbowStep();
             break;
         case 1:
-            rainbowEffect();
-            applyCheckerEffect();
-            FastLED.show();
-            rainbowStartingHue++;
-            delay(nextFrameDelay);
+            runRainbowCheckerStep();
             break;
         case 2:
-            scammerEffect();
+            runScannerStep();
             break;
         case 3:
-            pulseEffect();
+            runPulseStep();
             break;
         case 4:
-            snakeEffect();
+            runSnakeStep();
             break;
         case 5:
-            rainbowFill();
-            rainbowStartingHue++;
-            delay(nextFrameDelay);
+            runRainbowFillStep();
             break;
-        }
+        case 6:
+            runStaticColorStep();
+            break;
+    }
 }
 
-
-void parseSerialInput(){
-    String input = Serial.readStringUntil('\n');
-    char buf[120];
-    input.toCharArray(buf, 120);
-
+void parseCommand(char* buf) {
     char* cmd = strtok(buf, " ");
+    if (!cmd) return;
+
     char* a   = strtok(NULL, " ");
     char* b   = strtok(NULL, " ");
     char* c   = strtok(NULL, " ");
@@ -207,12 +247,13 @@ void parseSerialInput(){
     int id = d ? atoi(d) : 0;
     int ie = e ? atoi(e) : 0;
 
-    if (!cmd) return;
     switch (cmd[0]){
         case 's':
             switch (cmd[1]){
                 case 'm':
                     displayMode = ia;
+                    resetEffectState();
+                    resetAnimationState();
                     break;
                 case 's':
                     switch (cmd[2]){
@@ -228,7 +269,8 @@ void parseSerialInput(){
             }
             break;
         case 'f':
-            fill_solid(leds, NUM_LEDS, CRGB(ia,ib,ic));
+            staticColor = CRGB(ia,ib,ic);
+            fill_solid(leds, NUM_LEDS, staticColor);
             break;
         case 'o':{
             if (ia >= 0 && ia < X && ib >= 0 && ib < Y) {
@@ -241,6 +283,7 @@ void parseSerialInput(){
             switch (cmd[1]){
                 case 'm':
                     effectMode = ia;
+                    resetEffectState();
                     break;
                 case 's':
                     nextFrameDelay = ia;
@@ -253,12 +296,19 @@ void parseSerialInput(){
         case 'a':
             switch (cmd[1]){
                 case 's':
-                    if (ia <= 10){
+                    if (ia <= MAX_FRAMES){
                         animationFrameCount = ia;
                     }
                     break;
                 case 'f':
-                    strcpy(animationBuffer[ia], b);
+                    if (b && ia >= 0 && ia < MAX_FRAMES) {
+                        int len = strlen(b);
+                        if (len > NUM_LEDS) len = NUM_LEDS;
+                        memcpy(animationBuffer[ia], b, len);
+                        if (len < NUM_LEDS) {
+                            memset(animationBuffer[ia] + len, '0', NUM_LEDS - len);
+                        }
+                    }
                     break;
                 case 'w':
                     nextFrameDelay = ia;
@@ -274,20 +324,52 @@ void parseSerialInput(){
     }
 }
 
-void loop() {
-    if (Serial.available()) {
-        parseSerialInput();
-    }
-    if (animationIsPlaying && displayMode == 2){
-        convertAnimationFrameBuffer(animationCurrentFrame);
-        FastLED.show();
-        delay(nextFrameDelay);
-        animationCurrentFrame++;
-        if (animationCurrentFrame >= animationFrameCount) {
-            animationCurrentFrame = 0;
+void checkSerial() {
+    while (Serial.available() > 0) {
+        char c = Serial.read();
+        if (c == '\n' || c == '\r') {
+            if (serialBufferIndex > 0) {
+                serialBuffer[serialBufferIndex] = '\0';
+                parseCommand(serialBuffer);
+                serialBufferIndex = 0;
+            }
+        } else {
+            if (serialBufferIndex < SERIAL_BUFFER_SIZE - 1) {
+                serialBuffer[serialBufferIndex++] = c;
+            }
         }
     }
-    if (displayMode == 1){
-        renderEffects();
+}
+
+void loop() {
+    checkSerial();
+
+    unsigned long currentTime = millis();
+
+    if (displayMode == 2 && animationIsPlaying) {
+        if (currentTime - lastUpdateTime >= (unsigned long)nextFrameDelay) {
+            lastUpdateTime = currentTime;
+            convertAnimationFrameBuffer(animationCurrentFrame);
+            FastLED.show();
+            animationCurrentFrame++;
+            if (animationCurrentFrame >= animationFrameCount) {
+                animationCurrentFrame = 0;
+            }
+        }
+    }
+    else if (displayMode == 1) {
+        unsigned long currentDelay = nextFrameDelay;
+        if (effectMode == 3) {
+            if (pulseFadingUp) {
+                currentDelay = min(100, nextFrameDelay);
+            } else {
+                currentDelay = min(30, nextFrameDelay);
+            }
+        }
+
+        if (currentTime - lastUpdateTime >= currentDelay) {
+            lastUpdateTime = currentTime;
+            renderEffectsStep();
+        }
     }
 }

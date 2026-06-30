@@ -59,14 +59,34 @@ function setColorControlsDisabled(disabled) {
         colorBody.classList.toggle('pointer-events-none', disabled);
     }
 
-    ['r', 'g', 'b'].forEach(id => {
+    ['r', 'g', 'b', 'hex', 'os-color-picker'].forEach(id => {
         const input = $(id);
         if (input) input.disabled = disabled;
     });
 }
 
+function setAnimationControlsDisabled(disabled) {
+    const animCard = document.querySelector('[data-card-id="animation"]');
+    if (animCard) {
+        animCard.classList.toggle('opacity-50', disabled);
+        animCard.setAttribute('aria-disabled', disabled ? 'true' : 'false');
+    }
+
+    const animBody = animCard ? animCard.querySelector('.card-body') : null;
+    if (animBody) {
+        animBody.classList.toggle('pointer-events-none', disabled);
+    }
+
+    ['animation-select', 'refresh-animations', 'upload-animation', 'send-animation', 'toggle-animation-play'].forEach(id => {
+        const element = $(id);
+        if (element) element.disabled = disabled;
+    });
+}
+
 function syncPatternDependentControls() {
-    setColorControlsDisabled([0, 5].includes(getSelectedPattern()));
+    const pattern = getSelectedPattern();
+    setColorControlsDisabled([0, 5, 7].includes(pattern));
+    setAnimationControlsDisabled(pattern !== 7);
 }
 
 function setColorMode(mode) {
