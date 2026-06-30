@@ -220,19 +220,7 @@ async function saveAnimation() {
     animation.delay = parseInt($('frame-delay').value, 10);
     
     try {
-        // Download as JSON file
-        const dataStr = JSON.stringify(animation, null, 2);
-        const dataBlob = new Blob([dataStr], { type: 'application/json' });
-        const url = URL.createObjectURL(dataBlob);
-        
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = `${name}.json`;
-        link.click();
-        
-        URL.revokeObjectURL(url);
-        
-        // Also save to localStorage for quick access
+        // Save to localStorage
         const animationsJson = localStorage.getItem('led_animations_data');
         const animationsData = animationsJson ? JSON.parse(animationsJson) : {};
         animationsData[name] = animation;
@@ -246,7 +234,7 @@ async function saveAnimation() {
             localStorage.setItem('led_animations', JSON.stringify(animationsList));
         }
         
-        alert(`Animation "${name}" saved and downloaded!`);
+        alert(`Animation "${name}" saved successfully!`);
     } catch (error) {
         alert(`Error saving animation: ${error.message}`);
     }
