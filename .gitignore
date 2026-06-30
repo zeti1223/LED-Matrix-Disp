@@ -11,3 +11,4 @@
 /web_ui/state.json
 /web_ui/animations/*
 node_modules/
+.firebase/
