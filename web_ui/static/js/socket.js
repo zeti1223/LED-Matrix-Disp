@@ -97,12 +97,6 @@ function sendDisplayMode(mode) {
     socket.emit('set_display_mode', { mode });
 }
 
-// Pattern-related (commented out until Arduino implements patterns)
-// function sendPattern(pattern) {
-//     if (!socket || !socket.connected) return;
-//     socket.emit('set_pattern', { pattern });
-// }
-
 // Animation commands
 function sendAnimationFrameCount(count) {
     if (!socket || !socket.connected) return;
