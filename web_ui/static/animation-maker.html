@@ -22,8 +22,12 @@
                     <p class="text-sm font-semibold uppercase tracking-[0.35em] text-cyan-300/80">LED Matrix Display</p>
                     <div class="mt-2">
                         <div class="flex items-center gap-2">
-                            <button id="tab-control" class="tab-btn rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:bg-slate-700" data-tab="control">Control</button>
-                            <button id="tab-animation-maker" class="tab-btn rounded-xl border border-cyan-400/30 bg-cyan-500/20 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/30" data-tab="animation-maker">Animation Maker</button>
+                            <button id="tab-control"
+                                class="tab-btn rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:bg-slate-700"
+                                data-tab="control">Control</button>
+                            <button id="tab-animation-maker"
+                                class="tab-btn rounded-xl border border-cyan-400/30 bg-cyan-500/20 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/30"
+                                data-tab="animation-maker">Animation Maker</button>
                         </div>
                     </div>
                 </div>
@@ -77,14 +81,30 @@
                     <div class="mb-4">
                         <label class="text-sm font-semibold text-slate-300 mb-2 block">Color:</label>
                         <div class="flex flex-wrap gap-2" id="color-palette">
-                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="0" style="background-color: #000000;" title="Black (Off)"></button>
-                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="1" style="background-color: #ff0000;" title="Red"></button>
-                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="2" style="background-color: #00ff00;" title="Green"></button>
-                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="3" style="background-color: #0000ff;" title="Blue"></button>
-                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="4" style="background-color: #ffff00;" title="Yellow"></button>
-                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="5" style="background-color: #ff00ff;" title="Magenta"></button>
-                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="6" style="background-color: #00ffff;" title="Cyan"></button>
-                            <button class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="7" style="background-color: #ffffff;" title="White"></button>
+                            <button
+                                class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition"
+                                data-color="0" style="background-color: #000000;" title="Black (Off)"></button>
+                            <button
+                                class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition"
+                                data-color="1" style="background-color: #ff0000;" title="Red"></button>
+                            <button
+                                class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition"
+                                data-color="2" style="background-color: #00ff00;" title="Green"></button>
+                            <button
+                                class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition"
+                                data-color="3" style="background-color: #0000ff;" title="Blue"></button>
+                            <button
+                                class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition"
+                                data-color="4" style="background-color: #ffff00;" title="Yellow"></button>
+                            <button
+                                class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition"
+                                data-color="5" style="background-color: #ff00ff;" title="Magenta"></button>
+                            <button
+                                class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition"
+                                data-color="6" style="background-color: #00ffff;" title="Cyan"></button>
+                            <button
+                                class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition"
+                                data-color="7" style="background-color: #ffffff;" title="White"></button>
                         </div>
                     </div>
 
@@ -158,7 +178,7 @@
         // Tab switching logic
         document.addEventListener('DOMContentLoaded', () => {
             const tabButtons = document.querySelectorAll('.tab-btn');
-            
+
             tabButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const tab = btn.dataset.tab;

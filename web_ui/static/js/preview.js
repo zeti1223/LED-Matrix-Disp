@@ -83,12 +83,12 @@ function renderPreviewFrame(state) {
     if (state.displayMode === 2 && currentAnimation && currentAnimation.frames && currentAnimation.frames.length > 0) {
         const now = Date.now();
         const delay = currentAnimation.delay || 100;
-        
+
         if (now - lastAnimationFrameTime >= delay) {
             animationFrameIndex = (animationFrameIndex + 1) % currentAnimation.frames.length;
             lastAnimationFrameTime = now;
         }
-        
+
         const frame = currentAnimation.frames[animationFrameIndex];
         const colorMap = {
             '0': [0, 0, 0],
@@ -100,7 +100,7 @@ function renderPreviewFrame(state) {
             '6': [0, 255, 255],
             '7': [255, 255, 255]
         };
-        
+
         for (let y = 0; y < PREVIEW_H; y++) {
             for (let x = 0; x < PREVIEW_W; x++) {
                 const ledIndex = y * PREVIEW_W + x;
@@ -187,7 +187,7 @@ function getPixelColor(state, x, y) {
     // const phase = (now % periodMs) / periodMs;
 
     // return phase < duty ? color : [0, 0, 0];
-    
+
     return color;
 }
 

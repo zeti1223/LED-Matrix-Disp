@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', () => {
 function initializeLEDGrid() {
     const grid = $('led-grid');
     grid.innerHTML = '';
-    
+
     for (let y = 0; y < 8; y++) {
         for (let x = 0; x < 8; x++) {
             const cell = document.createElement('div');
@@ -46,24 +46,24 @@ function initializeLEDGrid() {
             cell.dataset.x = x;
             cell.dataset.y = y;
             cell.style.backgroundColor = '#000000';
-            
+
             cell.addEventListener('mousedown', (e) => {
                 isDrawing = true;
                 paintLED(cell);
             });
-            
+
             cell.addEventListener('mouseenter', () => {
                 if (isDrawing) paintLED(cell);
             });
-            
+
             cell.addEventListener('mouseup', () => {
                 isDrawing = false;
             });
-            
+
             grid.appendChild(cell);
         }
     }
-    
+
     document.addEventListener('mouseup', () => {
         isDrawing = false;
     });
@@ -78,7 +78,7 @@ function initializeColorPalette() {
             selectedColor = btn.dataset.color;
         });
     });
-    
+
     // Select first color by default
     buttons[1].click();
 }
@@ -93,7 +93,7 @@ function initializeEventListeners() {
     $('download-json').addEventListener('click', downloadJSON);
     $('play-preview').addEventListener('click', playPreview);
     $('stop-preview').addEventListener('click', stopPreview);
-    
+
     $('frame-delay').addEventListener('change', (e) => {
         animation.delay = parseInt(e.target.value, 10);
     });
@@ -103,9 +103,9 @@ function paintLED(cell) {
     const x = parseInt(cell.dataset.x, 10);
     const y = parseInt(cell.dataset.y, 10);
     const color = colorMap[selectedColor];
-    
+
     cell.style.backgroundColor = `rgb(${color.r}, ${color.g}, ${color.b})`;
-    
+
     // Update current frame data
     if (animation.frames[currentFrameIndex]) {
         const ledIndex = y * 8 + x;
@@ -119,7 +119,7 @@ function addFrame() {
         alert(`Maximum ${MAX_FRAMES} frames allowed (Arduino limit)`);
         return;
     }
-    
+
     // Create new frame with all LEDs off
     const newFrame = Array(64).fill('0');
     animation.frames.push(newFrame);
@@ -134,7 +134,7 @@ function deleteFrame() {
         alert('Cannot delete the last frame');
         return;
     }
-    
+
     animation.frames.splice(currentFrameIndex, 1);
     if (currentFrameIndex >= animation.frames.length) {
         currentFrameIndex = animation.frames.length - 1;
@@ -161,7 +161,7 @@ function updateFrameCounter() {
 function loadFrameToGrid(frameIndex) {
     const frame = animation.frames[frameIndex];
     if (!frame) return;
-    
+
     const cells = document.querySelectorAll('.led-cell');
     cells.forEach((cell, index) => {
         const colorCode = frame[index] || '0';
@@ -173,15 +173,15 @@ function loadFrameToGrid(frameIndex) {
 function renderFrameList() {
     const list = $('frame-list');
     list.innerHTML = '';
-    
+
     animation.frames.forEach((frame, index) => {
         const item = document.createElement('div');
         item.className = `p-2 rounded-lg cursor-pointer transition ${index === currentFrameIndex ? 'bg-cyan-500/20 border border-cyan-400/40' : 'bg-slate-800/50 border border-slate-700 hover:bg-slate-700'}`;
-        
+
         // Create mini preview
         const miniGrid = document.createElement('div');
         miniGrid.className = 'grid grid-cols-8 gap-0.5';
-        
+
         for (let i = 0; i < 64; i++) {
             const pixel = document.createElement('div');
             const colorCode = frame[i] || '0';
@@ -190,21 +190,21 @@ function renderFrameList() {
             pixel.className = 'w-2 h-2 rounded-sm';
             miniGrid.appendChild(pixel);
         }
-        
+
         const label = document.createElement('div');
         label.className = 'text-xs text-slate-300 mt-1';
         label.textContent = `Frame ${index + 1}`;
-        
+
         item.appendChild(miniGrid);
         item.appendChild(label);
-        
+
         item.addEventListener('click', () => {
             currentFrameIndex = index;
             updateFrameCounter();
             loadFrameToGrid(currentFrameIndex);
             renderFrameList();
         });
-        
+
         list.appendChild(item);
     });
 }
@@ -215,17 +215,17 @@ async function saveAnimation() {
         alert('Please enter an animation name');
         return;
     }
-    
+
     animation.name = name;
     animation.delay = parseInt($('frame-delay').value, 10);
-    
+
     try {
         // Save to localStorage
         const animationsJson = localStorage.getItem('led_animations_data');
         const animationsData = animationsJson ? JSON.parse(animationsJson) : {};
         animationsData[name] = animation;
         localStorage.setItem('led_animations_data', JSON.stringify(animationsData));
-        
+
         // Update animation list
         const animationsListJson = localStorage.getItem('led_animations');
         const animationsList = animationsListJson ? JSON.parse(animationsListJson) : [];
@@ -233,7 +233,7 @@ async function saveAnimation() {
             animationsList.push(name);
             localStorage.setItem('led_animations', JSON.stringify(animationsList));
         }
-        
+
         alert(`Animation "${name}" saved successfully!`);
     } catch (error) {
         alert(`Error saving animation: ${error.message}`);
@@ -243,13 +243,13 @@ async function saveAnimation() {
 async function loadAnimation() {
     const name = prompt('Enter animation name to load:');
     if (!name) return;
-    
+
     try {
         // Load from localStorage
         const animationsJson = localStorage.getItem('led_animations_data');
         const animationsData = animationsJson ? JSON.parse(animationsJson) : {};
         const result = animationsData[name];
-        
+
         if (result) {
             animation = result;
             $('animation-name').value = animation.name || '';
@@ -270,37 +270,37 @@ async function loadAnimation() {
 function downloadJSON() {
     animation.name = $('animation-name').value.trim() || 'animation';
     animation.delay = parseInt($('frame-delay').value, 10);
-    
+
     const dataStr = JSON.stringify(animation, null, 2);
     const dataBlob = new Blob([dataStr], { type: 'application/json' });
     const url = URL.createObjectURL(dataBlob);
-    
+
     const link = document.createElement('a');
     link.href = url;
     link.download = `${animation.name}.json`;
     link.click();
-    
+
     URL.revokeObjectURL(url);
 }
 
 function playPreview() {
     if (isPlayingPreview) return;
     isPlayingPreview = true;
-    
+
     let frameIndex = 0;
     const canvas = $('preview-canvas');
     const ctx = canvas.getContext('2d');
-    
+
     function renderFrame() {
         if (!isPlayingPreview) return;
-        
+
         const frame = animation.frames[frameIndex];
         if (!frame) return;
-        
+
         // Clear canvas
         ctx.fillStyle = '#0f172a';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
-        
+
         // Draw LEDs
         const ledSize = canvas.width / 8;
         for (let i = 0; i < 64; i++) {
@@ -308,14 +308,14 @@ function playPreview() {
             const y = Math.floor(i / 8) * ledSize;
             const colorCode = frame[i] || '0';
             const color = colorMap[colorCode];
-            
+
             ctx.fillStyle = `rgb(${color.r}, ${color.g}, ${color.b})`;
             ctx.fillRect(x + 1, y + 1, ledSize - 2, ledSize - 2);
         }
-        
+
         frameIndex = (frameIndex + 1) % animation.frames.length;
     }
-    
+
     renderFrame();
     previewInterval = setInterval(renderFrame, animation.delay);
 }

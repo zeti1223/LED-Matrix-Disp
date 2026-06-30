@@ -34,7 +34,7 @@ class SerialManager {
         try {
             await this.port.open({ baudRate: this.baudRate });
             this.connected = true;
-            
+
             // Set up writer
             const encoder = new TextEncoderStream();
             this.writableStreamClosed = encoder.readable.pipeTo(this.port.writable);
@@ -51,7 +51,7 @@ class SerialManager {
             // Notify listeners
             this.connectListeners.forEach(listener => listener(true));
             appendConsole('[serial] Connected\n');
-            
+
             return true;
         } catch (error) {
             this.connected = false;
@@ -65,7 +65,7 @@ class SerialManager {
         if (this.reader) {
             try {
                 await this.reader.cancel();
-                await this.readableStreamClosed.catch(() => {});
+                await this.readableStreamClosed.catch(() => { });
                 this.reader = null;
             } catch (error) {
                 console.error('Error closing reader:', error);
@@ -75,7 +75,7 @@ class SerialManager {
         if (this.writer) {
             try {
                 await this.writer.close();
-                await this.writableStreamClosed.catch(() => {});
+                await this.writableStreamClosed.catch(() => { });
                 this.writer = null;
             } catch (error) {
                 console.error('Error closing writer:', error);

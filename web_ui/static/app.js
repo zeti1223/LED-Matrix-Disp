@@ -112,7 +112,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const initialB = clamp($('b').value, 0, 255);
     setColorInputsFromRGB(initialR, initialG, initialB);
     setColorMode('rgb');
-    
+
     // Send initial fill color to Arduino
     if (window.sendFillColor) {
         try { window.sendFillColor(initialR, initialG, initialB); } catch (e) { }
@@ -186,7 +186,7 @@ async function loadAnimations() {
         // Load animations from localStorage
         const animationsJson = localStorage.getItem('led_animations');
         const animations = animationsJson ? JSON.parse(animationsJson) : [];
-        
+
         const select = $('animation-select');
         if (select) {
             select.innerHTML = '<option value="">Select animation...</option>';
@@ -206,21 +206,21 @@ async function loadAnimations() {
 async function handleAnimationUpload(event) {
     const file = event.target.files[0];
     if (!file) return;
-    
+
     try {
         const text = await file.text();
         const animation = JSON.parse(text);
-        
+
         if (!animation.name || !animation.frames || !Array.isArray(animation.frames)) {
             throw new Error('Invalid animation file format');
         }
-        
+
         // Save to localStorage
         const animationsJson = localStorage.getItem('led_animations_data');
         const animationsData = animationsJson ? JSON.parse(animationsJson) : {};
         animationsData[animation.name] = animation;
         localStorage.setItem('led_animations_data', JSON.stringify(animationsData));
-        
+
         // Update animation list
         const animationsListJson = localStorage.getItem('led_animations');
         const animationsList = animationsListJson ? JSON.parse(animationsListJson) : [];
@@ -228,23 +228,23 @@ async function handleAnimationUpload(event) {
             animationsList.push(animation.name);
             localStorage.setItem('led_animations', JSON.stringify(animationsList));
         }
-        
+
         // Refresh the dropdown
         loadAnimations();
-        
+
         // Select the uploaded animation
         const select = $('animation-select');
         if (select) {
             select.value = animation.name;
         }
-        
+
         appendConsole(`[animation] uploaded "${animation.name}"\n`);
     } catch (error) {
         console.error('Error uploading animation:', error);
         appendConsole(`[animation] error: ${error.message}\n`);
         alert(`Error uploading animation: ${error.message}`);
     }
-    
+
     // Reset file input
     event.target.value = '';
 }
@@ -252,32 +252,32 @@ async function handleAnimationUpload(event) {
 async function sendSelectedAnimation() {
     const select = $('animation-select');
     const animationName = select ? select.value : null;
-    
+
     if (!animationName) {
         alert('Please select an animation first');
         return;
     }
-    
+
     try {
         // Load animation from localStorage
         const animationsJson = localStorage.getItem('led_animations_data');
         const animationsData = animationsJson ? JSON.parse(animationsJson) : {};
         const animation = animationsData[animationName];
-        
+
         if (!animation) {
             throw new Error('Animation not found');
         }
-        
+
         // Set display mode to animation mode (mode 2)
         if (window.sendDisplayMode) {
             try { window.sendDisplayMode(2); } catch (e) { }
         }
-        
+
         // Send frame count
         if (window.sendAnimationFrameCount) {
             try { window.sendAnimationFrameCount(animation.frames.length); } catch (e) { }
         }
-        
+
         // Send each frame
         if (window.sendAnimationFrame) {
             animation.frames.forEach((frame, index) => {
@@ -285,24 +285,24 @@ async function sendSelectedAnimation() {
                 try { window.sendAnimationFrame(index, frameData); } catch (e) { }
             });
         }
-        
+
         // Send delay
         if (window.sendAnimationDelay) {
             try { window.sendAnimationDelay(animation.delay || 100); } catch (e) { }
         }
-        
+
         // Set preview to show animation
         if (window.setPreviewAnimation) {
             try { window.setPreviewAnimation(animation); } catch (e) { }
         }
-        
+
         // Wait a bit for Arduino to process all frames, then start playing
         setTimeout(() => {
             if (window.toggleAnimation) {
                 try { window.toggleAnimation(); } catch (e) { }
             }
         }, 500);
-        
+
         appendConsole(`[animation] sent "${animationName}" with ${animation.frames.length} frames\n`);
     } catch (error) {
         console.error('Error sending animation:', error);

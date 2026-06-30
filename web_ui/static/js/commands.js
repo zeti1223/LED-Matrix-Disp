@@ -8,7 +8,7 @@ if (window.serialManager) {
     window.serialManager.onConnect(() => {
         connected = true;
     });
-    
+
     window.serialManager.onDisconnect(() => {
         connected = false;
     });
@@ -19,7 +19,7 @@ function sendFrame(frame) {
     const now = Date.now();
     if (now - lastFrameSent < FRAME_SEND_INTERVAL) return;
     lastFrameSent = now;
-    
+
     // Send frame using serial manager
     if (window.serialManager && window.serialManager.isConnected()) {
         // Convert frame to individual LED commands
@@ -31,10 +31,10 @@ function sendFrame(frame) {
             const ledIndex = i / 3;
             const x = ledIndex % 8;
             const y = Math.floor(ledIndex / 8);
-            
+
             window.serialManager.send(`o ${x} ${y} ${r} ${g} ${b}`);
         }
-        
+
         // Trigger display update
         window.serialManager.send('d');
     }
