@@ -141,10 +141,10 @@ void rainbowEffect(){
 void applyCheckerEffect(){
     for (int y=0;y<Y;y++){
         for (int x=0;x<X;x++){
-            if (((x%2) == (rainbowStartingHue%2))&&((y%2) == (rainbowStartingHue%2))){
+            if ((((x%2) == 0)&&((y%2) != 0) || ((x%2) != 0)&&((y%2) == 0))&&((rainbowStartingHue%2)==0)){
                 leds[coordinatesToLedAddress(x,y)]=effectColor;
             }
-            if (((x%2) != (rainbowStartingHue%2))&&((y%2) != (rainbowStartingHue%2))){
+            if ((((x%2) == 0)&&((y%2) == 0) || ((x%2) != 0)&&((y%2) != 0))&&((rainbowStartingHue%2) != 0)){ 
                 leds[coordinatesToLedAddress(x,y)]=effectColor;
             }
         }
