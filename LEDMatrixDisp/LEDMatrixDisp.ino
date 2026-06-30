@@ -1,11 +1,11 @@
 #include <FastLED.h>
 
 #define LED_PIN 6
-#define NUM_LEDS 64
 #define MAX_FRAMES 10
 
 #define X 8
 #define Y 8
+#define NUM_LEDS 64
 
 CRGB leds[NUM_LEDS];
 
@@ -16,6 +16,9 @@ char animationBuffer[MAX_FRAMES][NUM_LEDS];
 int animationFrameCount = 0;
 bool animationIsPlaying = false;
 int animationCurrentFrame = 0;
+CRGB effectColor = CRGB(0,0,0);
+int rainbowStartingHue = 0;
+
 
 void setup() {
     Serial.begin(9600);
@@ -29,12 +32,6 @@ void playBootAnimation() {
         leds[i] = CRGB(0, 255, 0);
         FastLED.show();
         delay(15);
-    }
-
-    for (int i = 0; i < 20; i++) {
-        fadeToBlackBy(leds, NUM_LEDS, 50);
-        FastLED.show();
-        delay(20);
     }
 
     fill_solid(leds, NUM_LEDS, CRGB(0, 255, 0));
@@ -87,10 +84,110 @@ int coordinatesToLedAddress(int x, int y){
     return address;
 }
 
-
-void generateNextEffectFrame(){
-
+void snakeEffect(){
+    for (int i = 0; i < NUM_LEDS; i++) {
+        fadeToBlackBy(leds, NUM_LEDS, 40);
+        leds[i] = effectColor;
+        FastLED.show();
+        delay(nextFrameDelay);
+    };
 }
+
+void pulseEffect(){
+    for (int brightness = 0; brightness <=100;brightness++) {
+        fill_solid(leds, NUM_LEDS, CRGB(
+            (effectColor.r*brightness)/100,
+            (effectColor.g*brightness)/100,
+            (effectColor.b*brightness)/100)
+        );
+        FastLED.show();
+        delay(min(100,nextFrameDelay));
+    };
+    for (int brightness = 100; brightness >=0;brightness--) {
+        fill_solid(leds, NUM_LEDS, CRGB(
+            (effectColor.r*brightness)/100,
+            (effectColor.g*brightness)/100,
+            (effectColor.b*brightness)/100)
+        );
+        FastLED.show();
+        delay(min(30,nextFrameDelay));
+    };
+}
+
+void scammerEffect(){
+    for (int i = 0; i<Y;i++){
+        for (int x=0; x<X;x++){
+            if(i>=1){
+                leds[coordinatesToLedAddress(x,i-1)] = CRGB(0,0,0);
+            }
+            else {
+                leds[coordinatesToLedAddress(x,Y-1)] = CRGB(0,0,0);
+            }
+            leds[coordinatesToLedAddress(x,i)] = effectColor;
+        }
+        FastLED.show();
+        delay(nextFrameDelay);
+    }
+}
+
+void rainbowEffect(){
+    for (int y=0;y<Y;y++){
+        for (int x=0;x<X;x++){
+            leds[coordinatesToLedAddress(x,y)]=CHSV(rainbowStartingHue + ((x+y)*10), 255, 255);
+        }
+    }
+}
+
+void applyCheckerEffect(){
+    for (int y=0;y<Y;y++){
+        for (int x=0;x<X;x++){
+            if (((x%2) == (rainbowStartingHue%2))&&((y%2) == (rainbowStartingHue%2))){
+                leds[coordinatesToLedAddress(x,y)]=effectColor;
+            }
+            if (((x%2) != (rainbowStartingHue%2))&&((y%2) != (rainbowStartingHue%2))){
+                leds[coordinatesToLedAddress(x,y)]=effectColor;
+            }
+        }
+    }
+}
+
+void rainbowFill(){
+    fill_solid(leds,NUM_LEDS,CHSV(rainbowStartingHue, 255, 255));
+    FastLED.show();
+}
+
+void renderEffects(){
+    switch (effectMode){
+        case 0:
+            rainbowEffect();
+            FastLED.show();
+            rainbowStartingHue++;
+            delay(nextFrameDelay);
+            break;
+        case 1:
+            rainbowEffect();
+            applyCheckerEffect();
+            FastLED.show();
+            rainbowStartingHue++;
+            delay(nextFrameDelay);
+            break;
+        case 2:
+            scammerEffect();
+            break;
+        case 3:
+            pulseEffect();
+            break;
+        case 4:
+            snakeEffect();
+            break;
+        case 5:
+            rainbowFill();
+            rainbowStartingHue++;
+            delay(nextFrameDelay);
+            break;
+        }
+}
+
 
 void parseSerialInput(){
     String input = Serial.readStringUntil('\n');
@@ -148,6 +245,9 @@ void parseSerialInput(){
                 case 's':
                     nextFrameDelay = ia;
                     break;
+                case 'c':
+                    effectColor = CRGB(ia,ib,ic);
+                    break;
             }
             break;
         case 'a':
@@ -186,5 +286,8 @@ void loop() {
         if (animationCurrentFrame >= animationFrameCount) {
             animationCurrentFrame = 0;
         }
+    }
+    if (displayMode == 1){
+        renderEffects();
     }
 }
