@@ -1,5 +1,5 @@
 // Animation Maker State
-const MAX_FRAMES = 10; // Arduino can only accept 10 frames
+const MAX_FRAMES = 20; // Arduino can only accept 20 frames
 
 let animation = {
     name: '',
