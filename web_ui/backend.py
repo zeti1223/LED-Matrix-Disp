@@ -28,7 +28,7 @@ class SerialManager:
             return []
         return [p.device for p in list_ports.comports()]
 
-    def connect(self, port, baud=115200, timeout=1):
+    def connect(self, port, baud=9600, timeout=1):
         if serial is None:
             return False, "pyserial not installed"
         with self.lock:
