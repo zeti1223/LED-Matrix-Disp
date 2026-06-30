@@ -1,119 +1,190 @@
 #include <FastLED.h>
 
-#define DATA_PIN    6
-#define WIDTH       8
-#define HEIGHT      8
-#define NUM_LEDS    (WIDTH * HEIGHT)
-#define LED_TYPE    WS2812B
-#define COLOR_ORDER GRB
+#define LED_PIN 13
+#define NUM_LEDS 84
+#define MAX_FRAMES 10
+
+#define X 7
+#define Y 12
 
 CRGB leds[NUM_LEDS];
 
-const int FRAME_BUFFER_SIZE = NUM_LEDS * 3;
-uint8_t frameBuffer[FRAME_BUFFER_SIZE];
-int remainingFrameBytes = 0;
-int frameIndex = 0;
-String commandLine = "";
+byte displayMode = 0;
+byte effectMode = 0;
+int nextFrameDelay = 100;
+char animationBuffer[MAX_FRAMES][NUM_LEDS];
+int animationFrameCount = 0;
+bool animationIsPlaying = false;
+int animationCurrentFrame = 0;
 
 void setup() {
-  Serial.begin(115200);
-  FastLED.addLeds<LED_TYPE, DATA_PIN, COLOR_ORDER>(leds, NUM_LEDS);
-  FastLED.setBrightness(255);
-  printHelp();
-  setAllColor(CRGB::Black);
-  FastLED.show();
+    Serial.begin(9600);
+    FastLED.addLeds<WS2812, LED_PIN, GRB>(leds, NUM_LEDS).setCorrection(TypicalLEDStrip);
+    playBootAnimation();
+}
+
+void playBootAnimation() {
+    for (int i = 0; i < NUM_LEDS; i++) {
+        fadeToBlackBy(leds, NUM_LEDS, 40);
+        leds[i] = CRGB(0, 255, 0);
+        FastLED.show();
+        delay(15);
+    }
+
+    for (int i = 0; i < 20; i++) {
+        fadeToBlackBy(leds, NUM_LEDS, 50);
+        FastLED.show();
+        delay(20);
+    }
+
+    fill_solid(leds, NUM_LEDS, CRGB(0, 255, 0));
+    FastLED.show();
+    delay(500);
+
+    fill_solid(leds, NUM_LEDS, CRGB(0, 0, 0));
+    FastLED.show();
+    delay(300);
+}
+
+
+void convertAnimationFrameBuffer(int frameIndex){
+    for (int i = 0; i<NUM_LEDS; i++){
+        switch (animationBuffer[frameIndex][i]){
+            case '0':
+                leds[i] = CRGB(0,0,0);
+                break;
+            case '1':
+                leds[i] = CRGB(255,0,0);
+                break;
+            case '2':
+                leds[i] = CRGB(0,255,0);
+                break;
+            case '3':
+                leds[i] = CRGB(0,0,255);
+                break;
+            case '4':
+                leds[i] = CRGB(255,255,0);
+                break;
+            case '5':
+                leds[i] = CRGB(255,0,255);
+                break;
+            case '6':
+                leds[i] = CRGB(0,255,255);
+                break;
+            case '7':
+                leds[i] = CRGB(255,255,255);
+                break;
+        }
+    }
+}
+
+
+int coordinatesToLedAddress(int x, int y){
+    x++;y++;
+    int address = X*y;
+    if ((y%2)==0){address -=x;}
+    else {address-=X-x+1;}
+    return address;
+}
+
+
+void generateNextEffectFrame(){
+
+}
+
+void parseSerialInput(){
+    String input = Serial.readStringUntil('\n');
+    char buf[120];
+    input.toCharArray(buf, 120);
+
+    char* cmd = strtok(buf, " ");
+    char* a   = strtok(NULL, " ");
+    char* b   = strtok(NULL, " ");
+    char* c   = strtok(NULL, " ");
+    char* d   = strtok(NULL, " ");
+    char* e   = strtok(NULL, " ");
+
+    int ia = a ? atoi(a) : 0;
+    int ib = b ? atoi(b) : 0;
+    int ic = c ? atoi(c) : 0;
+    int id = d ? atoi(d) : 0;
+    int ie = e ? atoi(e) : 0;
+
+    if (!cmd) return;
+    switch (cmd[0]){
+        case 's':
+            switch (cmd[1]){
+                case 'm':
+                    displayMode = ia;
+                    break;
+                case 's':
+                    switch (cmd[2]){
+                        case 'h':
+                            break;
+                        case 'f':
+                            break;
+                    }
+                    break;
+                case 'b':
+                    FastLED.setBrightness(ia);
+                    break;
+            }
+            break;
+        case 'f':
+            fill_solid(leds, NUM_LEDS, CRGB(ia,ib,ic));
+            break;
+        case 'o':{
+            if (ia >= 0 && ia < X && ib >= 0 && ib < Y) {
+                int address = coordinatesToLedAddress(ia,ib);
+                leds[address] = CRGB(ic,id,ie);
+            }
+            break;
+        }
+        case 'e':
+            switch (cmd[1]){
+                case 'm':
+                    effectMode = ia;
+                    break;
+                case 's':
+                    nextFrameDelay = ia;
+                    break;
+            }
+            break;
+        case 'a':
+            switch (cmd[1]){
+                case 's':
+                    if (ia <= 10){
+                        animationFrameCount = ia;
+                    }
+                    break;
+                case 'f':
+                    strcpy(animationBuffer[ia], b);
+                    break;
+                case 'w':
+                    nextFrameDelay = ia;
+                    break;
+                case 'p':
+                    animationIsPlaying = !animationIsPlaying;
+                    break;
+            }
+            break;
+        case 'd':
+            FastLED.show();
+            break;
+    }
 }
 
 void loop() {
-  readSerialCommands();
-}
-
-void setAllColor(const CRGB &color) {
-  for (uint16_t i = 0; i < NUM_LEDS; i++) {
-    leds[i] = color;
-  }
-}
-
-void readSerialCommands() {
-  // Priority: read raw frame bytes if waiting
-  if (remainingFrameBytes > 0) {
-    int availableBytes = Serial.available();
-    int toRead = min(availableBytes, remainingFrameBytes);
-    int count = Serial.readBytes(frameBuffer + frameIndex, toRead);
-    frameIndex += count;
-    remainingFrameBytes -= count;
-
-    if (remainingFrameBytes == 0) {
-      applyFrame();
-      frameIndex = 0;
+    if (Serial.available()) {
+        parseSerialInput();
     }
-    return;  // Exit here - do NOT process text commands during frame read
-  }
-
-  // Text command processing
-  while (Serial.available() > 0) {
-    char c = Serial.read();
-    if (c == '\r') {
-      continue;
-    }
-    if (c == '\n') {
-      if (commandLine.length() > 0) {
-        commandLine.trim();
-        if (commandLine.length() > 0) {
-          parseCommand(commandLine);
+    if (animationIsPlaying && displayMode == 2){
+        convertAnimationFrameBuffer(animationCurrentFrame);
+        FastLED.show();
+        delay(nextFrameDelay);
+        animationCurrentFrame++;
+        if (animationCurrentFrame >= animationFrameCount) {
+            animationCurrentFrame = 0;
         }
-        commandLine = "";
-      }
-    } else {
-      commandLine += c;
     }
-  }
-}
-
-void applyFrame() {
-  for (uint16_t i = 0; i < NUM_LEDS; i++) {
-    int base = i * 3;
-    leds[i] = CRGB(frameBuffer[base], frameBuffer[base + 1], frameBuffer[base + 2]);
-  }
-  FastLED.show();
-}
-
-void parseCommand(const String &line) {
-  if (line.startsWith("FRAME")) {
-    int len = line.substring(5).toInt();
-    if (len <= 0 || len > FRAME_BUFFER_SIZE) {
-      Serial.println("Invalid frame size");
-      return;
-    }
-    remainingFrameBytes = len;
-    frameIndex = 0;
-    return;
-  }
-
-  char cmd = line.charAt(0);
-  if (cmd == 'C' || cmd == 'c') {
-    int values[3] = {0, 0, 0};
-    int index = 0;
-    int start = 1;
-    for (int i = 1; i <= line.length(); i++) {
-      if (i == line.length() || line.charAt(i) == ' ') {
-        if (index < 3) {
-          values[index++] = line.substring(start, i).toInt();
-        }
-        start = i + 1;
-      }
-    }
-    setAllColor(CRGB(constrain(values[0], 0, 255), constrain(values[1], 0, 255), constrain(values[2], 0, 255)));
-    FastLED.show();
-  } else if (cmd == 'H' || cmd == 'h' || cmd == '?') {
-    printHelp();
-  }
-}
-
-void printHelp() {
-  Serial.println("WS2812B LED Matrix renderer");
-  Serial.println("Commands:");
-  Serial.println("  FRAME <len> - send raw RGB frame payload after header");
-  Serial.println("  C r g b   - set static color frame");
-  Serial.println("  H/?       - help");
 }

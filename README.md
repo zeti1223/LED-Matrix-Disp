@@ -65,3 +65,7 @@ python web_ui/backend.py
 - RGB and hex color input modes
 - Brightness and strobe controls
 - Collapsible panels for a compact layout
+
+## Credits
+
+- Arduino code from: https://github.com/FonixPython/LEDMatrix/ 
