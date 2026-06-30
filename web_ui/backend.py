@@ -167,14 +167,16 @@ class StateManager:
         self.lock = threading.Lock()
         self.path = path or os.path.join(BASE_DIR, "state.json")
         self.default = {
-            "pattern": 0,
+            # Pattern-related (commented out until Arduino implements patterns)
+            # "pattern": 0,
             "r": 255,
             "g": 255,
             "b": 255,
             "brightness": 128,
-            "strobeOn": False,
-            "strobeSpeed": 8,
-            "strobeFill": 50,
+            # Strobe-related (commented out until Arduino implements strobe)
+            # "strobeOn": False,
+            # "strobeSpeed": 8,
+            # "strobeFill": 50,
         }
         self._state = self.default.copy()
         self._load()
@@ -250,6 +252,78 @@ def handle_send_command(data):
     socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
 
 
+@socketio.on("set_brightness")
+def handle_set_brightness(data):
+    brightness = data.get("brightness", 128)
+    cmd = f"sb {brightness}"
+    ok, msg = serial_mgr.send(cmd)
+    if ok:
+        serial_mgr.send("d")
+    socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
+
+
+@socketio.on("fill_color")
+def handle_fill_color(data):
+    r = data.get("r", 0)
+    g = data.get("g", 0)
+    b = data.get("b", 0)
+    cmd = f"f {r} {g} {b}"
+    ok, msg = serial_mgr.send(cmd)
+    if ok:
+        serial_mgr.send("d")
+    socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
+
+
+@socketio.on("set_display_mode")
+def handle_set_display_mode(data):
+    mode = data.get("mode", 0)
+    cmd = f"sm {mode}"
+    ok, msg = serial_mgr.send(cmd)
+    socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
+
+
+# Pattern-related commands (commented out until Arduino implements patterns)
+# @socketio.on("set_pattern")
+# def handle_set_pattern(data):
+#     pattern = data.get("pattern", 0)
+#     cmd = f"em {pattern}"
+#     ok, msg = serial_mgr.send(cmd)
+#     socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
+
+
+# Animation commands (commented out until Arduino implements animation patterns)
+# @socketio.on("set_animation_frame_count")
+# def handle_set_animation_frame_count(data):
+#     count = data.get("count", 0)
+#     cmd = f"as {count}"
+#     ok, msg = serial_mgr.send(cmd)
+#     socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
+
+
+# @socketio.on("set_animation_frame")
+# def handle_set_animation_frame(data):
+#     frame_index = data.get("frame_index", 0)
+#     frame_data = data.get("data", "")
+#     cmd = f"af {frame_index} {frame_data}"
+#     ok, msg = serial_mgr.send(cmd)
+#     socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
+
+
+# @socketio.on("set_animation_delay")
+# def handle_set_animation_delay(data):
+#     delay = data.get("delay", 100)
+#     cmd = f"aw {delay}"
+#     ok, msg = serial_mgr.send(cmd)
+#     socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
+
+
+# @socketio.on("toggle_animation")
+# def handle_toggle_animation(data):
+#     cmd = "ap"
+#     ok, msg = serial_mgr.send(cmd)
+#     socketio.emit("send_result", {"ok": ok, "msg": msg, "command": cmd})
+
+
 @socketio.on("send_frame")
 def handle_send_frame(data):
     frame = data.get("frame")
@@ -259,16 +333,36 @@ def handle_send_frame(data):
             {"ok": False, "msg": "Invalid frame format", "command": "FRAME"},
         )
         return
-    try:
-        payload = bytes(frame)
-    except Exception as e:
-        socketio.emit("send_result", {"ok": False, "msg": str(e), "command": "FRAME"})
-        return
-    header = f"FRAME {len(payload)}\n".encode("utf-8")
-    ok, msg = serial_mgr.send_bytes(header + payload)
-    socketio.emit(
-        "send_result", {"ok": ok, "msg": msg, "command": f"FRAME {len(payload)}"}
-    )
+    
+    # Send individual LED commands for each pixel
+    # Frame format: [r0, g0, b0, r1, g1, b1, ...] for 64 LEDs
+    ok = True
+    msg = "Sent"
+    
+    for i in range(0, len(frame), 3):
+        if i + 2 >= len(frame):
+            break
+        r = frame[i]
+        g = frame[i + 1]
+        b = frame[i + 2]
+        led_index = i // 3
+        
+        # Convert LED index to x,y coordinates
+        x = led_index % 8
+        y = led_index // 8
+        
+        cmd = f"o {x} {y} {r} {g} {b}"
+        result, result_msg = serial_mgr.send(cmd)
+        if not result:
+            ok = False
+            msg = result_msg
+            break
+    
+    # Trigger display update
+    if ok:
+        serial_mgr.send("d")
+    
+    socketio.emit("send_result", {"ok": ok, "msg": msg, "command": "FRAME"})
 
 
 @socketio.on("get_state")

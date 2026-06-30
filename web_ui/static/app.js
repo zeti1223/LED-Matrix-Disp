@@ -1,9 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     refreshPorts();
 
-    setSelectedPattern(0);
-    setStrobeEnabled(false);
-    syncPatternDependentControls();
+    // Pattern-related (commented out until Arduino implements patterns)
+    // setSelectedPattern(0);
+    // setStrobeEnabled(false);
+    // syncPatternDependentControls();
 
     $('refresh').addEventListener('click', refreshPorts);
 
@@ -21,17 +22,25 @@ document.addEventListener('DOMContentLoaded', () => {
         if (el) {
             el.addEventListener('input', () => {
                 updatePreviewState();
+                // Send fill color command to Arduino
+                const r = parseInt($('r').value || 0, 10);
+                const g = parseInt($('g').value || 0, 10);
+                const b = parseInt($('b').value || 0, 10);
+                if (window.sendFillColor) {
+                    try { window.sendFillColor(r, g, b); } catch (e) { }
+                }
             });
         }
     });
 
-    document.querySelectorAll('.pattern-btn').forEach(button => {
-        button.addEventListener('click', () => {
-            setSelectedPattern(parseInt(button.dataset.pattern || '0', 10));
-            syncPatternDependentControls();
-            updatePreviewState();
-        });
-    });
+    // Pattern-related (commented out until Arduino implements patterns)
+    // document.querySelectorAll('.pattern-btn').forEach(button => {
+    //     button.addEventListener('click', () => {
+    //         setSelectedPattern(parseInt(button.dataset.pattern || '0', 10));
+    //         syncPatternDependentControls();
+    //         updatePreviewState();
+    //     });
+    // });
 
     document.querySelectorAll('.color-mode-btn').forEach(btn => {
         btn.addEventListener('click', () => {
@@ -44,6 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
         osPicker.addEventListener('input', (e) => {
             setColorFromHex(e.target.value);
             updatePreviewState();
+            // Send fill color command to Arduino
+            const rgb = hexToRgb(e.target.value);
+            if (rgb && window.sendFillColor) {
+                try { window.sendFillColor(rgb.r, rgb.g, rgb.b); } catch (e) { }
+            }
         });
     }
 
@@ -75,14 +89,20 @@ document.addEventListener('DOMContentLoaded', () => {
     const initialB = clamp($('b').value, 0, 255);
     setColorInputsFromRGB(initialR, initialG, initialB);
     setColorMode('rgb');
-
-    const strobeToggleBtn = $('strobe-toggle');
-    if (strobeToggleBtn) {
-        strobeToggleBtn.addEventListener('click', () => {
-            setStrobeEnabled(!getStrobeEnabled());
-            updatePreviewState();
-        });
+    
+    // Send initial fill color to Arduino
+    if (window.sendFillColor) {
+        try { window.sendFillColor(initialR, initialG, initialB); } catch (e) { }
     }
+
+    // Strobe-related (commented out until Arduino implements strobe)
+    // const strobeToggleBtn = $('strobe-toggle');
+    // if (strobeToggleBtn) {
+    //     strobeToggleBtn.addEventListener('click', () => {
+    //         setStrobeEnabled(!getStrobeEnabled());
+    //         updatePreviewState();
+    //     });
+    // }
 
     document.querySelectorAll('.card-toggle').forEach(button => {
         button.addEventListener('click', () => {
@@ -99,31 +119,37 @@ document.addEventListener('DOMContentLoaded', () => {
     if (brightnessEl) {
         brightnessEl.addEventListener('input', () => {
             updatePreviewState();
+            // Send brightness command to Arduino
+            const brightness = parseInt(brightnessEl.value || 128, 10);
+            if (window.sendBrightness) {
+                try { window.sendBrightness(brightness); } catch (e) { }
+            }
         });
     }
 
-    ['strobe-speed', 'strobe-duty'].forEach(id => {
-        const el = $(id);
-        if (!el) return;
-        el.addEventListener('input', () => {
-            updatePreviewState();
-        });
-        el.addEventListener('change', () => {
-            updatePreviewState();
-        });
-    });
+    // Strobe-related (commented out until Arduino implements strobe)
+    // ['strobe-speed', 'strobe-duty'].forEach(id => {
+    //     const el = $(id);
+    //     if (!el) return;
+    //     el.addEventListener('input', () => {
+    //         updatePreviewState();
+    //     });
+    //     el.addEventListener('change', () => {
+    //         updatePreviewState();
+    //     });
+    // });
 
-    const speedEl = $('strobe-speed');
-    const speedValEl = $('strobe-speed-val');
-    function updateSpeedLabel(value) {
-        if (speedValEl) speedValEl.textContent = value + ' Hz';
-    }
-    if (speedEl) {
-        updateSpeedLabel(speedEl.value);
-        speedEl.addEventListener('input', (e) => {
-            updateSpeedLabel(e.target.value);
-        });
-    }
+    // const speedEl = $('strobe-speed');
+    // const speedValEl = $('strobe-speed-val');
+    // function updateSpeedLabel(value) {
+    //     if (speedValEl) speedValEl.textContent = value + ' Hz';
+    // }
+    // if (speedEl) {
+    //     updateSpeedLabel(speedEl.value);
+    //     speedEl.addEventListener('input', (e) => {
+    //         updateSpeedLabel(e.target.value);
+    //     });
+    // }
 
     startPreview();
 });

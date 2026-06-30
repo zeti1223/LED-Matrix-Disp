@@ -80,3 +80,55 @@ function sendState(state) {
 }
 
 window.sendState = sendState;
+
+// New Arduino protocol command senders
+function sendBrightness(brightness) {
+    if (!socket || !socket.connected) return;
+    socket.emit('set_brightness', { brightness });
+}
+
+function sendFillColor(r, g, b) {
+    if (!socket || !socket.connected) return;
+    socket.emit('fill_color', { r, g, b });
+}
+
+function sendDisplayMode(mode) {
+    if (!socket || !socket.connected) return;
+    socket.emit('set_display_mode', { mode });
+}
+
+// Pattern-related (commented out until Arduino implements patterns)
+// function sendPattern(pattern) {
+//     if (!socket || !socket.connected) return;
+//     socket.emit('set_pattern', { pattern });
+// }
+
+// Animation commands (commented out until Arduino implements animation patterns)
+// function sendAnimationFrameCount(count) {
+//     if (!socket || !socket.connected) return;
+//     socket.emit('set_animation_frame_count', { count });
+// }
+
+// function sendAnimationFrame(frameIndex, data) {
+//     if (!socket || !socket.connected) return;
+//     socket.emit('set_animation_frame', { frame_index: frameIndex, data });
+// }
+
+// function sendAnimationDelay(delay) {
+//     if (!socket || !socket.connected) return;
+//     socket.emit('set_animation_delay', { delay });
+// }
+
+// function toggleAnimation() {
+//     if (!socket || !socket.connected) return;
+//     socket.emit('toggle_animation', {});
+// }
+
+window.sendBrightness = sendBrightness;
+window.sendFillColor = sendFillColor;
+window.sendDisplayMode = sendDisplayMode;
+// window.sendPattern = sendPattern;
+// window.sendAnimationFrameCount = sendAnimationFrameCount;
+// window.sendAnimationFrame = sendAnimationFrame;
+// window.sendAnimationDelay = sendAnimationDelay;
+// window.toggleAnimation = toggleAnimation;
