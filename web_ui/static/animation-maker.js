@@ -37,6 +37,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addFrame(); // Start with one frame
     updateFrameCounter();
     renderFrameList();
+    loadAnimationDropdown();
 });
 
 function initializeLEDGrid() {
@@ -234,6 +235,8 @@ async function saveAnimation() {
 
     animation.name = name;
     animation.delay = parseInt($('frame-delay').value, 10);
+    animation.gridWidth = gridWidth;
+    animation.gridHeight = gridHeight;
 
     try {
         // Save to localStorage
@@ -250,15 +253,54 @@ async function saveAnimation() {
             localStorage.setItem('led_animations', JSON.stringify(animationsList));
         }
 
-        alert(`Animation "${name}" saved successfully!`);
+        alert(`Animation "${name}" saved successfully! (Grid: ${gridWidth}x${gridHeight})`);
+        
+        // Refresh the dropdown
+        loadAnimationDropdown();
     } catch (error) {
         alert(`Error saving animation: ${error.message}`);
     }
 }
 
+function loadAnimationDropdown() {
+    try {
+        const animationsJson = localStorage.getItem('led_animations');
+        const animations = animationsJson ? JSON.parse(animationsJson) : [];
+
+        const select = $('load-animation-select');
+        if (select) {
+            select.innerHTML = '<option value="">Load animation...</option>';
+            animations.forEach(name => {
+                const option = document.createElement('option');
+                option.value = name;
+                
+                // Get animation data to show dimensions
+                const animationsDataJson = localStorage.getItem('led_animations_data');
+                const animationsData = animationsDataJson ? JSON.parse(animationsDataJson) : {};
+                const animData = animationsData[name];
+                
+                if (animData && animData.gridWidth && animData.gridHeight) {
+                    option.textContent = `${name} (${animData.gridWidth}x${animData.gridHeight})`;
+                } else {
+                    option.textContent = name;
+                }
+                
+                select.appendChild(option);
+            });
+        }
+    } catch (error) {
+        console.error('Error loading animation dropdown:', error);
+    }
+}
+
 async function loadAnimation() {
-    const name = prompt('Enter animation name to load:');
-    if (!name) return;
+    const select = $('load-animation-select');
+    const name = select ? select.value : null;
+    
+    if (!name) {
+        alert('Please select an animation to load');
+        return;
+    }
 
     try {
         // Load from localStorage
@@ -267,6 +309,18 @@ async function loadAnimation() {
         const result = animationsData[name];
 
         if (result) {
+            // Check if animation has grid dimensions
+            const animWidth = result.gridWidth;
+            const animHeight = result.gridHeight;
+            
+            if (animWidth && animHeight) {
+                // Validate dimensions match current grid
+                if (animWidth !== gridWidth || animHeight !== gridHeight) {
+                    alert(`Error: Animation "${name}" was created for a ${animWidth}x${animHeight} grid, but current grid is ${gridWidth}x${gridHeight}. Cannot load.`);
+                    return;
+                }
+            }
+
             animation = result;
             $('animation-name').value = animation.name || '';
             $('frame-delay').value = animation.delay || 100;

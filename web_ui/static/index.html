@@ -342,25 +342,31 @@
                     <!-- Animation Settings -->
                     <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
                         <h3 class="text-lg font-semibold text-white mb-4">Animation Settings</h3>
-                        <div class="flex flex-wrap items-center gap-4">
+                        <div class="flex items-center gap-3 flex-nowrap">
                             <div class="flex items-center gap-2">
                                 <label for="animation-name" class="text-sm font-semibold text-slate-300">Name:</label>
                                 <input id="animation-name" type="text" placeholder="my-animation"
-                                    class="h-10 w-48 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                    class="h-10 w-36 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
                             </div>
                             <div class="flex items-center gap-2">
                                 <label for="frame-delay" class="text-sm font-semibold text-slate-300">Delay (ms):</label>
                                 <input id="frame-delay" type="number" min="10" max="5000" value="100"
-                                    class="h-10 w-24 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                    class="h-10 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
                             </div>
                             <button id="save-animation"
-                                class="rounded-xl border border-emerald-400/20 bg-emerald-500/15 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/25">
-                                Save Animation
+                                class="rounded-xl border border-emerald-400/20 bg-emerald-500/15 px-3 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/25">
+                                Save
                             </button>
-                            <button id="load-animation"
-                                class="rounded-xl border border-cyan-400/20 bg-cyan-500/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/25">
-                                Load Animation
-                            </button>
+                            <div class="flex items-center gap-2">
+                                <select id="load-animation-select"
+                                    class="h-10 min-w-[10rem] rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none ring-0 transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                    <option value="">Load animation...</option>
+                                </select>
+                                <button id="load-animation"
+                                    class="rounded-xl border border-cyan-400/20 bg-cyan-500/15 px-3 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/25">
+                                    Load
+                                </button>
+                            </div>
                         </div>
                     </section>
 

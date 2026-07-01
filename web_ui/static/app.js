@@ -345,6 +345,20 @@ async function handleAnimationUpload(event) {
             throw new Error('Invalid animation file format');
         }
 
+        // Check if animation has grid dimensions
+        if (animation.gridWidth && animation.gridHeight) {
+            // Get current matrix dimensions if available
+            const currentWidth = window.matrixDimensions?.width;
+            const currentHeight = window.matrixDimensions?.height;
+            
+            if (currentWidth && currentHeight) {
+                // Validate dimensions match current matrix
+                if (animation.gridWidth !== currentWidth || animation.gridHeight !== currentHeight) {
+                    throw new Error(`Animation was created for a ${animation.gridWidth}x${animation.gridHeight} grid, but current matrix is ${currentWidth}x${currentHeight}. Cannot upload.`);
+                }
+            }
+        }
+
         // Save to localStorage
         const animationsJson = localStorage.getItem('led_animations_data');
         const animationsData = animationsJson ? JSON.parse(animationsJson) : {};
