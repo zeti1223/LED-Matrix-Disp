@@ -13,6 +13,10 @@ let isDrawing = false;
 let previewInterval = null;
 let isPlayingPreview = false;
 
+// Dynamic grid dimensions (default to 8x8)
+let gridWidth = 8;
+let gridHeight = 8;
+
 // Color mapping (Arduino protocol)
 const colorMap = {
     '0': { r: 0, g: 0, b: 0 },
@@ -39,10 +43,20 @@ function initializeLEDGrid() {
     const grid = $('led-grid');
     grid.innerHTML = '';
 
-    for (let y = 0; y < 8; y++) {
-        for (let x = 0; x < 8; x++) {
+    // Update grid CSS to match dimensions
+    grid.style.gridTemplateColumns = `repeat(${gridWidth}, minmax(0, 1fr))`;
+
+    // Calculate cell size based on grid dimensions to fit in container
+    const maxContainerWidth = 600;
+    const cellSize = Math.floor(maxContainerWidth / Math.max(gridWidth, gridHeight));
+    const finalCellSize = Math.max(20, Math.min(32, cellSize)); // Clamp between 20px and 32px
+
+    for (let y = 0; y < gridHeight; y++) {
+        for (let x = 0; x < gridWidth; x++) {
             const cell = document.createElement('div');
-            cell.className = 'led-cell w-8 h-8 rounded cursor-pointer transition hover:scale-110 border border-slate-700';
+            cell.className = 'led-cell rounded cursor-pointer transition hover:scale-110 border border-slate-700';
+            cell.style.width = `${finalCellSize}px`;
+            cell.style.height = `${finalCellSize}px`;
             cell.dataset.x = x;
             cell.dataset.y = y;
             cell.style.backgroundColor = '#000000';
@@ -108,7 +122,7 @@ function paintLED(cell) {
 
     // Update current frame data
     if (animation.frames[currentFrameIndex]) {
-        const ledIndex = y * 8 + x;
+        const ledIndex = y * gridWidth + x;
         animation.frames[currentFrameIndex][ledIndex] = selectedColor;
         renderFrameList();
     }
@@ -120,8 +134,8 @@ function addFrame() {
         return;
     }
 
-    // Create new frame with all LEDs off
-    const newFrame = Array(64).fill('0');
+    // Create new frame with all LEDs off (size based on grid dimensions)
+    const newFrame = Array(gridWidth * gridHeight).fill('0');
     animation.frames.push(newFrame);
     currentFrameIndex = animation.frames.length - 1;
     updateFrameCounter();
@@ -180,9 +194,11 @@ function renderFrameList() {
 
         // Create mini preview
         const miniGrid = document.createElement('div');
-        miniGrid.className = 'grid grid-cols-8 gap-0.5';
+        miniGrid.className = 'grid gap-0.5';
+        miniGrid.style.gridTemplateColumns = `repeat(${gridWidth}, minmax(0, 1fr))`;
 
-        for (let i = 0; i < 64; i++) {
+        const totalLeds = gridWidth * gridHeight;
+        for (let i = 0; i < totalLeds; i++) {
             const pixel = document.createElement('div');
             const colorCode = frame[i] || '0';
             const color = colorMap[colorCode];
@@ -302,10 +318,11 @@ function playPreview() {
         ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         // Draw LEDs
-        const ledSize = canvas.width / 8;
-        for (let i = 0; i < 64; i++) {
-            const x = (i % 8) * ledSize;
-            const y = Math.floor(i / 8) * ledSize;
+        const ledSize = canvas.width / gridWidth;
+        const totalLeds = gridWidth * gridHeight;
+        for (let i = 0; i < totalLeds; i++) {
+            const x = (i % gridWidth) * ledSize;
+            const y = Math.floor(i / gridWidth) * ledSize;
             const colorCode = frame[i] || '0';
             const color = colorMap[colorCode];
 
@@ -332,3 +349,26 @@ function stopPreview() {
 function $(id) {
     return document.getElementById(id);
 }
+
+// Function to update grid dimensions when matrix size changes
+function updateAnimationMakerGrid(width, height) {
+    if (width && height) {
+        gridWidth = width;
+        gridHeight = height;
+        
+        // Clear existing frames and reinitialize with new dimensions
+        animation.frames = [];
+        currentFrameIndex = 0;
+        
+        // Rebuild the grid
+        initializeLEDGrid();
+        
+        // Add first frame with new dimensions
+        addFrame();
+        
+        console.log(`Animation maker grid updated to ${width}x${height}`);
+    }
+}
+
+// Register function globally so app.js can call it
+window.updateAnimationMakerGrid = updateAnimationMakerGrid;

@@ -12,14 +12,22 @@ document.addEventListener('DOMContentLoaded', () => {
             // Parse dimension response (format: "8x8")
             const match = data.trim().match(/^(\d+)x(\d+)$/);
             if (match) {
-                const width = match[1];
-                const height = match[2];
+                const width = parseInt(match[1], 10);
+                const height = parseInt(match[2], 10);
                 const dimensionsEl = $('dimensions');
                 if (dimensionsEl) {
                     dimensionsEl.textContent = `${width} x ${height}`;
                     dimensionsEl.classList.remove('hidden');
                 }
                 appendConsole(`[dimensions] ${width} x ${height}\n`);
+                
+                // Store dimensions globally for animation maker
+                window.matrixDimensions = { width, height };
+                
+                // Notify animation maker to update grid if it's loaded
+                if (window.updateAnimationMakerGrid) {
+                    try { window.updateAnimationMakerGrid(width, height); } catch (e) { }
+                }
             }
         });
     }
