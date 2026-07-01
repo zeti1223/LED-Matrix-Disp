@@ -34,9 +34,6 @@ function sendFrame(frame) {
 
             window.serialManager.send(`o ${x} ${y} ${r} ${g} ${b}`);
         }
-
-        // Trigger display update
-        window.serialManager.send('d');
     }
 }
 
@@ -45,7 +42,6 @@ async function sendBrightness(brightness) {
     if (!window.serialManager || !window.serialManager.isConnected()) return;
     try {
         await window.serialManager.send(`sb ${brightness}`);
-        await window.serialManager.send('d');
         appendConsole(`[sent] sb ${brightness}\n`);
     } catch (error) {
         console.error('Error sending brightness:', error);
@@ -55,9 +51,10 @@ async function sendBrightness(brightness) {
 async function sendFillColor(r, g, b) {
     if (!window.serialManager || !window.serialManager.isConnected()) return;
     try {
-        await window.serialManager.send(`f ${r} ${g} ${b}`);
-        await window.serialManager.send('d');
-        appendConsole(`[sent] f ${r} ${g} ${b}\n`);
+        await window.serialManager.send(`ec ${r} ${g} ${b}`);
+        await window.serialManager.send('f');
+        appendConsole(`[sent] ec ${r} ${g} ${b}\n`);
+        appendConsole(`[sent] f\n`);
     } catch (error) {
         console.error('Error sending fill color:', error);
     }
