@@ -30,6 +30,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (window.updateAnimationMakerGrid) {
                     try { window.updateAnimationMakerGrid(width, height); } catch (e) { }
                 }
+                
+                // Notify manual LED grid to update if it's loaded
+                if (window.updateManualLEDGrid) {
+                    try { window.updateManualLEDGrid(width, height); } catch (e) { }
+                }
             }
         });
     }

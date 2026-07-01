@@ -31,6 +31,9 @@
                             <button id="tab-marketplace"
                                 class="tab-btn rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:bg-slate-700"
                                 data-tab="marketplace">Marketplace</button>
+                            <button id="tab-manual-led"
+                                class="tab-btn rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:bg-slate-700"
+                                data-tab="manual-led">Manual LED</button>
                         </div>
                     </div>
                 </div>
@@ -493,6 +496,80 @@
             </section>
         </div>
 
+        <!-- Manual LED Tab -->
+        <div id="tab-content-manual-led" class="tab-content hidden">
+            <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+                <div class="mb-5">
+                    <h3 class="text-xl font-semibold text-white">Manual LED Control</h3>
+                    <p class="mt-1 text-sm text-slate-400">Manually color each LED individually using the 'o' command (Mode 0)</p>
+                </div>
+
+                <!-- Color Picker -->
+                <div class="mb-4">
+                    <label class="text-sm font-semibold text-slate-300 mb-2 block">Select Color:</label>
+                    
+                    <!-- Preset Colors -->
+                    <div class="flex flex-wrap gap-2 mb-3" id="manual-color-palette">
+                        <button class="manual-color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="0" style="background-color: #000000;" title="Black (Off)"></button>
+                        <button class="manual-color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="1" style="background-color: #ff0000;" title="Red"></button>
+                        <button class="manual-color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="2" style="background-color: #00ff00;" title="Green"></button>
+                        <button class="manual-color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="3" style="background-color: #0000ff;" title="Blue"></button>
+                        <button class="manual-color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="4" style="background-color: #ffff00;" title="Yellow"></button>
+                        <button class="manual-color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="5" style="background-color: #ff00ff;" title="Magenta"></button>
+                        <button class="manual-color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="6" style="background-color: #00ffff;" title="Cyan"></button>
+                        <button class="manual-color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition" data-color="7" style="background-color: #ffffff;" title="White"></button>
+                    </div>
+
+                    <!-- Custom RGB Color -->
+                    <div class="flex flex-wrap items-center gap-3">
+                        <div class="color-mode inline-flex h-14 items-stretch rounded-2xl border border-slate-700 bg-slate-950/60 p-1">
+                            <button type="button" class="manual-color-mode-btn h-full rounded-xl px-4 py-2 text-sm font-semibold transition" data-mode="rgb">RGB</button>
+                            <button type="button" class="manual-color-mode-btn h-full rounded-xl px-4 py-2 text-sm font-semibold transition" data-mode="hex">Hex</button>
+                        </div>
+                        <div class="color-pickers flex h-14 items-center gap-2 rounded-2xl border border-slate-700 bg-slate-950/60 px-3 py-2">
+                            <label for="manual-os-color-picker" class="text-sm font-semibold text-slate-300">Picker</label>
+                            <input id="manual-os-color-picker" type="color" title="Open OS color picker" class="h-10 w-12 cursor-pointer rounded-lg border-0 bg-transparent p-0">
+                        </div>
+                        <div class="manual-rgb-inputs color-inputs flex flex-wrap items-center gap-3">
+                            <input id="manual-r" type="number" min="0" max="255" value="255" class="h-14 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                            <input id="manual-g" type="number" min="0" max="255" value="0" class="h-14 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                            <input id="manual-b" type="number" min="0" max="255" value="0" class="h-14 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                        </div>
+                        <div class="manual-hex-inputs color-inputs hidden">
+                            <input id="manual-hex" type="text" maxlength="7" value="#ff0000" class="h-14 w-40 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm uppercase text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Manual LED Grid -->
+                <div class="flex justify-center mb-4">
+                    <div id="manual-led-grid" class="grid gap-1 bg-slate-950 p-3 rounded-xl">
+                        <!-- LED cells will be generated by JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Controls -->
+                <div class="flex flex-wrap items-center justify-center gap-4">
+                    <button id="clear-manual-grid"
+                        class="rounded-xl border border-rose-400/20 bg-rose-500/15 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/25">
+                        Clear All
+                    </button>
+                    <button id="set-mode-zero"
+                        class="rounded-xl border border-emerald-400/20 bg-emerald-500/15 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/25">
+                        Set Mode 0
+                    </button>
+                </div>
+
+                <!-- Brightness Control -->
+                <div class="mt-4">
+                    <label class="text-sm font-semibold text-slate-300 mb-2 block">Brightness:</label>
+                    <div class="flex items-center gap-4">
+                        <input id="manual-brightness" type="range" min="0" max="255" value="255" class="w-full accent-cyan-400">
+                    </div>
+                </div>
+            </section>
+        </div>
+
         <!-- Upload Modal -->
         <div id="upload-modal" class="fixed inset-0 z-50 hidden">
             <div id="upload-modal-backdrop" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
@@ -523,6 +600,7 @@
     <script src="js/commands.js"></script>
     <script src="app.js"></script>
     <script src="animation-maker.js"></script>
+    <script src="manual-led.js"></script>
     <script type="module" src="js/marketplace.js"></script>
     <script>
         // Tab switching logic
