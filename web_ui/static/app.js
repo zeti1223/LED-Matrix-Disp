@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', () => {
     // Set up serial data listener for dimensions
     if (window.serialManager) {
         window.serialManager.onData((data) => {
+            // Log all incoming serial data to console
+            appendConsole(`[serial] ${data}\n`);
+
             // Parse dimension response (format: "8x8")
             const match = data.trim().match(/^(\d+)x(\d+)$/);
             if (match) {
@@ -19,7 +22,6 @@ document.addEventListener('DOMContentLoaded', () => {
                     dimensionsEl.textContent = `${width} x ${height}`;
                     dimensionsEl.classList.remove('hidden');
                 }
-                appendConsole(`[dimensions] ${width} x ${height}\n`);
                 
                 // Store dimensions globally for animation maker
                 window.matrixDimensions = { width, height };
