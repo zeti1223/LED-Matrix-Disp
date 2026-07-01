@@ -25,17 +25,11 @@ Sets the system speed/delay in milliseconds.
 
 ## Buffer Controls
 
-### `f <r> <g> <b>` — Solid Fill
-
 Fills the entire buffer with a single solid RGB color.
 
 ### `o <x> <y> <r> <g> <b>` — Offset / Pixel Manipulation
 
 Changes the color of specific selected pixels in the buffer at the given coordinates.
-
-### `d` — Display Buffer
-
-Displays the current buffer.
 
 ## `e` — Effect Mode Configuration
 
@@ -49,10 +43,6 @@ Displays the current buffer.
 * `3`: Pulse
 * `4`: Snake (uses custom color)
 * `5`: Rainbow fill
-
-* ### `es <ms>` — Effect Speed
-
-Sets the animation speed for the active effect in milliseconds.
 
 * ### `ec <r> <g> <b>` — Effect Color
 

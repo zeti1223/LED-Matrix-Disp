@@ -6,7 +6,7 @@
 
 #define X 8
 #define Y 8
-#define NUM_LEDS 64
+#define NUM_LEDS (X*Y)
 
 
 
@@ -23,7 +23,7 @@ int rainbowStartingHue = 0;
 char text[64];
 uint8_t animationBuffer[MAX_FRAMES][NUM_LEDS/2];
 int animationFrameCount = 0;
-CRGB effectColor = CRGB(0,0,0);
+CRGB effectColor = CRGB(255,128,64);
 int textColor = 0;
 
 
@@ -486,7 +486,7 @@ void parseSerialInput(){
             }
             break;
         case 'f':
-            fill_solid(leds, NUM_LEDS, CRGB(ia,ib,ic));
+            fill_solid(leds, NUM_LEDS, effectColor);
             break;
         case 'o':{
             if (ia >= 0 && ia < X && ib >= 0 && ib < Y) {
@@ -537,8 +537,13 @@ void parseSerialInput(){
                     break;
             }
             break;
-        case 'd':
-            if(displayMode==0){FastLED.show();}
+        case 'g':
+            switch(cmd[1]){
+                case 'd':
+                    String returnString = String(X) + String("x") + String(Y);
+                    Serial.println(returnString);
+                    break;
+            }
             break;
     }
 }
@@ -602,7 +607,5 @@ void loop() {
         if (textXOffset > maxOffset) textXOffset = -X;
     }
     FastLED.show();
-    static unsigned long last = 0;
-    if (millis() - last < nextFrameDelay) return;
-    last = millis();
+    delay(nextFrameDelay);
 }
