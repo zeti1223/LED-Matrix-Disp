@@ -97,7 +97,7 @@ async function sendEffectColor(r, g, b) {
 async function sendText(text) {
     if (!window.serialManager || !window.serialManager.isConnected()) return;
     try {
-        const payload = String(text || '').trim().replace(/\s+/g, '_');
+        const payload = String(text || '').trim().slice(0, 64).replace(/\s+/g, '_');
         await window.serialManager.send(`ts ${payload}`);
         appendConsole(`[sent] ts ${payload}\n`);
     } catch (error) {
