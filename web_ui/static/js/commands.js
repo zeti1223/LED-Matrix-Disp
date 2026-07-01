@@ -162,6 +162,16 @@ async function sendEffectSpeed(delay) {
     }
 }
 
+async function getDimensions() {
+    if (!window.serialManager || !window.serialManager.isConnected()) return;
+    try {
+        await window.serialManager.send('gd');
+        appendConsole(`[sent] gd\n`);
+    } catch (error) {
+        console.error('Error getting dimensions:', error);
+    }
+}
+
 window.sendBrightness = sendBrightness;
 window.sendFillColor = sendFillColor;
 window.sendDisplayMode = sendDisplayMode;
@@ -174,3 +184,4 @@ window.toggleAnimation = toggleAnimation;
 window.sendPattern = sendPattern;
 window.sendEffectColor = sendEffectColor;
 window.sendEffectSpeed = sendEffectSpeed;
+window.getDimensions = getDimensions;

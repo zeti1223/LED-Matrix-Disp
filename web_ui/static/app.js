@@ -6,6 +6,24 @@ document.addEventListener('DOMContentLoaded', () => {
     setTextColorMode(0);
     syncModeDependentControls();
 
+    // Set up serial data listener for dimensions
+    if (window.serialManager) {
+        window.serialManager.onData((data) => {
+            // Parse dimension response (format: "8x8")
+            const match = data.trim().match(/^(\d+)x(\d+)$/);
+            if (match) {
+                const width = match[1];
+                const height = match[2];
+                const dimensionsEl = $('dimensions');
+                if (dimensionsEl) {
+                    dimensionsEl.textContent = `${width} x ${height}`;
+                    dimensionsEl.classList.remove('hidden');
+                }
+                appendConsole(`[dimensions] ${width} x ${height}\n`);
+            }
+        });
+    }
+
     $('refresh-animations').addEventListener('click', loadAnimations);
     $('upload-animation').addEventListener('click', () => {
         $('upload-animation-input').click();
@@ -18,6 +36,11 @@ document.addEventListener('DOMContentLoaded', () => {
             await serialManager.connect();
             const status = $('status');
             if (status) status.textContent = 'Connected';
+
+            // Request dimensions after connection
+            if (window.getDimensions) {
+                try { window.getDimensions(); } catch (e) { }
+            }
         } catch (error) {
             appendConsole(`[connect] Error: ${error.message}\n`);
             const status = $('status');
