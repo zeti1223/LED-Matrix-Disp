@@ -563,7 +563,7 @@ void loadFontChar(byte dest[7], int fontIndex) {
 
 void renderTextFrame(){
     int textLength = strlen(text);
-    int topPadding = 2;
+    int topPadding = 1;
     fill_solid(leds,NUM_LEDS,CRGB(0,0,0));
     for (int x = 0; x < X; x++){
         int textColumn = x + textXOffset; 

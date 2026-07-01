@@ -50,7 +50,80 @@
             <section class="space-y-2">
                 <section
                     class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
-                    data-card-id="pattern">
+                    data-card-id="mode">
+                    <div class="panel-header flex items-center gap-3">
+                        <h3 class="text-lg font-semibold text-white">Mode</h3>
+                        <button type="button"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            aria-expanded="true">▾ Collapse</button>
+                    </div>
+                    <div
+                        class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none">
+                        <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
+                            <button type="button"
+                                class="mode-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-mode="0">
+                                <span class="block text-base text-white">Single frame mode</span>
+                                <span class="mt-1 block text-xs uppercase tracking-[0.2em] text-slate-400">Mode 0</span>
+                            </button>
+                            <button type="button"
+                                class="mode-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-mode="1">
+                                <span class="block text-base text-white">Effect mode</span>
+                                <span class="mt-1 block text-xs uppercase tracking-[0.2em] text-slate-400">Mode 1</span>
+                            </button>
+                            <button type="button"
+                                class="mode-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-mode="2">
+                                <span class="block text-base text-white">Animation mode</span>
+                                <span class="mt-1 block text-xs uppercase tracking-[0.2em] text-slate-400">Mode 2</span>
+                            </button>
+                            <button type="button"
+                                class="mode-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-mode="3">
+                                <span class="block text-base text-white">Text mode</span>
+                                <span class="mt-1 block text-xs uppercase tracking-[0.2em] text-slate-400">Mode 3</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section
+                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    data-card-id="brightness">
+                    <div class="panel-header flex items-center gap-3">
+                        <h3 class="text-lg font-semibold text-white">Brightness</h3>
+                        <button type="button"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            aria-expanded="true">▾ Collapse</button>
+                    </div>
+                    <div
+                        class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex items-center gap-4">
+                        <input id="brightness" type="range" min="0" max="255" value="255"
+                            class="w-full accent-cyan-400">
+                    </div>
+                </section>
+
+                <section
+                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    data-card-id="speed">
+                    <div class="panel-header flex items-center gap-3">
+                        <h3 class="text-lg font-semibold text-white">Speed</h3>
+                        <button type="button"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            aria-expanded="true">▾ Collapse</button>
+                    </div>
+                    <div
+                        class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex items-center gap-4">
+                        <input id="speed" type="range" min="1" max="1000" value="100"
+                            class="w-full accent-cyan-400">
+                        <span id="speed-value" class="text-sm font-semibold text-slate-300 min-w-[6rem] text-right">100 ms</span>
+                    </div>
+                </section>
+
+                <section
+                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    data-card-id="effect">
                     <div class="panel-header flex items-center gap-3">
                         <h3 class="text-lg font-semibold text-white">Pattern</h3>
                         <button type="button"
@@ -59,32 +132,74 @@
                     </div>
                     <div
                         class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none">
-                        <div class="pattern-group grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3" role="group"
-                            aria-label="Pattern selection">
+                        <div class="pattern-group grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-1" role="group"
+                            aria-label="Effect selection">
                             <button type="button"
-                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
-                                data-pattern="6">Static Color</button>
+                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-pattern="0">
+                                <span class="block text-base text-white">Rainbow</span>
+                                <span class="mt-1 block text-xs text-slate-400">Starts from the corner</span>
+                            </button>
                             <button type="button"
-                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
-                                data-pattern="0">Rainbow</button>
+                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-pattern="1">
+                                <span class="block text-base text-white">Checker</span>
+                                <span class="mt-1 block text-xs text-slate-400">Line-by-line, alternating custom color and rainbow</span>
+                            </button>
                             <button type="button"
-                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
-                                data-pattern="1">Rainbow Checker</button>
+                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-pattern="2">
+                                <span class="block text-base text-white">Scammer</span>
+                                <span class="mt-1 block text-xs text-slate-400">Vertical scan effect</span>
+                            </button>
                             <button type="button"
-                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
-                                data-pattern="2">Scanner</button>
+                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-pattern="3">
+                                <span class="block text-base text-white">Pulse</span>
+                                <span class="mt-1 block text-xs text-slate-400">Smooth brightness pulse</span>
+                            </button>
                             <button type="button"
-                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
-                                data-pattern="3">Pulse</button>
+                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-pattern="4">
+                                <span class="block text-base text-white">Snake</span>
+                                <span class="mt-1 block text-xs text-slate-400">Uses custom color</span>
+                            </button>
                             <button type="button"
-                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
-                                data-pattern="4">Snake</button>
-                            <button type="button"
-                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
-                                data-pattern="5">Rainbow Fill</button>
-                            <button type="button"
-                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
-                                data-pattern="7">Custom Animation</button>
+                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                data-pattern="5">
+                                <span class="block text-base text-white">Rainbow fill</span>
+                                <span class="mt-1 block text-xs text-slate-400">Solid rainbow fill</span>
+                            </button>
+                        </div>
+                    </div>
+                </section>
+
+                <section
+                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    data-card-id="text">
+                    <div class="panel-header flex items-center gap-3">
+                        <h3 class="text-lg font-semibold text-white">Text</h3>
+                        <button type="button"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            aria-expanded="true">▾ Collapse</button>
+                    </div>
+                    <div
+                        class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none space-y-4">
+                        <div class="flex flex-wrap items-center gap-3">
+                            <input id="text-value" type="text" value="HELLO" placeholder="Type text here"
+                                class="min-w-[16rem] flex-1 rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                        </div>
+                        <div class="flex flex-wrap items-center gap-3">
+                            <span class="text-sm font-semibold text-slate-300">Text color mode</span>
+                            <div
+                                class="inline-flex rounded-2xl border border-slate-700 bg-slate-950/60 p-1">
+                                <button type="button"
+                                    class="text-color-mode-btn rounded-xl px-4 py-2 text-sm font-semibold transition"
+                                    data-mode="0">Color</button>
+                                <button type="button"
+                                    class="text-color-mode-btn rounded-xl px-4 py-2 text-sm font-semibold transition"
+                                    data-mode="1">Rainbow text</button>
+                            </div>
                         </div>
                     </div>
                 </section>
@@ -93,13 +208,17 @@
                     class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
                     data-card-id="color">
                     <div class="panel-header flex items-center gap-3">
-                        <h3 class="text-lg font-semibold text-white">Color</h3>
+                        <div>
+                            <h3 id="color-card-title" class="text-lg font-semibold text-white">Color</h3>
+                            <p id="color-card-subtitle" class="text-sm text-slate-400">Solid fill color for single frame mode</p>
+                        </div>
                         <button type="button"
                             class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
                             aria-expanded="true">▾ Collapse</button>
                     </div>
                     <div
                         class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex flex-wrap items-center gap-4">
+                        <p id="color-card-description" class="w-full text-sm text-slate-400">Use the same picker for the active display mode.</p>
                         <div
                             class="color-mode inline-flex h-14 items-stretch rounded-2xl border border-slate-700 bg-slate-950/60 p-1">
                             <button type="button"
@@ -132,43 +251,9 @@
 
                 <section
                     class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
-                    data-card-id="brightness">
-                    <div class="panel-header flex items-center gap-3">
-                        <h3 class="text-lg font-semibold text-white">Brightness</h3>
-                        <button type="button"
-                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
-                            aria-expanded="true">▾ Collapse</button>
-                    </div>
-                    <div
-                        class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex items-center gap-4">
-                        <input id="brightness" type="range" min="0" max="255" value="255"
-                            class="w-full accent-cyan-400">
-                    </div>
-                </section>
-
-                <section
-                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
-                    data-card-id="effect-speed">
-                    <div class="panel-header flex items-center gap-3">
-                        <h3 class="text-lg font-semibold text-white">Effect Speed</h3>
-                        <button type="button"
-                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
-                            aria-expanded="true">▾ Collapse</button>
-                    </div>
-                    <div
-                        class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex items-center gap-4">
-                        <input id="effect-speed" type="range" min="1" max="1000" value="100"
-                            class="w-full accent-cyan-400">
-                        <span id="effect-speed-value"
-                            class="text-sm font-semibold text-slate-300 min-w-[6rem] text-right">100 ms</span>
-                    </div>
-                </section>
-
-                <section
-                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
                     data-card-id="animation">
                     <div class="panel-header flex items-center gap-3">
-                        <h3 class="text-lg font-semibold text-white">Animation</h3>
+                        <h3 class="text-lg font-semibold text-white">Custom Animation</h3>
                         <button type="button"
                             class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
                             aria-label="Collapse animation" aria-expanded="true">▾ Collapse</button>

@@ -1,8 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
     loadAnimations();
 
-    setSelectedPattern(6);
-    syncPatternDependentControls();
+    setSelectedMode(0);
+    setSelectedPattern(0);
+    setTextColorMode(0);
+    syncModeDependentControls();
 
     $('refresh-animations').addEventListener('click', loadAnimations);
     $('upload-animation').addEventListener('click', () => {
@@ -33,65 +35,116 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
+    function getCurrentRgb() {
+        return {
+            r: clamp(parseInt($('r').value || 0, 10), 0, 255),
+            g: clamp(parseInt($('g').value || 0, 10), 0, 255),
+            b: clamp(parseInt($('b').value || 0, 10), 0, 255),
+        };
+    }
+
     function sendColorUpdate(r, g, b) {
-        const pattern = getSelectedPattern();
-        if (pattern === 6) {
+        const mode = getSelectedMode();
+        if (mode === 0) {
             if (window.sendFillColor) {
                 try { window.sendFillColor(r, g, b); } catch (e) { }
             }
-        } else {
+            return;
+        }
+
+        if (mode === 1 || mode === 3) {
             if (window.sendEffectColor) {
                 try { window.sendEffectColor(r, g, b); } catch (e) { }
             }
         }
     }
 
+    function syncPreviewToMode(mode) {
+        if (!window.previewState) return;
+
+        window.previewState.displayMode = mode;
+
+        if (mode === 2) {
+            const select = $('animation-select');
+            const animationName = select ? select.value : null;
+            if (animationName) {
+                const animationsJson = localStorage.getItem('led_animations_data');
+                const animationsData = animationsJson ? JSON.parse(animationsJson) : {};
+                const animation = animationsData[animationName];
+                if (animation && window.setPreviewAnimation) {
+                    try { window.setPreviewAnimation(animation); } catch (e) { }
+                }
+            }
+        }
+    }
+
+    function applyMode(mode) {
+        setSelectedMode(mode);
+        syncModeDependentControls();
+        syncPreviewToMode(mode);
+        updatePreviewState();
+
+        if (window.sendDisplayMode) {
+            try { window.sendDisplayMode(mode); } catch (e) { }
+        }
+
+        const { r, g, b } = getCurrentRgb();
+
+        if (mode === 0) {
+            if (window.sendFillColor) {
+                try { window.sendFillColor(r, g, b); } catch (e) { }
+            }
+        } else if (mode === 1) {
+            if (window.sendPattern) {
+                try { window.sendPattern(getSelectedPattern()); } catch (e) { }
+            }
+            if (window.sendEffectColor) {
+                try { window.sendEffectColor(r, g, b); } catch (e) { }
+            }
+        } else if (mode === 3) {
+            const textInput = $('text-value');
+            const text = textInput ? textInput.value : '';
+            if (window.sendText) {
+                try { window.sendText(text); } catch (e) { }
+            }
+            if (window.sendTextColorMode) {
+                try { window.sendTextColorMode(getSelectedTextColorMode()); } catch (e) { }
+            }
+            if (window.sendEffectColor) {
+                try { window.sendEffectColor(r, g, b); } catch (e) { }
+            }
+        }
+    }
+
+    document.querySelectorAll('.mode-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            applyMode(parseInt(button.dataset.mode || '0', 10));
+        });
+    });
+
     document.querySelectorAll('.pattern-btn').forEach(button => {
         button.addEventListener('click', () => {
             const pattern = parseInt(button.dataset.pattern || '0', 10);
             setSelectedPattern(pattern);
-            syncPatternDependentControls();
+            updateColorCardContext();
 
-            // Sync preview state displayMode
-            if (window.previewState) {
-                if (pattern === 7) {
-                    window.previewState.displayMode = 2;
-                    // If an animation is selected, load it in the preview
-                    const select = $('animation-select');
-                    const animationName = select ? select.value : null;
-                    if (animationName) {
-                        const animationsJson = localStorage.getItem('led_animations_data');
-                        const animationsData = animationsJson ? JSON.parse(animationsJson) : {};
-                        const animation = animationsData[animationName];
-                        if (animation && window.setPreviewAnimation) {
-                            try { window.setPreviewAnimation(animation); } catch (e) { }
-                        }
-                    }
-                } else {
-                    window.previewState.displayMode = 1;
-                }
-            }
-            updatePreviewState();
-
-            if (pattern === 7) {
-                if (window.sendDisplayMode) {
-                    try { window.sendDisplayMode(2); } catch (e) { }
-                }
-            } else {
-                if (window.sendDisplayMode) {
-                    try { window.sendDisplayMode(1); } catch (e) { }
-                }
+            if (getSelectedMode() === 1) {
                 if (window.sendPattern) {
                     try { window.sendPattern(pattern); } catch (e) { }
                 }
-                if (pattern === 6) {
-                    const r = clamp(parseInt($('r').value || 0, 10), 0, 255);
-                    const g = clamp(parseInt($('g').value || 0, 10), 0, 255);
-                    const b = clamp(parseInt($('b').value || 0, 10), 0, 255);
-                    if (window.sendFillColor) {
-                        try { window.sendFillColor(r, g, b); } catch (e) { }
-                    }
-                }
+            }
+        });
+    });
+
+    document.querySelectorAll('.text-color-mode-btn').forEach(button => {
+        button.addEventListener('click', () => {
+            const mode = parseInt(button.dataset.mode || '0', 10);
+            setTextColorMode(mode);
+            updateColorCardContext();
+            updatePreviewState();
+
+            if (window.sendTextColorMode) {
+                try { window.sendTextColorMode(mode); } catch (e) { }
             }
         });
     });
@@ -129,6 +182,24 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
+    const textInput = $('text-value');
+    if (textInput) {
+        const sendTextUpdate = debounce(() => {
+            if (window.sendText) {
+                try { window.sendText(textInput.value || ''); } catch (e) { }
+            }
+        }, 200);
+
+        textInput.addEventListener('input', () => {
+            updatePreviewState();
+            sendTextUpdate();
+        });
+
+        textInput.addEventListener('change', () => {
+            sendTextUpdate();
+        });
+    }
+
     ['r', 'g', 'b'].forEach(id => {
         const el = $(id);
         if (!el) return;
@@ -150,10 +221,11 @@ document.addEventListener('DOMContentLoaded', () => {
     setColorInputsFromRGB(initialR, initialG, initialB);
     setColorMode('rgb');
 
-    // Send initial fill color to Arduino
-    if (window.sendFillColor) {
-        try { window.sendFillColor(initialR, initialG, initialB); } catch (e) { }
+    if ($('text-value') && !$('text-value').value) {
+        $('text-value').value = 'HELLO';
     }
+
+    applyMode(0);
 
     document.querySelectorAll('.card-toggle').forEach(button => {
         button.addEventListener('click', () => {
@@ -182,11 +254,11 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const effectSpeedEl = $('effect-speed');
+    const effectSpeedEl = $('speed');
     if (effectSpeedEl) {
         const updateSpeedValue = () => {
             const delay = parseInt(effectSpeedEl.value || 100, 10);
-            const valueDisplay = $('effect-speed-value');
+            const valueDisplay = $('speed-value');
             if (valueDisplay) {
                 valueDisplay.textContent = `${delay} ms`;
             }
@@ -297,6 +369,10 @@ async function sendSelectedAnimation() {
         if (window.sendDisplayMode) {
             try { window.sendDisplayMode(2); } catch (e) { }
         }
+
+        setSelectedMode(2);
+        syncModeDependentControls();
+        updatePreviewState();
 
         // Send frame count
         if (window.sendAnimationFrameCount) {

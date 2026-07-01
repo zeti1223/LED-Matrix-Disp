@@ -25,6 +25,27 @@ function applyPorts(list) {
     appendConsole('[ports] refreshed\n');
 }
 
+function getSelectedMode() {
+    const activeButton = document.querySelector('.mode-btn.active');
+    return activeButton ? parseInt(activeButton.dataset.mode || '0', 10) : 0;
+}
+
+function setSelectedMode(mode) {
+    document.querySelectorAll('.mode-btn').forEach(button => {
+        const isActive = parseInt(button.dataset.mode || '0', 10) === mode;
+        button.classList.toggle('active', isActive);
+        swapClasses(
+            button,
+            isActive
+                ? ['border-cyan-400/50', 'bg-cyan-400/15', 'text-cyan-100', 'shadow-lg', 'shadow-cyan-500/10']
+                : ['border-slate-700', 'bg-slate-800/70', 'text-slate-200'],
+            isActive
+                ? ['border-slate-700', 'bg-slate-800/70', 'text-slate-200']
+                : ['border-cyan-400/50', 'bg-cyan-400/15', 'text-cyan-100', 'shadow-lg', 'shadow-cyan-500/10']
+        );
+    });
+}
+
 function getSelectedPattern() {
     const activeButton = document.querySelector('.pattern-btn.active');
     return activeButton ? parseInt(activeButton.dataset.pattern || '0', 10) : 0;
@@ -44,6 +65,79 @@ function setSelectedPattern(pattern) {
                 : ['border-cyan-400/50', 'bg-cyan-400/15', 'text-cyan-100', 'shadow-lg', 'shadow-cyan-500/10']
         );
     });
+}
+
+function getSelectedTextColorMode() {
+    const activeButton = document.querySelector('.text-color-mode-btn.active');
+    return activeButton ? parseInt(activeButton.dataset.mode || '0', 10) : 0;
+}
+
+function setTextColorMode(mode) {
+    document.querySelectorAll('.text-color-mode-btn').forEach(button => {
+        const isActive = parseInt(button.dataset.mode || '0', 10) === mode;
+        button.classList.toggle('active', isActive);
+        swapClasses(
+            button,
+            isActive
+                ? ['bg-cyan-400', 'text-slate-950', 'shadow-md', 'shadow-cyan-500/20']
+                : ['text-slate-300', 'hover:bg-slate-800'],
+            isActive
+                ? ['text-slate-300', 'hover:bg-slate-800']
+                : ['bg-cyan-400', 'text-slate-950', 'shadow-md', 'shadow-cyan-500/20']
+        );
+    });
+}
+
+function setCardVisible(cardId, visible) {
+    const card = document.querySelector(`[data-card-id="${cardId}"]`);
+    if (card) card.classList.toggle('hidden', !visible);
+}
+
+function updateColorCardContext() {
+    const mode = getSelectedMode();
+    const title = $('color-card-title');
+    const subtitle = $('color-card-subtitle');
+    const description = $('color-card-description');
+    const textColorMode = getSelectedTextColorMode();
+
+    if (title) title.textContent = 'Color';
+    if (subtitle) {
+        if (mode === 0) {
+            subtitle.textContent = 'Solid fill color for single frame mode';
+        } else if (mode === 1) {
+            subtitle.textContent = 'Effect color for effect mode';
+        } else if (mode === 3) {
+            subtitle.textContent = textColorMode === 0
+                ? 'Color used by text mode when Text color mode is Color'
+                : 'Available when text mode uses a solid color';
+        } else {
+            subtitle.textContent = 'Color controls are hidden in animation mode';
+        }
+    }
+    if (description) {
+        description.textContent = mode === 3 && textColorMode === 1
+            ? 'Text is rendered in rainbow mode, so the selected color is kept for when you switch back to Color.'
+            : 'Use the same picker for the active display mode.';
+    }
+}
+
+function syncModeDependentControls() {
+    const mode = getSelectedMode();
+    setCardVisible('effect', mode === 1);
+    setCardVisible('text', mode === 3);
+    setCardVisible('color', mode === 0 || mode === 1 || mode === 3);
+    setCardVisible('animation', mode === 2);
+
+    const colorCard = document.querySelector('[data-card-id="color"]');
+    if (colorCard) {
+        colorCard.setAttribute('aria-disabled', mode === 2 ? 'true' : 'false');
+    }
+
+    updateColorCardContext();
+}
+
+function syncPatternDependentControls() {
+    syncModeDependentControls();
 }
 
 
@@ -84,7 +178,7 @@ function setAnimationControlsDisabled(disabled) {
 }
 
 function setEffectSpeedControlsDisabled(disabled) {
-    const speedCard = document.querySelector('[data-card-id="effect-speed"]');
+    const speedCard = document.querySelector('[data-card-id="speed"]');
     if (speedCard) {
         speedCard.classList.toggle('opacity-50', disabled);
         speedCard.setAttribute('aria-disabled', disabled ? 'true' : 'false');
@@ -95,15 +189,8 @@ function setEffectSpeedControlsDisabled(disabled) {
         speedBody.classList.toggle('pointer-events-none', disabled);
     }
 
-    const input = $('effect-speed');
+    const input = $('speed');
     if (input) input.disabled = disabled;
-}
-
-function syncPatternDependentControls() {
-    const pattern = getSelectedPattern();
-    setColorControlsDisabled([0, 5, 7].includes(pattern));
-    setAnimationControlsDisabled(pattern !== 7);
-    setEffectSpeedControlsDisabled([6, 7].includes(pattern));
 }
 
 function setColorMode(mode) {

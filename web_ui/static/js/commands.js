@@ -94,6 +94,27 @@ async function sendEffectColor(r, g, b) {
     }
 }
 
+async function sendText(text) {
+    if (!window.serialManager || !window.serialManager.isConnected()) return;
+    try {
+        const payload = String(text || '').trim().replace(/\s+/g, '_');
+        await window.serialManager.send(`ts ${payload}`);
+        appendConsole(`[sent] ts ${payload}\n`);
+    } catch (error) {
+        console.error('Error sending text:', error);
+    }
+}
+
+async function sendTextColorMode(mode) {
+    if (!window.serialManager || !window.serialManager.isConnected()) return;
+    try {
+        await window.serialManager.send(`tc ${mode}`);
+        appendConsole(`[sent] tc ${mode}\n`);
+    } catch (error) {
+        console.error('Error sending text color mode:', error);
+    }
+}
+
 // Animation commands
 async function sendAnimationFrameCount(count) {
     if (!window.serialManager || !window.serialManager.isConnected()) return;
@@ -118,8 +139,8 @@ async function sendAnimationFrame(frameIndex, data) {
 async function sendAnimationDelay(delay) {
     if (!window.serialManager || !window.serialManager.isConnected()) return;
     try {
-        await window.serialManager.send(`aw ${delay}`);
-        appendConsole(`[sent] aw ${delay}\n`);
+        await window.serialManager.send(`ss ${delay}`);
+        appendConsole(`[sent] ss ${delay}\n`);
     } catch (error) {
         console.error('Error sending animation delay:', error);
     }
@@ -137,8 +158,8 @@ async function toggleAnimation() {
 async function sendEffectSpeed(delay) {
     if (!window.serialManager || !window.serialManager.isConnected()) return;
     try {
-        await window.serialManager.send(`es ${delay}`);
-        appendConsole(`[sent] es ${delay}\n`);
+        await window.serialManager.send(`ss ${delay}`);
+        appendConsole(`[sent] ss ${delay}\n`);
     } catch (error) {
         console.error('Error sending effect speed:', error);
     }
@@ -147,6 +168,8 @@ async function sendEffectSpeed(delay) {
 window.sendBrightness = sendBrightness;
 window.sendFillColor = sendFillColor;
 window.sendDisplayMode = sendDisplayMode;
+window.sendText = sendText;
+window.sendTextColorMode = sendTextColorMode;
 window.sendAnimationFrameCount = sendAnimationFrameCount;
 window.sendAnimationFrame = sendAnimationFrame;
 window.sendAnimationDelay = sendAnimationDelay;

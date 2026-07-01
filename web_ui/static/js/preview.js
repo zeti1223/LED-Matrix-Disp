@@ -4,7 +4,7 @@ const PREVIEW_H = 8;
 let canvas = null;
 let ctx = null;
 let previewAnim = null;
-window.previewState = { r: 255, g: 255, b: 255, brightness: 128, step: 0, displayMode: 0 };
+window.previewState = { r: 255, g: 255, b: 255, brightness: 128, step: 0, displayMode: 0, mode: 0, effectMode: 0, text: 'HELLO', textColorMode: 0 };
 const previewState = window.previewState;
 let currentAnimation = null;
 let animationFrameIndex = 0;
@@ -12,12 +12,15 @@ let lastAnimationFrameTime = 0;
 
 function getSelectedState() {
     return {
-        // Pattern-related (commented out until Arduino implements patterns)
-        // pattern: getSelectedPattern(),
+        mode: getSelectedMode(),
+        effectMode: getSelectedPattern(),
+        text: $('text-value') ? $('text-value').value : '',
+        textColorMode: getSelectedTextColorMode(),
         r: parseInt($('r').value || 0, 10),
         g: parseInt($('g').value || 0, 10),
         b: parseInt($('b').value || 0, 10),
         brightness: parseInt($('brightness').value || 128, 10),
+        speed: parseInt(($('speed') ? $('speed').value : 100) || 100, 10),
     };
 }
 
@@ -30,8 +33,7 @@ function startPreview() {
     frameSendEnabled = false;
 
     const state = getSelectedState();
-    // Pattern-related (commented out until Arduino implements patterns)
-    // previewState.pattern = state.pattern;
+    previewState.displayMode = state.mode;
     previewState.r = state.r;
     previewState.g = state.g;
     previewState.b = state.b;
@@ -141,8 +143,7 @@ function buildFramePixels(state) {
 
 function updatePreviewState() {
     const state = getSelectedState();
-    // Pattern-related (commented out until Arduino implements patterns)
-    // previewState.pattern = state.pattern;
+    previewState.displayMode = state.mode;
     previewState.r = state.r;
     previewState.g = state.g;
     previewState.b = state.b;
@@ -172,6 +173,23 @@ window.applyServerState = function (s) {
         }
         if (typeof s.brightness !== 'undefined') {
             const b = $('brightness'); if (b) b.value = parseInt(s.brightness || 0, 10);
+        }
+        if (typeof s.mode !== 'undefined') {
+            setSelectedMode(parseInt(s.mode || 0, 10));
+            syncModeDependentControls();
+        }
+        if (typeof s.effectMode !== 'undefined') {
+            setSelectedPattern(parseInt(s.effectMode || 0, 10));
+        }
+        if (typeof s.textColorMode !== 'undefined') {
+            setTextColorMode(parseInt(s.textColorMode || 0, 10));
+        }
+        if (typeof s.text !== 'undefined') {
+            const textInput = $('text-value');
+            if (textInput) textInput.value = s.text;
+        }
+        if (typeof s.speed !== 'undefined') {
+            const speed = $('speed'); if (speed) speed.value = parseInt(s.speed || 0, 10);
         }
         // update rendered preview
         updatePreviewState();
