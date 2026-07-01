@@ -483,22 +483,57 @@
 
         <!-- Marketplace Tab -->
         <div id="tab-content-marketplace" class="tab-content hidden">
-            <div class="grid gap-4 md:grid-cols-2">
-                <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
-                    <div class="flex items-center justify-between mb-4">
-                        <h3 class="text-lg font-semibold text-white">Community Animations</h3>
-                        <button id="refresh-market" class="rounded-xl border border-cyan-400/20 bg-cyan-500/15 px-3 py-1 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/25">Refresh</button>
+            <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+                <div class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                    <div>
+                        <h3 class="text-xl font-semibold text-white">Community Animations</h3>
+                        <p class="mt-1 text-sm text-slate-400">Browse, preview and download animations shared by the community</p>
                     </div>
-                    <div id="market-list" class="space-y-3 max-h-[600px] overflow-auto">
-                        <p class="text-sm text-slate-400">Loading marketplace data...</p>
+                    <div class="flex flex-wrap items-center gap-2">
+                        <label class="flex items-center gap-2 text-sm text-slate-300">
+                            <span class="whitespace-nowrap">Size:</span>
+                            <select id="market-size-filter"
+                                class="rounded-xl border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/40">
+                                <option value="all">All sizes</option>
+                            </select>
+                        </label>
+                        <button id="upload-animation-btn"
+                            class="rounded-xl border border-fuchsia-400/20 bg-fuchsia-500/15 px-4 py-2 text-sm font-semibold text-fuchsia-100 transition hover:bg-fuchsia-500/25">
+                            Upload
+                        </button>
+                        <button id="refresh-market"
+                            class="rounded-xl border border-cyan-400/20 bg-cyan-500/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/25">
+                            Refresh
+                        </button>
                     </div>
-                </section>
+                </div>
+                <div id="market-list"
+                    class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+                    <p class="col-span-full text-sm text-slate-400">Loading marketplace data...</p>
+                </div>
+            </section>
+        </div>
 
-                <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
-                    <h3 class="text-lg font-semibold text-white mb-4">Share Your Animations</h3>
-                    <div id="local-list" class="space-y-3 max-h-[600px] overflow-auto">
+        <!-- Upload Modal -->
+        <div id="upload-modal" class="fixed inset-0 z-50 hidden">
+            <div id="upload-modal-backdrop" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+            <div class="relative flex min-h-full items-center justify-center p-4">
+                <div class="w-full max-w-4xl rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-2xl">
+                    <div class="mb-5 flex items-center justify-between">
+                        <div>
+                            <h3 class="text-lg font-semibold text-white">Upload Your Animation</h3>
+                            <p class="mt-1 text-sm text-slate-400">Choose an animation from your local library to share</p>
+                        </div>
+                        <button id="upload-modal-close"
+                            class="rounded-lg border border-slate-700 bg-slate-800/50 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-700">
+                            Close
+                        </button>
                     </div>
-                </section>
+                    <div id="upload-modal-list"
+                        class="grid max-h-[60vh] grid-cols-2 gap-4 overflow-y-auto sm:grid-cols-3 md:grid-cols-4">
+                        <p class="col-span-full text-sm text-slate-400">No local animations found.</p>
+                    </div>
+                </div>
             </div>
         </div>
     </main>
