@@ -51,8 +51,7 @@
 
         <!-- Control Tab -->
         <div id="tab-content-control" class="tab-content">
-            <div class="grid gap-2 xl:grid-cols-[minmax(0,1fr)_22rem]">
-                <section class="space-y-2">
+            <div class="space-y-2">
                 <section
                     class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
                     data-card-id="mode">
@@ -312,26 +311,6 @@
                     </div>
                 </section>
             </section>
-
-            <aside class="xl:sticky xl:top-6 xl:self-start">
-                <section
-                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
-                    data-card-id="preview">
-                    <div class="panel-header flex items-center gap-3">
-                        <h3 class="text-lg font-semibold text-white">Preview</h3>
-                        <div class="panel-actions ml-auto flex items-center gap-2">
-                            <button id="toggle-preview"
-                                class="toggle-btn card-toggle inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
-                                aria-label="Collapse preview" aria-expanded="true">▾ Collapse</button>
-                        </div>
-                    </div>
-                    <div
-                        class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none">
-                        <canvas id="preview" width="240" height="240"
-                            class="aspect-square w-full rounded-2xl border border-slate-800 bg-slate-950 shadow-inner"></canvas>
-                    </div>
-                </section>
-            </aside>
         </div>
         </div>
 
@@ -542,7 +521,6 @@
     <script src="js/controls.js"></script>
     <script src="js/serial.js"></script>
     <script src="js/commands.js"></script>
-    <script src="js/preview.js"></script>
     <script src="app.js"></script>
     <script src="animation-maker.js"></script>
     <script type="module" src="js/marketplace.js"></script>

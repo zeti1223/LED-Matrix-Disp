@@ -92,30 +92,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function syncPreviewToMode(mode) {
-        if (!window.previewState) return;
-
-        window.previewState.displayMode = mode;
-
-        if (mode === 2) {
-            const select = $('animation-select');
-            const animationName = select ? select.value : null;
-            if (animationName) {
-                const animationsJson = localStorage.getItem('led_animations_data');
-                const animationsData = animationsJson ? JSON.parse(animationsJson) : {};
-                const animation = animationsData[animationName];
-                if (animation && window.setPreviewAnimation) {
-                    try { window.setPreviewAnimation(animation); } catch (e) { }
-                }
-            }
-        }
-    }
 
     function applyMode(mode) {
         setSelectedMode(mode);
         syncModeDependentControls();
-        syncPreviewToMode(mode);
-        updatePreviewState();
 
         if (window.sendDisplayMode) {
             try { window.sendDisplayMode(mode); } catch (e) { }
@@ -174,7 +154,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const mode = parseInt(button.dataset.mode || '0', 10);
             setTextColorMode(mode);
             updateColorCardContext();
-            updatePreviewState();
 
             if (window.sendTextColorMode) {
                 try { window.sendTextColorMode(mode); } catch (e) { }
@@ -192,7 +171,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (osPicker) {
         osPicker.addEventListener('input', (e) => {
             setColorFromHex(e.target.value);
-            updatePreviewState();
             const rgb = hexToRgb(e.target.value);
             if (rgb) {
                 sendColorUpdate(rgb.r, rgb.g, rgb.b);
@@ -207,7 +185,6 @@ document.addEventListener('DOMContentLoaded', () => {
             if (!value.startsWith('#')) value = '#' + value;
             e.target.value = value.toLowerCase();
             setColorFromHex(value);
-            updatePreviewState();
             const rgb = hexToRgb(value);
             if (rgb) {
                 sendColorUpdate(rgb.r, rgb.g, rgb.b);
@@ -224,7 +201,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }, 200);
 
         textInput.addEventListener('input', () => {
-            updatePreviewState();
             sendTextUpdate();
         });
 
@@ -243,7 +219,6 @@ document.addEventListener('DOMContentLoaded', () => {
             const b = clamp(parseInt($('b').value || 0, 10), 0, 255);
 
             setColorInputsFromRGB(r, g, b);
-            updatePreviewState();
             sendColorUpdate(r, g, b);
         });
     });
@@ -278,7 +253,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const brightnessEl = $('brightness');
     if (brightnessEl) {
         brightnessEl.addEventListener('input', () => {
-            updatePreviewState();
             // Send brightness command to Arduino
             const brightness = parseInt(brightnessEl.value || 128, 10);
             if (window.sendBrightness) {
@@ -308,7 +282,6 @@ document.addEventListener('DOMContentLoaded', () => {
         // Initialize display value
         updateSpeedValue();
     }
-    startPreview();
 });
 
 async function loadAnimations() {
@@ -419,7 +392,6 @@ async function sendSelectedAnimation() {
 
         setSelectedMode(2);
         syncModeDependentControls();
-        updatePreviewState();
 
         // Send frame count
         if (window.sendAnimationFrameCount) {
@@ -439,10 +411,6 @@ async function sendSelectedAnimation() {
             try { window.sendAnimationDelay(animation.delay || 100); } catch (e) { }
         }
 
-        // Set preview to show animation
-        if (window.setPreviewAnimation) {
-            try { window.setPreviewAnimation(animation); } catch (e) { }
-        }
 
         // Wait a bit for Arduino to process all frames, then start playing
         setTimeout(() => {
