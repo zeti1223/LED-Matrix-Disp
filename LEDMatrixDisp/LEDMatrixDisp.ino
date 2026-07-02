@@ -326,16 +326,6 @@ void setup() {
     playBootAnimation();
 }
 
-void setPixelInAnimationBuffer(uint8_t frame, uint8_t index, uint8_t value) {
-    uint8_t &b = animationBuffer[frame][index >> 1];
-    if (index & 1) {
-        b = (b & 0x0F) | (value << 4);   // high nibble
-    } else {
-        b = (b & 0xF0) | (value & 0x0F); // low nibble
-    }
-    if (frame >= MAX_FRAMES) return;
-}
-
 uint8_t getPixelInAnimationBuffer(uint8_t frame, uint8_t index) {
     uint8_t b = animationBuffer[frame][index >> 1];
     if (index & 1) {
@@ -453,7 +443,7 @@ void renderEffects(){
 
 
 void parseSerialInput(){
-    char buf[120];
+    char buf[63];
     size_t len = Serial.readBytesUntil('\n', buf, sizeof(buf) - 1);
     buf[len] = '\0';
 
@@ -509,19 +499,25 @@ void parseSerialInput(){
         case 'a':
             switch (cmd[1]){
                 case 's':
-                    if (ia <= 10){
+                    if (ia <= MAX_FRAMES){
                         animationFrameCount = ia;
                     }
                     break;
-                case 'f':
-                    for (int i=0;i<NUM_LEDS;i++){
-                        setPixelInAnimationBuffer(ia,i,b[i]);
+                case 'f':{
+                    uint8_t frameData[NUM_LEDS / 2];
+                    size_t len = Serial.readBytesUntil('\n', frameData, sizeof(frameData));
+                    if (len == sizeof(frameData)) {
+                        if (ia > MAX_FRAMES-1) return;
+                        memcpy(animationBuffer[ia], frameData, sizeof(frameData));
                     }
                     break;
+                }
                 case 'p':
                     animationIsPlaying = !animationIsPlaying;
+                    animationCurrentFrame = 0;
                     break;
                 case 'c':
+                    if (ia<0 || ia>=10) return;
                     palette[ia] = CRGB(ib,ic,id);
                     break;
             }
@@ -540,12 +536,14 @@ void parseSerialInput(){
         case 'g':
             switch(cmd[1]){
                 case 'd':
-                    String returnString = String(X) + String("x") + String(Y);
-                    Serial.println(returnString);
+                    Serial.print(X);
+                    Serial.print("x");
+                    Serial.println(Y);
                     break;
             }
             break;
     }
+
 }
 
 int charToIndex(char x) {
@@ -560,6 +558,8 @@ void loadFontChar(byte dest[7], int fontIndex) {
         dest[y] = pgm_read_byte(&fontArray[fontIndex][y]);
     }
 }
+
+
 
 void renderTextFrame(){
     int textLength = strlen(text);
