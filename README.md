@@ -10,9 +10,9 @@ This project contains WS2812B LED matrix control software for Arduino, plus a br
 ## Hardware
 
 - Arduino-compatible board
-- WS2812B LED strip or matrix
+- WS2812B LED strip
 - Proper power supply (5V, sufficient current)
-- Data line connected to the Arduino `DATA_PIN` pin (default: D6)
+- Data line connected to the Arduino `DATA_PIN` pin (for me it's D6)
 
 ## Setup
 
@@ -23,46 +23,20 @@ This project contains WS2812B LED matrix control software for Arduino, plus a br
 5. Upload the sketch to the Arduino.
 6. Make sure the board is connected over USB.
 
-## Arduino serial protocol
-
-- `f r g b` - set the entire matrix to a static RGB color
-- `sb brightness` - set brightness (0-255)
-- `sm mode` - set display mode (0=static, 1=preview, 2=animation)
-- `o x y r g b` - set individual LED at position (x,y) to RGB color
-- `d` - display update (trigger refresh)
-- `as count` - set animation frame count
-- `af index data` - set animation frame at index with color data
-- `aw delay` - set animation delay in milliseconds
-- `ap` - toggle animation play/pause
-
 The web UI renders animation patterns in the browser and streams them to the Arduino using WebSerial.
 
 ## Web UI
 
 The browser UI uses WebSerial API for direct serial communication from the browser. No backend server is required.
 
-**Important:** WebSerial only works in Chromium-based browsers (Chrome, Edge, Opera) and requires HTTPS or localhost.
+**Important:** WebSerial requires HTTPS or localhost.
 
-### Using the Web UI
-
-1. Open `web_ui/static/index.html` in a Chromium-based browser (Chrome, Edge, Opera).
-2. Click "Connect" to select and connect to your Arduino's serial port.
-3. Use the controls to set colors, brightness, and send animations.
-4. Use the Animation Maker (`animation-maker.html`) to create custom animations.
-
-### Serving the Web UI (Optional)
-
-If you want to serve the web UI locally:
+### Serving the Web UI
 
 ```bash
-# Using npm (recommended)
 cd web_ui
 npm install
 npm start
-
-# Or using Python 3
-cd web_ui/static
-python -m http.server 8000
 
 # Then open http://localhost:8000 in your browser
 ```
@@ -73,7 +47,6 @@ python -m http.server 8000
 
 - WebSerial-based direct serial communication (no backend required)
 - Serial port connection via browser
-- Live preview of the selected pattern
 - Static color control with RGB and hex input modes
 - Brightness control
 - Animation system with localStorage persistence
