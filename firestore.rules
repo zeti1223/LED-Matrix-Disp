@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /animations/{animationId} {
+      allow read: if true;
+      allow create: if request.resource.data.keys().hasAll(['name', 'frames', 'sharedAt'])
+                    && request.resource.data.name is string
+                    && request.resource.data.name.size() > 0
+                    && request.resource.data.name.size() <= 100;
+      allow update: if request.resource.data.diff(resource.data).affectedKeys()
+                        .hasOnly(['downloadCount', 'ratingSum', 'ratingCount']);
+
+      match /comments/{commentId} {
+        allow read: if true;
+        allow create: if request.resource.data.keys().hasAll(['text', 'authorName', 'createdAt'])
+                      && request.resource.data.text is string
+                      && request.resource.data.text.size() > 0
+                      && request.resource.data.text.size() <= 300;
+        allow update, delete: if false;
+      }
+
+      match /ratings/{userId} {
+        allow read: if true;
+        allow create, update: if request.resource.data.keys().hasAll(['rating', 'createdAt'])
+                              && request.resource.data.rating is int
+                              && request.resource.data.rating >= 1
+                              && request.resource.data.rating <= 5;
+        allow delete: if false;
+      }
+    }
+  }
+}
