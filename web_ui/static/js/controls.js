@@ -37,11 +37,11 @@ function setSelectedMode(mode) {
         swapClasses(
             button,
             isActive
-                ? ['border-cyan-400/50', 'bg-cyan-400/15', 'text-cyan-100', 'shadow-lg', 'shadow-cyan-500/10']
-                : ['border-slate-700', 'bg-slate-800/70', 'text-slate-200'],
+                ? ['border-cyan-500/40', 'bg-cyan-500/10', 'text-cyan-700', 'shadow-lg', 'shadow-cyan-500/10', 'dark:border-cyan-400/50', 'dark:bg-cyan-400/15', 'dark:text-cyan-100']
+                : ['border-slate-300', 'bg-slate-100/80', 'text-slate-700', 'dark:border-slate-700', 'dark:bg-slate-800/70', 'dark:text-slate-200'],
             isActive
-                ? ['border-slate-700', 'bg-slate-800/70', 'text-slate-200']
-                : ['border-cyan-400/50', 'bg-cyan-400/15', 'text-cyan-100', 'shadow-lg', 'shadow-cyan-500/10']
+                ? ['border-slate-300', 'bg-slate-100/80', 'text-slate-700', 'dark:border-slate-700', 'dark:bg-slate-800/70', 'dark:text-slate-200']
+                : ['border-cyan-500/40', 'bg-cyan-500/10', 'text-cyan-700', 'shadow-lg', 'shadow-cyan-500/10', 'dark:border-cyan-400/50', 'dark:bg-cyan-400/15', 'dark:text-cyan-100']
         );
     });
 }
@@ -58,11 +58,11 @@ function setSelectedPattern(pattern) {
         swapClasses(
             button,
             isActive
-                ? ['border-cyan-400/50', 'bg-cyan-400/15', 'text-cyan-100', 'shadow-lg', 'shadow-cyan-500/10']
-                : ['border-slate-700', 'bg-slate-800/70', 'text-slate-200'],
+                ? ['border-cyan-500/40', 'bg-cyan-500/10', 'text-cyan-700', 'shadow-lg', 'shadow-cyan-500/10', 'dark:border-cyan-400/50', 'dark:bg-cyan-400/15', 'dark:text-cyan-100']
+                : ['border-slate-300', 'bg-slate-100/80', 'text-slate-700', 'dark:border-slate-700', 'dark:bg-slate-800/70', 'dark:text-slate-200'],
             isActive
-                ? ['border-slate-700', 'bg-slate-800/70', 'text-slate-200']
-                : ['border-cyan-400/50', 'bg-cyan-400/15', 'text-cyan-100', 'shadow-lg', 'shadow-cyan-500/10']
+                ? ['border-slate-300', 'bg-slate-100/80', 'text-slate-700', 'dark:border-slate-700', 'dark:bg-slate-800/70', 'dark:text-slate-200']
+                : ['border-cyan-500/40', 'bg-cyan-500/10', 'text-cyan-700', 'shadow-lg', 'shadow-cyan-500/10', 'dark:border-cyan-400/50', 'dark:bg-cyan-400/15', 'dark:text-cyan-100']
         );
     });
 }
@@ -79,11 +79,11 @@ function setTextColorMode(mode) {
         swapClasses(
             button,
             isActive
-                ? ['bg-cyan-400', 'text-slate-950', 'shadow-md', 'shadow-cyan-500/20']
-                : ['text-slate-300', 'hover:bg-slate-800'],
+                ? ['bg-cyan-500', 'text-white', 'shadow-md', 'shadow-cyan-500/20', 'dark:bg-cyan-400', 'dark:text-slate-950']
+                : ['text-slate-700', 'hover:bg-slate-200/60', 'dark:text-slate-300', 'dark:hover:bg-slate-800'],
             isActive
-                ? ['text-slate-300', 'hover:bg-slate-800']
-                : ['bg-cyan-400', 'text-slate-950', 'shadow-md', 'shadow-cyan-500/20']
+                ? ['text-slate-700', 'hover:bg-slate-200/60', 'dark:text-slate-300', 'dark:hover:bg-slate-800']
+                : ['bg-cyan-500', 'text-white', 'shadow-md', 'shadow-cyan-500/20', 'dark:bg-cyan-400', 'dark:text-slate-950']
         );
     });
 }
@@ -200,11 +200,11 @@ function setColorMode(mode) {
         swapClasses(
             button,
             isActive
-                ? ['bg-cyan-400', 'text-slate-950', 'shadow-md', 'shadow-cyan-500/20']
-                : ['text-slate-300', 'hover:bg-slate-800'],
+                ? ['bg-cyan-500', 'text-white', 'shadow-md', 'shadow-cyan-500/20', 'dark:bg-cyan-400', 'dark:text-slate-950']
+                : ['text-slate-700', 'hover:bg-slate-200/60', 'dark:text-slate-300', 'dark:hover:bg-slate-800'],
             isActive
-                ? ['text-slate-300', 'hover:bg-slate-800']
-                : ['bg-cyan-400', 'text-slate-950', 'shadow-md', 'shadow-cyan-500/20']
+                ? ['text-slate-700', 'hover:bg-slate-200/60', 'dark:text-slate-300', 'dark:hover:bg-slate-800']
+                : ['bg-cyan-500', 'text-white', 'shadow-md', 'shadow-cyan-500/20', 'dark:bg-cyan-400', 'dark:text-slate-950']
         );
     });
 

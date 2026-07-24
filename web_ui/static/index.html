@@ -336,26 +336,26 @@
             <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_22rem]">
                 <section class="space-y-4">
                     <!-- Animation Settings -->
-                    <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+                    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
                         <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200 mb-4">Animation Settings</h3>
                         <div class="flex items-center gap-3 flex-nowrap">
                             <div class="flex items-center gap-2">
                                 <label for="animation-name" class="text-sm font-semibold text-slate-700 transition-colors duration-200 dark:text-slate-300">Name:</label>
                                 <input id="animation-name" type="text" placeholder="my-animation"
-                                    class="h-10 w-36 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                    class="h-10 w-36 rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
                             </div>
                             <div class="flex items-center gap-2">
                                 <label for="frame-delay" class="text-sm font-semibold text-slate-700 transition-colors duration-200 dark:text-slate-300">Delay (ms):</label>
                                 <input id="frame-delay" type="number" min="10" max="5000" value="100"
-                                    class="h-10 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                    class="h-10 w-20 rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
                             </div>
                             <button id="save-animation"
-                                class="rounded-xl border border-emerald-400/20 bg-emerald-500/15 px-3 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/25">
+                                class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-700 transition duration-200 hover:bg-emerald-500/20 dark:border-emerald-400/20 dark:bg-emerald-500/15 dark:text-emerald-100 dark:hover:bg-emerald-500/25">
                                 Save
                             </button>
                             <div class="flex items-center gap-2">
                                 <select id="load-animation-select"
-                                    class="h-10 min-w-[10rem] rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none ring-0 transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                    class="h-10 min-w-[10rem] rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none ring-0 transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
                                     <option value="">Load animation...</option>
                                 </select>
                                 <button id="load-animation"
@@ -367,16 +367,16 @@
                     </section>
 
                     <!-- Frame Editor -->
-                    <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+                    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">Frame Editor</h3>
                             <div class="flex items-center gap-2">
                                 <button id="add-frame"
-                                    class="rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-1 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-700">
+                                    class="rounded-xl border border-slate-300 bg-slate-100/80 px-3 py-1 text-sm font-semibold text-slate-800 transition duration-200 hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:border-slate-500 dark:hover:bg-slate-700">
                                     + Add Frame
                                 </button>
                                 <button id="delete-frame"
-                                    class="rounded-xl border border-rose-400/20 bg-rose-500/15 px-3 py-1 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/25">
+                                    class="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-1 text-sm font-semibold text-rose-700 transition duration-200 hover:bg-rose-500/20 dark:border-rose-400/20 dark:bg-rose-500/15 dark:text-rose-100 dark:hover:bg-rose-500/25">
                                     Delete Frame
                                 </button>
                             </div>
@@ -415,7 +415,7 @@
 
                         <!-- LED Grid -->
                         <div class="flex justify-center mb-4">
-                            <div id="led-grid" class="grid gap-1 bg-slate-950 p-3 rounded-xl">
+                            <div id="led-grid" class="grid gap-1 bg-slate-200 p-3 rounded-xl dark:bg-slate-950">
                                 <!-- LED cells will be generated by JavaScript -->
                             </div>
                         </div>
@@ -423,19 +423,19 @@
                         <!-- Frame Navigation -->
                         <div class="flex items-center justify-center gap-4">
                             <button id="prev-frame"
-                                class="rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-700">
+                                class="rounded-xl border border-slate-300 bg-slate-100/80 px-4 py-2 text-sm font-semibold text-slate-800 transition duration-200 hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:border-slate-500 dark:hover:bg-slate-700">
                                 ← Previous
                             </button>
-                            <span id="frame-counter" class="text-lg font-semibold text-cyan-200">Frame 1 / 1</span>
+                            <span id="frame-counter" class="text-lg font-semibold text-cyan-700 dark:text-cyan-200">Frame 1 / 1</span>
                             <button id="next-frame"
-                                class="rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-700">
+                                class="rounded-xl border border-slate-300 bg-slate-100/80 px-4 py-2 text-sm font-semibold text-slate-800 transition duration-200 hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:border-slate-500 dark:hover:bg-slate-700">
                                 Next →
                             </button>
                         </div>
                     </section>
 
                     <!-- Animation Preview -->
-                    <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+                    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
                         <div class="flex items-center justify-between mb-4">
                             <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">Animation Preview</h3>
                             <div class="flex items-center gap-2">
@@ -444,21 +444,21 @@
                                     ▶ Play
                                 </button>
                                 <button id="stop-preview"
-                                    class="rounded-xl border border-rose-400/20 bg-rose-500/15 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/25">
+                                    class="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-2 text-sm font-semibold text-rose-700 transition duration-200 hover:bg-rose-500/20 dark:border-rose-400/20 dark:bg-rose-500/15 dark:text-rose-100 dark:hover:bg-rose-500/25">
                                     ⏹ Stop
                                 </button>
                             </div>
                         </div>
                         <div class="flex justify-center">
                             <canvas id="preview-canvas" width="240" height="240"
-                                class="aspect-square w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950 shadow-inner"></canvas>
+                                class="aspect-square w-full max-w-sm rounded-2xl border border-slate-300 bg-slate-200 shadow-inner dark:border-slate-800 dark:bg-slate-950"></canvas>
                         </div>
                     </section>
                 </section>
 
                 <aside class="xl:sticky xl:top-6 xl:self-start space-y-4">
                     <!-- Frame List -->
-                    <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+                    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
                         <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200 mb-4">Frames</h3>
                         <div id="frame-list" class="space-y-2 max-h-96 overflow-auto">
                             <!-- Frame thumbnails will be generated by JavaScript -->
@@ -466,7 +466,7 @@
                     </section>
 
                     <!-- Export -->
-                    <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+                    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
                         <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200 mb-4">Export</h3>
                         <button id="download-json"
                             class="w-full rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-900 transition duration-200 hover:bg-cyan-500/20 dark:border-cyan-400/20 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-500/25">
@@ -479,22 +479,22 @@
 
         <!-- Marketplace Tab -->
         <div id="tab-content-marketplace" class="tab-content hidden">
-            <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+            <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
                 <div class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <h3 class="text-xl font-semibold text-white">Community Animations</h3>
+                        <h3 class="text-xl font-semibold text-slate-900 dark:text-white transition-colors duration-200">Community Animations</h3>
                         <p class="mt-1 text-sm text-slate-600 transition-colors duration-200 dark:text-slate-400">Browse, preview and download animations shared by the community</p>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
-                        <label class="flex items-center gap-2 text-sm text-slate-300">
+                        <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
                             <span class="whitespace-nowrap">Size:</span>
                             <select id="market-size-filter"
-                                class="rounded-xl border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/40">
+                                class="rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-100 dark:focus:border-cyan-400/40">
                                 <option value="all">All sizes</option>
                             </select>
                         </label>
                         <button id="upload-animation-btn"
-                            class="rounded-xl border border-fuchsia-400/20 bg-fuchsia-500/15 px-4 py-2 text-sm font-semibold text-fuchsia-100 transition hover:bg-fuchsia-500/25">
+                            class="rounded-xl border border-fuchsia-500/30 bg-fuchsia-500/10 px-4 py-2 text-sm font-semibold text-fuchsia-700 transition duration-200 hover:bg-fuchsia-500/20 dark:border-fuchsia-400/20 dark:bg-fuchsia-500/15 dark:text-fuchsia-100 dark:hover:bg-fuchsia-500/25">
                             Upload
                         </button>
                         <button id="refresh-market"
@@ -512,9 +512,9 @@
 
         <!-- Manual LED Tab -->
         <div id="tab-content-manual-led" class="tab-content hidden">
-            <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+            <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
                 <div class="mb-5">
-                    <h3 class="text-xl font-semibold text-white">Manual LED Control</h3>
+                    <h3 class="text-xl font-semibold text-slate-900 dark:text-white transition-colors duration-200">Manual LED Control</h3>
                     <p class="mt-1 text-sm text-slate-600 transition-colors duration-200 dark:text-slate-400">Manually color each LED individually using the 'o' command (Mode 0)</p>
                 </div>
 
@@ -557,7 +557,7 @@
 
                 <!-- Manual LED Grid -->
                 <div class="flex justify-center mb-4">
-                    <div id="manual-led-grid" class="grid gap-1 bg-slate-950 p-3 rounded-xl">
+                    <div id="manual-led-grid" class="grid gap-1 bg-slate-200 p-3 rounded-xl dark:bg-slate-950">
                         <!-- LED cells will be generated by JavaScript -->
                     </div>
                 </div>
@@ -565,7 +565,7 @@
                 <!-- Controls -->
                 <div class="flex flex-wrap items-center justify-center gap-4">
                     <button id="clear-manual-grid"
-                        class="rounded-xl border border-rose-400/20 bg-rose-500/15 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/25">
+                        class="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-2 text-sm font-semibold text-rose-700 transition duration-200 hover:bg-rose-500/20 dark:border-rose-400/20 dark:bg-rose-500/15 dark:text-rose-100 dark:hover:bg-rose-500/25">
                         Clear All
                     </button>
                     <button id="set-mode-zero"
@@ -586,16 +586,16 @@
 
         <!-- Upload Modal -->
         <div id="upload-modal" class="fixed inset-0 z-50 hidden">
-            <div id="upload-modal-backdrop" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+            <div id="upload-modal-backdrop" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm dark:bg-slate-950/80"></div>
             <div class="relative flex min-h-full items-center justify-center p-4">
-                <div class="w-full max-w-4xl rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-2xl">
+                <div class="w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl transition-colors duration-200 dark:border-slate-700 dark:bg-slate-900">
                     <div class="mb-5 flex items-center justify-between">
                         <div>
                             <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">Upload Your Animation</h3>
                             <p class="mt-1 text-sm text-slate-600 transition-colors duration-200 dark:text-slate-400">Choose an animation from your local library to share</p>
                         </div>
                         <button id="upload-modal-close"
-                            class="rounded-lg border border-slate-700 bg-slate-800/50 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-700">
+                            class="rounded-lg border border-slate-300 bg-slate-100/80 px-3 py-1.5 text-sm text-slate-700 transition duration-200 hover:bg-slate-200 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-300 dark:hover:bg-slate-700">
                             Close
                         </button>
                     </div>
@@ -622,20 +622,20 @@
         document.addEventListener('DOMContentLoaded', () => {
             const tabButtons = document.querySelectorAll('.tab-btn');
             const tabContents = document.querySelectorAll('.tab-content');
+            const TAB_ACTIVE = ['border-cyan-500/40', 'bg-cyan-500/10', 'text-cyan-700', 'dark:border-cyan-400/30', 'dark:bg-cyan-500/20', 'dark:text-cyan-100'];
+            const TAB_INACTIVE = ['border-slate-300/80', 'bg-slate-100/80', 'text-slate-600', 'dark:border-slate-700', 'dark:bg-slate-800/50', 'dark:text-slate-200'];
 
             tabButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const tab = btn.dataset.tab;
-                    
-                    // Update button styles
+
                     tabButtons.forEach(b => {
-                        b.classList.remove('border-cyan-400/30', 'bg-cyan-500/20', 'text-cyan-100');
-                        b.classList.add('border-slate-700', 'bg-slate-800/50', 'text-slate-200');
+                        b.classList.remove(...TAB_ACTIVE);
+                        b.classList.add(...TAB_INACTIVE);
                     });
-                    btn.classList.remove('border-slate-700', 'bg-slate-800/50', 'text-slate-200');
-                    btn.classList.add('border-cyan-400/30', 'bg-cyan-500/20', 'text-cyan-100');
-                    
-                    // Show/hide content
+                    btn.classList.remove(...TAB_INACTIVE);
+                    btn.classList.add(...TAB_ACTIVE);
+
                     tabContents.forEach(content => {
                         content.classList.add('hidden');
                     });

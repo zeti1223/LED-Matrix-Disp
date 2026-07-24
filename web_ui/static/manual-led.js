@@ -43,7 +43,7 @@ function initializeManualLEDGrid() {
     for (let y = 0; y < manualGridHeight; y++) {
         for (let x = 0; x < manualGridWidth; x++) {
             const cell = document.createElement('div');
-            cell.className = 'manual-led-cell rounded cursor-pointer transition hover:scale-110 border border-slate-700';
+            cell.className = 'manual-led-cell rounded cursor-pointer transition hover:scale-110 border border-slate-400 dark:border-slate-700';
             cell.style.width = `${finalCellSize}px`;
             cell.style.height = `${finalCellSize}px`;
             cell.dataset.x = x;
@@ -160,9 +160,9 @@ function setManualColorMode(mode) {
 
     buttons.forEach(btn => {
         if (btn.dataset.mode === mode) {
-            btn.classList.add('bg-cyan-500/20', 'text-cyan-100');
+            btn.classList.add('bg-cyan-500', 'text-white', 'shadow-md', 'shadow-cyan-500/20', 'dark:bg-cyan-400', 'dark:text-slate-950');
         } else {
-            btn.classList.remove('bg-cyan-500/20', 'text-cyan-100');
+            btn.classList.remove('bg-cyan-500', 'text-white', 'shadow-md', 'shadow-cyan-500/20', 'dark:bg-cyan-400', 'dark:text-slate-950');
         }
     });
 
