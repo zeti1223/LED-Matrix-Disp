@@ -108,6 +108,8 @@ function initializeEventListeners() {
     $('download-json').addEventListener('click', downloadJSON);
     $('play-preview').addEventListener('click', playPreview);
     $('stop-preview').addEventListener('click', stopPreview);
+    $('import-gif').addEventListener('click', () => $('import-gif-input').click());
+    $('import-gif-input').addEventListener('change', handleGifImport);
 
     $('frame-delay').addEventListener('change', (e) => {
         animation.delay = parseInt(e.target.value, 10);
@@ -351,6 +353,53 @@ function downloadJSON() {
     link.click();
 
     URL.revokeObjectURL(url);
+}
+
+async function handleGifImport(event) {
+    const file = event.target.files[0];
+    event.target.value = '';
+    if (!file) return;
+
+    if (!window.GifImport) {
+        alert('GIF import module failed to load. Please refresh the page.');
+        return;
+    }
+
+    const importBtn = $('import-gif');
+    importBtn.disabled = true;
+    importBtn.textContent = 'Importing...';
+
+    try {
+        stopPreview();
+
+        const result = await window.GifImport.parseGifFile(
+            file, gridWidth, gridHeight, colorMap, MAX_FRAMES
+        );
+
+        animation.frames = result.frames;
+        animation.delay = result.delay;
+        animation.gridWidth = gridWidth;
+        animation.gridHeight = gridHeight;
+
+        $('animation-name').value = result.name;
+        $('frame-delay').value = result.delay;
+        currentFrameIndex = 0;
+        updateFrameCounter();
+        loadFrameToGrid(currentFrameIndex);
+        renderFrameList();
+
+        let message = `Imported ${result.importedFrames} frame(s) from GIF (${gridWidth}x${gridHeight}, ${result.delay}ms delay).`;
+        if (result.truncated) {
+            message += `\n\nOnly the first ${MAX_FRAMES} of ${result.totalFrames} frames were imported (Arduino limit).`;
+        }
+        alert(message);
+    } catch (error) {
+        console.error('GIF import error:', error);
+        alert(`Error importing GIF: ${error.message}`);
+    } finally {
+        importBtn.disabled = false;
+        importBtn.textContent = 'Import GIF';
+    }
 }
 
 function playPreview() {

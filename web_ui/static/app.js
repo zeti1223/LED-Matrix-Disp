@@ -316,11 +316,45 @@ async function handleAnimationUpload(event) {
     if (!file) return;
 
     try {
-        const text = await file.text();
-        const animation = JSON.parse(text);
+        let animation;
 
-        if (!animation.name || !animation.frames || !Array.isArray(animation.frames)) {
-            throw new Error('Invalid animation file format');
+        if (/\.gif$/i.test(file.name)) {
+            if (!window.GifImport) {
+                throw new Error('GIF import module failed to load. Please refresh the page.');
+            }
+
+            const width = window.matrixDimensions?.width || 8;
+            const height = window.matrixDimensions?.height || 8;
+            const colorMap = {
+                '0': { r: 0, g: 0, b: 0 },
+                '1': { r: 255, g: 0, b: 0 },
+                '2': { r: 0, g: 255, b: 0 },
+                '3': { r: 0, g: 0, b: 255 },
+                '4': { r: 255, g: 255, b: 0 },
+                '5': { r: 255, g: 0, b: 255 },
+                '6': { r: 0, g: 255, b: 255 },
+                '7': { r: 255, g: 255, b: 255 }
+            };
+
+            const result = await window.GifImport.parseGifFile(file, width, height, colorMap, 20);
+            animation = {
+                name: result.name,
+                delay: result.delay,
+                frames: result.frames,
+                gridWidth: width,
+                gridHeight: height
+            };
+
+            if (result.truncated) {
+                appendConsole(`[animation] GIF truncated to ${result.importedFrames}/${result.totalFrames} frames\n`);
+            }
+        } else {
+            const text = await file.text();
+            animation = JSON.parse(text);
+
+            if (!animation.name || !animation.frames || !Array.isArray(animation.frames)) {
+                throw new Error('Invalid animation file format');
+            }
         }
 
         // Check if animation has grid dimensions

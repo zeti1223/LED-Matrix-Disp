@@ -292,7 +292,7 @@
                                     class="rounded-xl border border-slate-300 bg-slate-100/80 px-3 py-2 text-sm font-semibold text-slate-800 transition duration-200 hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-white">
                                     Refresh
                                 </button>
-                                <input type="file" id="upload-animation-input" accept=".json" style="display: none;">
+                                <input type="file" id="upload-animation-input" accept=".json,image/gif,.gif" style="display: none;">
                                 <button id="upload-animation"
                                     class="rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-900 transition duration-200 hover:bg-cyan-500/20 dark:border-cyan-400/20 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-500/25">
                                     Upload
@@ -465,13 +465,20 @@
                         </div>
                     </section>
 
-                    <!-- Export -->
+                    <!-- Import / Export -->
                     <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
-                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200 mb-4">Export</h3>
-                        <button id="download-json"
-                            class="w-full rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-900 transition duration-200 hover:bg-cyan-500/20 dark:border-cyan-400/20 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-500/25">
-                            Download as JSON
-                        </button>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200 mb-4">Import / Export</h3>
+                        <div class="space-y-2">
+                            <input type="file" id="import-gif-input" accept="image/gif,.gif" class="hidden">
+                            <button id="import-gif"
+                                class="w-full rounded-xl border border-fuchsia-500/30 bg-fuchsia-500/10 px-4 py-2 text-sm font-semibold text-fuchsia-700 transition duration-200 hover:bg-fuchsia-500/20 dark:border-fuchsia-400/20 dark:bg-fuchsia-500/15 dark:text-fuchsia-100 dark:hover:bg-fuchsia-500/25">
+                                Import GIF
+                            </button>
+                            <button id="download-json"
+                                class="w-full rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-900 transition duration-200 hover:bg-cyan-500/20 dark:border-cyan-400/20 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-500/25">
+                                Download as JSON
+                            </button>
+                        </div>
                     </section>
                 </aside>
             </div>
@@ -609,6 +616,7 @@
     </main>
 
     <script src="js/utils.js"></script>
+    <script src="js/gif-import.js"></script>
     <script src="js/controls.js"></script>
     <script src="js/serial.js"></script>
     <script src="js/commands.js"></script>
