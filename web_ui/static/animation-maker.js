@@ -55,7 +55,7 @@ function initializeLEDGrid() {
     for (let y = 0; y < gridHeight; y++) {
         for (let x = 0; x < gridWidth; x++) {
             const cell = document.createElement('div');
-            cell.className = 'led-cell rounded cursor-pointer transition hover:scale-110 border border-slate-700';
+            cell.className = 'led-cell rounded cursor-pointer transition hover:scale-110 border border-slate-400 dark:border-slate-700';
             cell.style.width = `${finalCellSize}px`;
             cell.style.height = `${finalCellSize}px`;
             cell.dataset.x = x;
@@ -191,7 +191,7 @@ function renderFrameList() {
 
     animation.frames.forEach((frame, index) => {
         const item = document.createElement('div');
-        item.className = `p-2 rounded-lg cursor-pointer transition ${index === currentFrameIndex ? 'bg-cyan-500/20 border border-cyan-400/40' : 'bg-slate-800/50 border border-slate-700 hover:bg-slate-700'}`;
+        item.className = `p-2 rounded-lg cursor-pointer transition ${index === currentFrameIndex ? 'bg-cyan-500/20 border border-cyan-500/40 dark:border-cyan-400/40' : 'bg-slate-100/80 border border-slate-300 hover:bg-slate-200 dark:bg-slate-800/50 dark:border-slate-700 dark:hover:bg-slate-700'}`;
 
         // Create mini preview
         const miniGrid = document.createElement('div');
@@ -209,7 +209,7 @@ function renderFrameList() {
         }
 
         const label = document.createElement('div');
-        label.className = 'text-xs text-slate-300 mt-1';
+        label.className = 'text-xs text-slate-600 dark:text-slate-300 mt-1';
         label.textContent = `Frame ${index + 1}`;
 
         item.appendChild(miniGrid);

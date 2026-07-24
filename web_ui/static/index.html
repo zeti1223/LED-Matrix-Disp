@@ -1,52 +1,66 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
 
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>LED Matrix Display - Web UI</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
 </head>
 
-<body class="min-h-screen bg-slate-950 text-slate-100">
+<body class="min-h-screen bg-slate-50 text-slate-900 transition-colors duration-300 dark:bg-slate-950 dark:text-slate-100">
     <div class="absolute inset-0 -z-10 overflow-hidden">
-        <div class="absolute left-[-8rem] top-[-8rem] h-72 w-72 rounded-full bg-cyan-500/20 blur-3xl"></div>
-        <div class="absolute right-[-6rem] top-40 h-80 w-80 rounded-full bg-fuchsia-500/10 blur-3xl"></div>
-        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(15,23,42,0.9),rgba(2,6,23,1)_68%)]"></div>
+        <div class="absolute left-[-8rem] top-[-8rem] h-72 w-72 rounded-full bg-cyan-400/30 blur-3xl dark:bg-cyan-500/20"></div>
+        <div class="absolute right-[-6rem] top-40 h-80 w-80 rounded-full bg-fuchsia-400/20 blur-3xl dark:bg-fuchsia-500/10"></div>
+        <div class="absolute inset-0 bg-[radial-gradient(circle_at_top,rgba(248,250,252,0.9),rgba(241,245,249,1)_68%)] dark:bg-[radial-gradient(circle_at_top,rgba(15,23,42,0.9),rgba(2,6,23,1)_68%)]"></div>
     </div>
 
     <main id="app" class="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-4 px-4 py-6 sm:px-6 lg:px-8">
-        <header class="rounded-3xl border border-slate-800/80 bg-slate-900/75 px-6 py-5 shadow-2xl backdrop-blur-xl">
+        <header class="rounded-3xl border border-slate-200/80 bg-white/75 px-6 py-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/75 dark:shadow-2xl">
             <div class="flex items-center justify-between">
                 <div>
-                    <p class="text-sm font-semibold uppercase tracking-[0.35em] text-cyan-300/80">LED Matrix Display</p>
+                    <p class="text-sm font-semibold uppercase tracking-[0.35em] text-cyan-600 dark:text-cyan-300/80 transition-colors duration-200">LED Matrix Display</p>
                     <div class="mt-2">
                         <div class="flex items-center gap-2">
                             <button id="tab-control"
-                                class="tab-btn rounded-xl border border-cyan-400/30 bg-cyan-500/20 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/30"
+                                class="tab-btn rounded-xl border border-cyan-500/40 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-700 transition duration-200 hover:bg-cyan-500/20 dark:border-cyan-400/30 dark:bg-cyan-500/20 dark:text-cyan-100 dark:hover:bg-cyan-500/30"
                                 data-tab="control">Control</button>
                             <button id="tab-animation-maker"
-                                class="tab-btn rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:bg-slate-700"
+                                class="tab-btn rounded-xl border border-slate-300/80 bg-slate-100/80 px-4 py-2 text-sm font-semibold text-slate-600 transition duration-200 hover:border-slate-400 hover:bg-slate-200/80 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                                 data-tab="animation-maker">Animation Maker</button>
                             <button id="tab-marketplace"
-                                class="tab-btn rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:bg-slate-700"
+                                class="tab-btn rounded-xl border border-slate-300/80 bg-slate-100/80 px-4 py-2 text-sm font-semibold text-slate-600 transition duration-200 hover:border-slate-400 hover:bg-slate-200/80 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                                 data-tab="marketplace">Marketplace</button>
                             <button id="tab-manual-led"
-                                class="tab-btn rounded-xl border border-slate-700 bg-slate-800/50 px-4 py-2 text-sm font-semibold text-slate-200 transition hover:border-slate-500 hover:bg-slate-700"
+                                class="tab-btn rounded-xl border border-slate-300/80 bg-slate-100/80 px-4 py-2 text-sm font-semibold text-slate-600 transition duration-200 hover:border-slate-400 hover:bg-slate-200/80 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                                 data-tab="manual-led">Manual LED</button>
                         </div>
                     </div>
                 </div>
                 <div class="flex items-center gap-3">
+                    <button id="theme-toggle" type="button" 
+                        class="rounded-xl border border-slate-300 bg-slate-100/80 p-2.5 text-slate-700 transition duration-200 hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100">
+                        <svg id="theme-toggle-light-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 100 2h1z"></path>
+                        </svg>
+                        <svg id="theme-toggle-dark-icon" class="hidden h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                            <path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"></path>
+                        </svg>
+                    </button>
                     <button id="connect"
-                        class="rounded-xl border border-emerald-400/20 bg-emerald-500/15 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/25">Connect</button>
+                        class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-700 transition duration-200 hover:bg-emerald-500/20 dark:border-emerald-400/20 dark:bg-emerald-500/15 dark:text-emerald-100 dark:hover:bg-emerald-500/25">Connect</button>
                     <button id="disconnect"
-                        class="rounded-xl border border-rose-400/20 bg-rose-500/15 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/25">Disconnect</button>
+                        class="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-2 text-sm font-semibold text-rose-700 transition duration-200 hover:bg-rose-500/20 dark:border-rose-400/20 dark:bg-rose-500/15 dark:text-rose-100 dark:hover:bg-rose-500/25">Disconnect</button>
                     <div id="status"
-                        class="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm font-semibold text-slate-300">
+                        class="rounded-full border border-slate-300 bg-white/70 px-3 py-2 text-sm font-semibold text-slate-700 transition duration-200 dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-300">
                         Disconnected</div>
                     <div id="dimensions"
-                        class="rounded-full border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm font-semibold text-slate-300 hidden">
+                        class="hidden rounded-full border border-slate-300 bg-white/70 px-3 py-2 text-sm font-semibold text-slate-700 transition duration-200 dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-300">
                         -- x --</div>
                 </div>
             </div>
@@ -56,85 +70,85 @@
         <div id="tab-content-control" class="tab-content">
             <div class="space-y-2">
                 <section
-                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    class="collapsible-card rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl"
                     data-card-id="mode">
                     <div class="panel-header flex items-center gap-3">
-                        <h3 class="text-lg font-semibold text-white">Mode</h3>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">Mode</h3>
                         <button type="button"
-                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-100/80 px-3 py-2 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-700 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-cyan-400/30 dark:hover:bg-cyan-400/10 dark:hover:text-cyan-100"
                             aria-expanded="true">▾ Collapse</button>
                     </div>
                     <div
                         class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none">
                         <div class="grid grid-cols-1 gap-3 sm:grid-cols-2">
                             <button type="button"
-                                class="mode-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                class="mode-btn rounded-xl border border-slate-300 bg-slate-100/80 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                                 data-mode="0">
-                                <span class="block text-base text-white">Single frame mode</span>
-                                <span class="mt-1 block text-xs uppercase tracking-[0.2em] text-slate-400">Mode 0</span>
+                                <span class="block text-base text-slate-900 transition-colors duration-200 dark:text-white">Single frame mode</span>
+                                <span class="mt-1 block text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 transition-colors duration-200">Mode 0</span>
                             </button>
                             <button type="button"
-                                class="mode-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                class="mode-btn rounded-xl border border-slate-300 bg-slate-100/80 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                                 data-mode="1">
-                                <span class="block text-base text-white">Effect mode</span>
-                                <span class="mt-1 block text-xs uppercase tracking-[0.2em] text-slate-400">Mode 1</span>
+                                <span class="block text-base text-slate-900 transition-colors duration-200 dark:text-white">Effect mode</span>
+                                <span class="mt-1 block text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 transition-colors duration-200">Mode 1</span>
                             </button>
                             <button type="button"
-                                class="mode-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                class="mode-btn rounded-xl border border-slate-300 bg-slate-100/80 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                                 data-mode="2">
-                                <span class="block text-base text-white">Animation mode</span>
-                                <span class="mt-1 block text-xs uppercase tracking-[0.2em] text-slate-400">Mode 2</span>
+                                <span class="block text-base text-slate-900 transition-colors duration-200 dark:text-white">Animation mode</span>
+                                <span class="mt-1 block text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 transition-colors duration-200">Mode 2</span>
                             </button>
                             <button type="button"
-                                class="mode-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                class="mode-btn rounded-xl border border-slate-300 bg-slate-100/80 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                                 data-mode="3">
-                                <span class="block text-base text-white">Text mode</span>
-                                <span class="mt-1 block text-xs uppercase tracking-[0.2em] text-slate-400">Mode 3</span>
+                                <span class="block text-base text-slate-900 transition-colors duration-200 dark:text-white">Text mode</span>
+                                <span class="mt-1 block text-xs uppercase tracking-[0.2em] text-slate-500 dark:text-slate-400 transition-colors duration-200">Mode 3</span>
                             </button>
                         </div>
                     </div>
                 </section>
 
                 <section
-                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    class="collapsible-card rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl"
                     data-card-id="brightness">
                     <div class="panel-header flex items-center gap-3">
-                        <h3 class="text-lg font-semibold text-white">Brightness</h3>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">Brightness</h3>
                         <button type="button"
-                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-100/80 px-3 py-2 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-700 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-cyan-400/30 dark:hover:bg-cyan-400/10 dark:hover:text-cyan-100"
                             aria-expanded="true">▾ Collapse</button>
                     </div>
                     <div
                         class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex items-center gap-4">
                         <input id="brightness" type="range" min="0" max="255" value="255"
-                            class="w-full accent-cyan-400">
+                            class="w-full accent-cyan-600 dark:accent-cyan-400">
                     </div>
                 </section>
 
                 <section
-                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    class="collapsible-card rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl"
                     data-card-id="speed">
                     <div class="panel-header flex items-center gap-3">
-                        <h3 class="text-lg font-semibold text-white">Speed</h3>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">Speed</h3>
                         <button type="button"
-                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-100/80 px-3 py-2 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-700 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-cyan-400/30 dark:hover:bg-cyan-400/10 dark:hover:text-cyan-100"
                             aria-expanded="true">▾ Collapse</button>
                     </div>
                     <div
                         class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex items-center gap-4">
                         <input id="speed" type="range" min="1" max="1000" value="100"
-                            class="w-full accent-cyan-400">
-                        <span id="speed-value" class="text-sm font-semibold text-slate-300 min-w-[6rem] text-right">100 ms</span>
+                            class="w-full accent-cyan-600 dark:accent-cyan-400">
+                        <span id="speed-value" class="min-w-[6rem] text-right text-sm font-semibold text-slate-700 transition-colors duration-200 dark:text-slate-300">100 ms</span>
                     </div>
                 </section>
 
                 <section
-                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    class="collapsible-card rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl"
                     data-card-id="effect">
                     <div class="panel-header flex items-center gap-3">
-                        <h3 class="text-lg font-semibold text-white">Pattern</h3>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">Pattern</h3>
                         <button type="button"
-                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-100/80 px-3 py-2 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-700 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-cyan-400/30 dark:hover:bg-cyan-400/10 dark:hover:text-cyan-100"
                             aria-expanded="true">▾ Collapse</button>
                     </div>
                     <div
@@ -142,69 +156,69 @@
                         <div class="pattern-group grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-1" role="group"
                             aria-label="Effect selection">
                             <button type="button"
-                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                class="pattern-btn rounded-xl border border-slate-300 bg-slate-100/80 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                                 data-pattern="0">
-                                <span class="block text-base text-white">Rainbow</span>
-                                <span class="mt-1 block text-xs text-slate-400">Starts from the corner</span>
+                                <span class="block text-base text-slate-900 transition-colors duration-200 dark:text-white">Rainbow</span>
+                                <span class="mt-1 block text-xs text-slate-500 transition-colors duration-200 dark:text-slate-400">Starts from the corner</span>
                             </button>
                             <button type="button"
-                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                class="pattern-btn rounded-xl border border-slate-300 bg-slate-100/80 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                                 data-pattern="1">
-                                <span class="block text-base text-white">Checker</span>
-                                <span class="mt-1 block text-xs text-slate-400">Line-by-line, alternating custom color and rainbow</span>
+                                <span class="block text-base text-slate-900 transition-colors duration-200 dark:text-white">Checker</span>
+                                <span class="mt-1 block text-xs text-slate-500 transition-colors duration-200 dark:text-slate-400">Line-by-line, alternating custom color and rainbow</span>
                             </button>
                             <button type="button"
-                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                class="pattern-btn rounded-xl border border-slate-300 bg-slate-100/80 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                                 data-pattern="2">
-                                <span class="block text-base text-white">Scammer</span>
-                                <span class="mt-1 block text-xs text-slate-400">Vertical scan effect</span>
+                                <span class="block text-base text-slate-900 transition-colors duration-200 dark:text-white">Scammer</span>
+                                <span class="mt-1 block text-xs text-slate-500 transition-colors duration-200 dark:text-slate-400">Vertical scan effect</span>
                             </button>
                             <button type="button"
-                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                class="pattern-btn rounded-xl border border-slate-300 bg-slate-100/80 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                                 data-pattern="3">
-                                <span class="block text-base text-white">Pulse</span>
-                                <span class="mt-1 block text-xs text-slate-400">Smooth brightness pulse</span>
+                                <span class="block text-base text-slate-900 transition-colors duration-200 dark:text-white">Pulse</span>
+                                <span class="mt-1 block text-xs text-slate-500 transition-colors duration-200 dark:text-slate-400">Smooth brightness pulse</span>
                             </button>
                             <button type="button"
-                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                class="pattern-btn rounded-xl border border-slate-300 bg-slate-100/80 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                                 data-pattern="4">
-                                <span class="block text-base text-white">Snake</span>
-                                <span class="mt-1 block text-xs text-slate-400">Uses custom color</span>
+                                <span class="block text-base text-slate-900 transition-colors duration-200 dark:text-white">Snake</span>
+                                <span class="mt-1 block text-xs text-slate-500 transition-colors duration-200 dark:text-slate-400">Uses custom color</span>
                             </button>
                             <button type="button"
-                                class="pattern-btn rounded-xl border border-slate-700 bg-slate-800/70 px-4 py-3 text-left text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-slate-500 hover:bg-slate-700"
+                                class="pattern-btn rounded-xl border border-slate-300 bg-slate-100/80 px-4 py-3 text-left text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-slate-100"
                                 data-pattern="5">
-                                <span class="block text-base text-white">Rainbow fill</span>
-                                <span class="mt-1 block text-xs text-slate-400">Solid rainbow fill</span>
+                                <span class="block text-base text-slate-900 transition-colors duration-200 dark:text-white">Rainbow fill</span>
+                                <span class="mt-1 block text-xs text-slate-500 transition-colors duration-200 dark:text-slate-400">Solid rainbow fill</span>
                             </button>
                         </div>
                     </div>
                 </section>
 
                 <section
-                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    class="collapsible-card rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl"
                     data-card-id="text">
                     <div class="panel-header flex items-center gap-3">
-                        <h3 class="text-lg font-semibold text-white">Text</h3>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">Text</h3>
                         <button type="button"
-                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-100/80 px-3 py-2 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-700 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-cyan-400/30 dark:hover:bg-cyan-400/10 dark:hover:text-cyan-100"
                             aria-expanded="true">▾ Collapse</button>
                     </div>
                     <div
                         class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none space-y-4">
                         <div class="flex flex-wrap items-center gap-3">
                             <input id="text-value" type="text" maxlength="64" value="HELLO" placeholder="Type text here"
-                                class="min-w-[16rem] flex-1 rounded-xl border border-slate-700 bg-slate-950/80 px-4 py-3 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                class="min-w-[16rem] flex-1 rounded-xl border border-slate-300 bg-white/80 px-4 py-3 text-sm text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
                         </div>
                         <div class="flex flex-wrap items-center gap-3">
-                            <span class="text-sm font-semibold text-slate-300">Text color mode</span>
+                            <span class="text-sm font-semibold text-slate-700 transition-colors duration-200 dark:text-slate-300">Text color mode</span>
                             <div
-                                class="inline-flex rounded-2xl border border-slate-700 bg-slate-950/60 p-1">
+                                class="inline-flex rounded-2xl border border-slate-300 bg-slate-100/70 p-1 transition-colors duration-200 dark:border-slate-700 dark:bg-slate-950/60">
                                 <button type="button"
-                                    class="text-color-mode-btn rounded-xl px-4 py-2 text-sm font-semibold transition"
+                                    class="text-color-mode-btn rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition duration-200 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-slate-100"
                                     data-mode="0">Color</button>
                                 <button type="button"
-                                    class="text-color-mode-btn rounded-xl px-4 py-2 text-sm font-semibold transition"
+                                    class="text-color-mode-btn rounded-xl px-4 py-2 text-sm font-semibold text-slate-700 transition duration-200 hover:bg-slate-200/60 hover:text-slate-900 dark:text-slate-300 dark:hover:bg-slate-800/60 dark:hover:text-slate-100"
                                     data-mode="1">Rainbow text</button>
                             </div>
                         </div>
@@ -212,22 +226,22 @@
                 </section>
 
                 <section
-                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    class="collapsible-card rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl"
                     data-card-id="color">
                     <div class="panel-header flex items-center gap-3">
                         <div>
-                            <h3 id="color-card-title" class="text-lg font-semibold text-white">Color</h3>
-                            <p id="color-card-subtitle" class="text-sm text-slate-400">Solid fill color for single frame mode</p>
+                            <h3 id="color-card-title" class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">Color</h3>
+                            <p id="color-card-subtitle" class="text-sm text-slate-600 transition-colors duration-200 dark:text-slate-400">Solid fill color for single frame mode</p>
                         </div>
                         <button type="button"
-                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-100/80 px-3 py-2 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-700 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-cyan-400/30 dark:hover:bg-cyan-400/10 dark:hover:text-cyan-100"
                             aria-expanded="true">▾ Collapse</button>
                     </div>
                     <div
                         class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none flex flex-wrap items-center gap-4">
-                        <p id="color-card-description" class="w-full text-sm text-slate-400">Use the same picker for the active display mode.</p>
+                        <p id="color-card-description" class="w-full text-sm text-slate-600 transition-colors duration-200 dark:text-slate-400">Use the same picker for the active display mode.</p>
                         <div
-                            class="color-mode inline-flex h-14 items-stretch rounded-2xl border border-slate-700 bg-slate-950/60 p-1">
+                            class="color-mode inline-flex h-14 items-stretch rounded-2xl border border-slate-300 bg-slate-100/70 p-1 transition-colors duration-200 dark:border-slate-700 dark:bg-slate-950/60">
                             <button type="button"
                                 class="color-mode-btn h-full rounded-xl px-4 py-2 text-sm font-semibold transition"
                                 data-mode="rgb">RGB</button>
@@ -236,60 +250,60 @@
                                 data-mode="hex">Hex</button>
                         </div>
                         <div
-                            class="color-pickers flex h-14 items-center gap-2 rounded-2xl border border-slate-700 bg-slate-950/60 px-3 py-2">
-                            <label for="os-color-picker" class="text-sm font-semibold text-slate-300">Picker</label>
+                            class="color-pickers flex h-14 items-center gap-2 rounded-2xl border border-slate-300 bg-slate-100/70 px-3 py-2 transition-colors duration-200 dark:border-slate-700 dark:bg-slate-950/60">
+                            <label for="os-color-picker" class="text-sm font-semibold text-slate-700 transition-colors duration-200 dark:text-slate-300">Picker</label>
                             <input id="os-color-picker" type="color" title="Open OS color picker"
                                 class="h-10 w-12 cursor-pointer rounded-lg border-0 bg-transparent p-0">
                         </div>
                         <div class="rgb-inputs color-inputs flex flex-wrap items-center gap-3">
                             <input id="r" type="number" min="0" max="255" value="255"
-                                class="h-14 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                class="h-14 w-20 rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
                             <input id="g" type="number" min="0" max="255" value="20"
-                                class="h-14 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                class="h-14 w-20 rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
                             <input id="b" type="number" min="0" max="255" value="255"
-                                class="h-14 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                class="h-14 w-20 rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
                         </div>
                         <div class="hex-inputs color-inputs hidden">
                             <input id="hex" type="text" maxlength="7" value="#ff14ff"
-                                class="h-14 w-40 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm uppercase text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                class="h-14 w-40 rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm uppercase text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
                         </div>
                     </div>
                 </section>
 
                 <section
-                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    class="collapsible-card rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl"
                     data-card-id="animation">
                     <div class="panel-header flex items-center gap-3">
-                        <h3 class="text-lg font-semibold text-white">Custom Animation</h3>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">Custom Animation</h3>
                         <button type="button"
-                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                            class="toggle-btn card-toggle ml-auto inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-100/80 px-3 py-2 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-700 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-cyan-400/30 dark:hover:bg-cyan-400/10 dark:hover:text-cyan-100"
                             aria-label="Collapse animation" aria-expanded="true">▾ Collapse</button>
                     </div>
                     <div
                         class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none">
                         <div class="flex flex-wrap items-center gap-4">
                             <div class="flex items-center gap-2">
-                                <label for="animation-select" class="text-sm font-semibold text-slate-300">Load:</label>
+                                <label for="animation-select" class="text-sm font-semibold text-slate-700 transition-colors duration-200 dark:text-slate-300">Load:</label>
                                 <select id="animation-select"
-                                    class="min-w-[12rem] rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none ring-0 transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                    class="min-w-[12rem] rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none ring-0 transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
                                     <option value="">Select animation...</option>
                                 </select>
                                 <button id="refresh-animations"
-                                    class="rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-2 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-700">
+                                    class="rounded-xl border border-slate-300 bg-slate-100/80 px-3 py-2 text-sm font-semibold text-slate-800 transition duration-200 hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:border-slate-500 dark:hover:bg-slate-700 dark:hover:text-white">
                                     Refresh
                                 </button>
                                 <input type="file" id="upload-animation-input" accept=".json" style="display: none;">
                                 <button id="upload-animation"
-                                    class="rounded-xl border border-cyan-400/20 bg-cyan-500/15 px-3 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/25">
+                                    class="rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-900 transition duration-200 hover:bg-cyan-500/20 dark:border-cyan-400/20 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-500/25">
                                     Upload
                                 </button>
                             </div>
                             <button id="send-animation"
-                                class="rounded-xl border border-emerald-400/20 bg-emerald-500/15 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/25">
+                                class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-900 transition duration-200 hover:bg-emerald-500/20 dark:border-emerald-400/20 dark:bg-emerald-500/15 dark:text-emerald-100 dark:hover:bg-emerald-500/25">
                                 Send Animation
                             </button>
                             <button id="toggle-animation-play"
-                                class="rounded-xl border border-cyan-400/20 bg-cyan-500/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/25">
+                                class="rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-900 transition duration-200 hover:bg-cyan-500/20 dark:border-cyan-400/20 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-500/25">
                                 Play/Pause
                             </button>
                         </div>
@@ -297,20 +311,20 @@
                 </section>
 
                 <section
-                    class="collapsible-card rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl"
+                    class="collapsible-card rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl"
                     data-card-id="console">
                     <div class="panel-header flex items-center gap-3">
-                        <h3 class="text-lg font-semibold text-white">Console</h3>
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">Console</h3>
                         <div class="panel-actions ml-auto flex items-center gap-2">
                             <button id="toggle-console"
-                                class="toggle-btn card-toggle inline-flex items-center gap-2 rounded-full border border-slate-700 bg-slate-800/70 px-3 py-2 text-sm font-semibold text-slate-200 transition hover:-translate-y-px hover:border-cyan-400/30 hover:bg-cyan-400/10 hover:text-cyan-100"
+                                class="toggle-btn card-toggle inline-flex items-center gap-2 rounded-full border border-slate-300 bg-slate-100/80 px-3 py-2 text-sm font-semibold text-slate-700 transition duration-200 hover:-translate-y-px hover:border-cyan-500/40 hover:bg-cyan-500/10 hover:text-cyan-900 dark:border-slate-700 dark:bg-slate-800/70 dark:text-slate-200 dark:hover:border-cyan-400/30 dark:hover:bg-cyan-400/10 dark:hover:text-cyan-100"
                                 aria-label="Collapse console" aria-expanded="true">▾ Collapse</button>
                         </div>
                     </div>
                     <div
                         class="card-body mt-4 max-h-[1000px] overflow-hidden transition-all duration-300 ease-in-out motion-reduce:transition-none">
                         <pre id="console"
-                            class="console max-h-96 min-h-48 overflow-auto rounded-2xl border border-slate-800 bg-slate-950/80 p-4 text-sm leading-6 text-cyan-100 shadow-inner"></pre>
+                            class="console max-h-96 min-h-48 overflow-auto rounded-2xl border border-slate-300 bg-slate-100/90 p-4 text-sm leading-6 text-slate-800 shadow-inner transition-colors duration-200 dark:border-slate-800 dark:bg-slate-950/80 dark:text-cyan-100"></pre>
                     </div>
                 </section>
             </section>
@@ -322,30 +336,30 @@
             <div class="grid gap-4 xl:grid-cols-[minmax(0,1fr)_22rem]">
                 <section class="space-y-4">
                     <!-- Animation Settings -->
-                    <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
-                        <h3 class="text-lg font-semibold text-white mb-4">Animation Settings</h3>
+                    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200 mb-4">Animation Settings</h3>
                         <div class="flex items-center gap-3 flex-nowrap">
                             <div class="flex items-center gap-2">
-                                <label for="animation-name" class="text-sm font-semibold text-slate-300">Name:</label>
+                                <label for="animation-name" class="text-sm font-semibold text-slate-700 transition-colors duration-200 dark:text-slate-300">Name:</label>
                                 <input id="animation-name" type="text" placeholder="my-animation"
-                                    class="h-10 w-36 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                    class="h-10 w-36 rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
                             </div>
                             <div class="flex items-center gap-2">
-                                <label for="frame-delay" class="text-sm font-semibold text-slate-300">Delay (ms):</label>
+                                <label for="frame-delay" class="text-sm font-semibold text-slate-700 transition-colors duration-200 dark:text-slate-300">Delay (ms):</label>
                                 <input id="frame-delay" type="number" min="10" max="5000" value="100"
-                                    class="h-10 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                    class="h-10 w-20 rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
                             </div>
                             <button id="save-animation"
-                                class="rounded-xl border border-emerald-400/20 bg-emerald-500/15 px-3 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/25">
+                                class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-700 transition duration-200 hover:bg-emerald-500/20 dark:border-emerald-400/20 dark:bg-emerald-500/15 dark:text-emerald-100 dark:hover:bg-emerald-500/25">
                                 Save
                             </button>
                             <div class="flex items-center gap-2">
                                 <select id="load-animation-select"
-                                    class="h-10 min-w-[10rem] rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none ring-0 transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                                    class="h-10 min-w-[10rem] rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none ring-0 transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
                                     <option value="">Load animation...</option>
                                 </select>
                                 <button id="load-animation"
-                                    class="rounded-xl border border-cyan-400/20 bg-cyan-500/15 px-3 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/25">
+                                    class="rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-900 transition duration-200 hover:bg-cyan-500/20 dark:border-cyan-400/20 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-500/25">
                                     Load
                                 </button>
                             </div>
@@ -353,16 +367,16 @@
                     </section>
 
                     <!-- Frame Editor -->
-                    <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+                    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-white">Frame Editor</h3>
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">Frame Editor</h3>
                             <div class="flex items-center gap-2">
                                 <button id="add-frame"
-                                    class="rounded-xl border border-slate-700 bg-slate-800/80 px-3 py-1 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-700">
+                                    class="rounded-xl border border-slate-300 bg-slate-100/80 px-3 py-1 text-sm font-semibold text-slate-800 transition duration-200 hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:border-slate-500 dark:hover:bg-slate-700">
                                     + Add Frame
                                 </button>
                                 <button id="delete-frame"
-                                    class="rounded-xl border border-rose-400/20 bg-rose-500/15 px-3 py-1 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/25">
+                                    class="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3 py-1 text-sm font-semibold text-rose-700 transition duration-200 hover:bg-rose-500/20 dark:border-rose-400/20 dark:bg-rose-500/15 dark:text-rose-100 dark:hover:bg-rose-500/25">
                                     Delete Frame
                                 </button>
                             </div>
@@ -370,7 +384,7 @@
 
                         <!-- Color Palette -->
                         <div class="mb-4">
-                            <label class="text-sm font-semibold text-slate-300 mb-2 block">Color:</label>
+                            <label class="text-sm font-semibold text-slate-700 transition-colors duration-200 dark:text-slate-300 mb-2 block">Color:</label>
                             <div class="flex flex-wrap gap-2" id="color-palette">
                                 <button
                                     class="color-btn w-10 h-10 rounded-lg border-2 border-transparent hover:border-white transition"
@@ -401,7 +415,7 @@
 
                         <!-- LED Grid -->
                         <div class="flex justify-center mb-4">
-                            <div id="led-grid" class="grid gap-1 bg-slate-950 p-3 rounded-xl">
+                            <div id="led-grid" class="grid gap-1 bg-slate-200 p-3 rounded-xl dark:bg-slate-950">
                                 <!-- LED cells will be generated by JavaScript -->
                             </div>
                         </div>
@@ -409,53 +423,53 @@
                         <!-- Frame Navigation -->
                         <div class="flex items-center justify-center gap-4">
                             <button id="prev-frame"
-                                class="rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-700">
+                                class="rounded-xl border border-slate-300 bg-slate-100/80 px-4 py-2 text-sm font-semibold text-slate-800 transition duration-200 hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:border-slate-500 dark:hover:bg-slate-700">
                                 ← Previous
                             </button>
-                            <span id="frame-counter" class="text-lg font-semibold text-cyan-200">Frame 1 / 1</span>
+                            <span id="frame-counter" class="text-lg font-semibold text-cyan-700 dark:text-cyan-200">Frame 1 / 1</span>
                             <button id="next-frame"
-                                class="rounded-xl border border-slate-700 bg-slate-800/80 px-4 py-2 text-sm font-semibold text-slate-100 transition hover:border-slate-500 hover:bg-slate-700">
+                                class="rounded-xl border border-slate-300 bg-slate-100/80 px-4 py-2 text-sm font-semibold text-slate-800 transition duration-200 hover:border-slate-400 hover:bg-slate-200 hover:text-slate-900 dark:border-slate-700 dark:bg-slate-800/80 dark:text-slate-100 dark:hover:border-slate-500 dark:hover:bg-slate-700">
                                 Next →
                             </button>
                         </div>
                     </section>
 
                     <!-- Animation Preview -->
-                    <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+                    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
                         <div class="flex items-center justify-between mb-4">
-                            <h3 class="text-lg font-semibold text-white">Animation Preview</h3>
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">Animation Preview</h3>
                             <div class="flex items-center gap-2">
                                 <button id="play-preview"
-                                    class="rounded-xl border border-emerald-400/20 bg-emerald-500/15 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/25">
+                                    class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-900 transition duration-200 hover:bg-emerald-500/20 dark:border-emerald-400/20 dark:bg-emerald-500/15 dark:text-emerald-100 dark:hover:bg-emerald-500/25">
                                     ▶ Play
                                 </button>
                                 <button id="stop-preview"
-                                    class="rounded-xl border border-rose-400/20 bg-rose-500/15 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/25">
+                                    class="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-2 text-sm font-semibold text-rose-700 transition duration-200 hover:bg-rose-500/20 dark:border-rose-400/20 dark:bg-rose-500/15 dark:text-rose-100 dark:hover:bg-rose-500/25">
                                     ⏹ Stop
                                 </button>
                             </div>
                         </div>
                         <div class="flex justify-center">
                             <canvas id="preview-canvas" width="240" height="240"
-                                class="aspect-square w-full max-w-sm rounded-2xl border border-slate-800 bg-slate-950 shadow-inner"></canvas>
+                                class="aspect-square w-full max-w-sm rounded-2xl border border-slate-300 bg-slate-200 shadow-inner dark:border-slate-800 dark:bg-slate-950"></canvas>
                         </div>
                     </section>
                 </section>
 
                 <aside class="xl:sticky xl:top-6 xl:self-start space-y-4">
                     <!-- Frame List -->
-                    <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
-                        <h3 class="text-lg font-semibold text-white mb-4">Frames</h3>
+                    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200 mb-4">Frames</h3>
                         <div id="frame-list" class="space-y-2 max-h-96 overflow-auto">
                             <!-- Frame thumbnails will be generated by JavaScript -->
                         </div>
                     </section>
 
                     <!-- Export -->
-                    <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
-                        <h3 class="text-lg font-semibold text-white mb-4">Export</h3>
+                    <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
+                        <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200 mb-4">Export</h3>
                         <button id="download-json"
-                            class="w-full rounded-xl border border-cyan-400/20 bg-cyan-500/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/25">
+                            class="w-full rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-900 transition duration-200 hover:bg-cyan-500/20 dark:border-cyan-400/20 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-500/25">
                             Download as JSON
                         </button>
                     </section>
@@ -465,48 +479,48 @@
 
         <!-- Marketplace Tab -->
         <div id="tab-content-marketplace" class="tab-content hidden">
-            <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+            <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
                 <div class="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <h3 class="text-xl font-semibold text-white">Community Animations</h3>
-                        <p class="mt-1 text-sm text-slate-400">Browse, preview and download animations shared by the community</p>
+                        <h3 class="text-xl font-semibold text-slate-900 dark:text-white transition-colors duration-200">Community Animations</h3>
+                        <p class="mt-1 text-sm text-slate-600 transition-colors duration-200 dark:text-slate-400">Browse, preview and download animations shared by the community</p>
                     </div>
                     <div class="flex flex-wrap items-center gap-2">
-                        <label class="flex items-center gap-2 text-sm text-slate-300">
+                        <label class="flex items-center gap-2 text-sm text-slate-700 dark:text-slate-300">
                             <span class="whitespace-nowrap">Size:</span>
                             <select id="market-size-filter"
-                                class="rounded-xl border border-slate-700 bg-slate-950/60 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/40">
+                                class="rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/60 dark:text-slate-100 dark:focus:border-cyan-400/40">
                                 <option value="all">All sizes</option>
                             </select>
                         </label>
                         <button id="upload-animation-btn"
-                            class="rounded-xl border border-fuchsia-400/20 bg-fuchsia-500/15 px-4 py-2 text-sm font-semibold text-fuchsia-100 transition hover:bg-fuchsia-500/25">
+                            class="rounded-xl border border-fuchsia-500/30 bg-fuchsia-500/10 px-4 py-2 text-sm font-semibold text-fuchsia-700 transition duration-200 hover:bg-fuchsia-500/20 dark:border-fuchsia-400/20 dark:bg-fuchsia-500/15 dark:text-fuchsia-100 dark:hover:bg-fuchsia-500/25">
                             Upload
                         </button>
                         <button id="refresh-market"
-                            class="rounded-xl border border-cyan-400/20 bg-cyan-500/15 px-4 py-2 text-sm font-semibold text-cyan-100 transition hover:bg-cyan-500/25">
+                            class="rounded-xl border border-cyan-500/30 bg-cyan-500/10 px-4 py-2 text-sm font-semibold text-cyan-900 transition duration-200 hover:bg-cyan-500/20 dark:border-cyan-400/20 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-500/25">
                             Refresh
                         </button>
                     </div>
                 </div>
                 <div id="market-list"
                     class="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-                    <p class="col-span-full text-sm text-slate-400">Loading marketplace data...</p>
+                    <p class="col-span-full text-sm text-slate-600 transition-colors duration-200 dark:text-slate-400">Loading marketplace data...</p>
                 </div>
             </section>
         </div>
 
         <!-- Manual LED Tab -->
         <div id="tab-content-manual-led" class="tab-content hidden">
-            <section class="rounded-2xl border border-slate-800/80 bg-slate-900/80 p-5 shadow-2xl backdrop-blur-xl">
+            <section class="rounded-2xl border border-slate-200/80 bg-white/80 p-5 shadow-xl backdrop-blur-xl transition-colors duration-200 dark:border-slate-800/80 dark:bg-slate-900/80 dark:shadow-2xl">
                 <div class="mb-5">
-                    <h3 class="text-xl font-semibold text-white">Manual LED Control</h3>
-                    <p class="mt-1 text-sm text-slate-400">Manually color each LED individually using the 'o' command (Mode 0)</p>
+                    <h3 class="text-xl font-semibold text-slate-900 dark:text-white transition-colors duration-200">Manual LED Control</h3>
+                    <p class="mt-1 text-sm text-slate-600 transition-colors duration-200 dark:text-slate-400">Manually color each LED individually using the 'o' command (Mode 0)</p>
                 </div>
 
                 <!-- Color Picker -->
                 <div class="mb-4">
-                    <label class="text-sm font-semibold text-slate-300 mb-2 block">Select Color:</label>
+                    <label class="text-sm font-semibold text-slate-700 transition-colors duration-200 dark:text-slate-300 mb-2 block">Select Color:</label>
                     
                     <!-- Preset Colors -->
                     <div class="flex flex-wrap gap-2 mb-3" id="manual-color-palette">
@@ -522,28 +536,28 @@
 
                     <!-- Custom RGB Color -->
                     <div class="flex flex-wrap items-center gap-3">
-                        <div class="color-mode inline-flex h-14 items-stretch rounded-2xl border border-slate-700 bg-slate-950/60 p-1">
+                        <div class="color-mode inline-flex h-14 items-stretch rounded-2xl border border-slate-300 bg-slate-100/70 p-1 transition-colors duration-200 dark:border-slate-700 dark:bg-slate-950/60">
                             <button type="button" class="manual-color-mode-btn h-full rounded-xl px-4 py-2 text-sm font-semibold transition" data-mode="rgb">RGB</button>
                             <button type="button" class="manual-color-mode-btn h-full rounded-xl px-4 py-2 text-sm font-semibold transition" data-mode="hex">Hex</button>
                         </div>
-                        <div class="color-pickers flex h-14 items-center gap-2 rounded-2xl border border-slate-700 bg-slate-950/60 px-3 py-2">
-                            <label for="manual-os-color-picker" class="text-sm font-semibold text-slate-300">Picker</label>
+                        <div class="color-pickers flex h-14 items-center gap-2 rounded-2xl border border-slate-300 bg-slate-100/70 px-3 py-2 transition-colors duration-200 dark:border-slate-700 dark:bg-slate-950/60">
+                            <label for="manual-os-color-picker" class="text-sm font-semibold text-slate-700 transition-colors duration-200 dark:text-slate-300">Picker</label>
                             <input id="manual-os-color-picker" type="color" title="Open OS color picker" class="h-10 w-12 cursor-pointer rounded-lg border-0 bg-transparent p-0">
                         </div>
                         <div class="manual-rgb-inputs color-inputs flex flex-wrap items-center gap-3">
-                            <input id="manual-r" type="number" min="0" max="255" value="255" class="h-14 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
-                            <input id="manual-g" type="number" min="0" max="255" value="0" class="h-14 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
-                            <input id="manual-b" type="number" min="0" max="255" value="0" class="h-14 w-20 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                            <input id="manual-r" type="number" min="0" max="255" value="255" class="h-14 w-20 rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
+                            <input id="manual-g" type="number" min="0" max="255" value="0" class="h-14 w-20 rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
+                            <input id="manual-b" type="number" min="0" max="255" value="0" class="h-14 w-20 rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
                         </div>
                         <div class="manual-hex-inputs color-inputs hidden">
-                            <input id="manual-hex" type="text" maxlength="7" value="#ff0000" class="h-14 w-40 rounded-xl border border-slate-700 bg-slate-950/80 px-3 py-2 text-sm uppercase text-slate-100 outline-none transition focus:border-cyan-400/60 focus:ring-2 focus:ring-cyan-400/20">
+                            <input id="manual-hex" type="text" maxlength="7" value="#ff0000" class="h-14 w-40 rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-sm uppercase text-slate-800 outline-none transition duration-200 focus:border-cyan-500/60 focus:ring-2 focus:ring-cyan-500/20 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100 dark:focus:border-cyan-400/60 dark:focus:ring-2 dark:focus:ring-cyan-400/20">
                         </div>
                     </div>
                 </div>
 
                 <!-- Manual LED Grid -->
                 <div class="flex justify-center mb-4">
-                    <div id="manual-led-grid" class="grid gap-1 bg-slate-950 p-3 rounded-xl">
+                    <div id="manual-led-grid" class="grid gap-1 bg-slate-200 p-3 rounded-xl dark:bg-slate-950">
                         <!-- LED cells will be generated by JavaScript -->
                     </div>
                 </div>
@@ -551,20 +565,20 @@
                 <!-- Controls -->
                 <div class="flex flex-wrap items-center justify-center gap-4">
                     <button id="clear-manual-grid"
-                        class="rounded-xl border border-rose-400/20 bg-rose-500/15 px-4 py-2 text-sm font-semibold text-rose-100 transition hover:bg-rose-500/25">
+                        class="rounded-xl border border-rose-500/30 bg-rose-500/10 px-4 py-2 text-sm font-semibold text-rose-700 transition duration-200 hover:bg-rose-500/20 dark:border-rose-400/20 dark:bg-rose-500/15 dark:text-rose-100 dark:hover:bg-rose-500/25">
                         Clear All
                     </button>
                     <button id="set-mode-zero"
-                        class="rounded-xl border border-emerald-400/20 bg-emerald-500/15 px-4 py-2 text-sm font-semibold text-emerald-100 transition hover:bg-emerald-500/25">
+                        class="rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-sm font-semibold text-emerald-900 transition duration-200 hover:bg-emerald-500/20 dark:border-emerald-400/20 dark:bg-emerald-500/15 dark:text-emerald-100 dark:hover:bg-emerald-500/25">
                         Set Mode 0
                     </button>
                 </div>
 
                 <!-- Brightness Control -->
                 <div class="mt-4">
-                    <label class="text-sm font-semibold text-slate-300 mb-2 block">Brightness:</label>
+                    <label class="text-sm font-semibold text-slate-700 transition-colors duration-200 dark:text-slate-300 mb-2 block">Brightness:</label>
                     <div class="flex items-center gap-4">
-                        <input id="manual-brightness" type="range" min="0" max="255" value="255" class="w-full accent-cyan-400">
+                        <input id="manual-brightness" type="range" min="0" max="255" value="255" class="w-full accent-cyan-600 dark:accent-cyan-400">
                     </div>
                 </div>
             </section>
@@ -572,22 +586,22 @@
 
         <!-- Upload Modal -->
         <div id="upload-modal" class="fixed inset-0 z-50 hidden">
-            <div id="upload-modal-backdrop" class="absolute inset-0 bg-slate-950/80 backdrop-blur-sm"></div>
+            <div id="upload-modal-backdrop" class="absolute inset-0 bg-slate-900/40 backdrop-blur-sm dark:bg-slate-950/80"></div>
             <div class="relative flex min-h-full items-center justify-center p-4">
-                <div class="w-full max-w-4xl rounded-2xl border border-slate-700 bg-slate-900 p-6 shadow-2xl">
+                <div class="w-full max-w-4xl rounded-2xl border border-slate-200 bg-white p-6 shadow-2xl transition-colors duration-200 dark:border-slate-700 dark:bg-slate-900">
                     <div class="mb-5 flex items-center justify-between">
                         <div>
-                            <h3 class="text-lg font-semibold text-white">Upload Your Animation</h3>
-                            <p class="mt-1 text-sm text-slate-400">Choose an animation from your local library to share</p>
+                            <h3 class="text-lg font-semibold text-slate-900 dark:text-white transition-colors duration-200">Upload Your Animation</h3>
+                            <p class="mt-1 text-sm text-slate-600 transition-colors duration-200 dark:text-slate-400">Choose an animation from your local library to share</p>
                         </div>
                         <button id="upload-modal-close"
-                            class="rounded-lg border border-slate-700 bg-slate-800/50 px-3 py-1.5 text-sm text-slate-300 transition hover:bg-slate-700">
+                            class="rounded-lg border border-slate-300 bg-slate-100/80 px-3 py-1.5 text-sm text-slate-700 transition duration-200 hover:bg-slate-200 dark:border-slate-700 dark:bg-slate-800/50 dark:text-slate-300 dark:hover:bg-slate-700">
                             Close
                         </button>
                     </div>
                     <div id="upload-modal-list"
                         class="grid max-h-[60vh] grid-cols-2 gap-4 overflow-y-auto sm:grid-cols-3 md:grid-cols-4">
-                        <p class="col-span-full text-sm text-slate-400">No local animations found.</p>
+                        <p class="col-span-full text-sm text-slate-600 transition-colors duration-200 dark:text-slate-400">No local animations found.</p>
                     </div>
                 </div>
             </div>
@@ -602,25 +616,26 @@
     <script src="animation-maker.js"></script>
     <script src="manual-led.js"></script>
     <script type="module" src="js/marketplace.js"></script>
+    <script src="js/theme.js"></script>
     <script>
         // Tab switching logic
         document.addEventListener('DOMContentLoaded', () => {
             const tabButtons = document.querySelectorAll('.tab-btn');
             const tabContents = document.querySelectorAll('.tab-content');
+            const TAB_ACTIVE = ['border-cyan-500/40', 'bg-cyan-500/10', 'text-cyan-700', 'dark:border-cyan-400/30', 'dark:bg-cyan-500/20', 'dark:text-cyan-100'];
+            const TAB_INACTIVE = ['border-slate-300/80', 'bg-slate-100/80', 'text-slate-600', 'dark:border-slate-700', 'dark:bg-slate-800/50', 'dark:text-slate-200'];
 
             tabButtons.forEach(btn => {
                 btn.addEventListener('click', () => {
                     const tab = btn.dataset.tab;
-                    
-                    // Update button styles
+
                     tabButtons.forEach(b => {
-                        b.classList.remove('border-cyan-400/30', 'bg-cyan-500/20', 'text-cyan-100');
-                        b.classList.add('border-slate-700', 'bg-slate-800/50', 'text-slate-200');
+                        b.classList.remove(...TAB_ACTIVE);
+                        b.classList.add(...TAB_INACTIVE);
                     });
-                    btn.classList.remove('border-slate-700', 'bg-slate-800/50', 'text-slate-200');
-                    btn.classList.add('border-cyan-400/30', 'bg-cyan-500/20', 'text-cyan-100');
-                    
-                    // Show/hide content
+                    btn.classList.remove(...TAB_INACTIVE);
+                    btn.classList.add(...TAB_ACTIVE);
+
                     tabContents.forEach(content => {
                         content.classList.add('hidden');
                     });

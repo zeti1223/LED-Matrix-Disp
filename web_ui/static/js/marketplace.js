@@ -132,10 +132,10 @@ function setupHoverPreview(canvas, animation, card, intervalMap = previewInterva
 
 function createAnimationCard({ name, animation, sizeLabel, frameCount, delay, onAction, actionLabel, actionClass, previewMap }) {
     const card = document.createElement('div');
-    card.className = 'flex flex-col overflow-hidden rounded-xl border border-slate-700 bg-slate-800/50 transition hover:border-cyan-400/30 hover:bg-slate-800/80';
+    card.className = 'flex flex-col overflow-hidden rounded-xl border border-slate-200 bg-white/80 transition hover:border-cyan-500/40 hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-800/50 dark:hover:border-cyan-400/30 dark:hover:bg-slate-800/80';
 
     const previewWrap = document.createElement('div');
-    previewWrap.className = 'aspect-square bg-slate-950/60 p-2';
+    previewWrap.className = 'aspect-square bg-slate-100 p-2 dark:bg-slate-950/60';
 
     const canvas = document.createElement('canvas');
     canvas.width = 160;
@@ -147,12 +147,12 @@ function createAnimationCard({ name, animation, sizeLabel, frameCount, delay, on
     info.className = 'flex flex-1 flex-col gap-2 p-3';
 
     const title = document.createElement('p');
-    title.className = 'truncate font-semibold text-cyan-200';
+    title.className = 'truncate font-semibold text-cyan-700 dark:text-cyan-200';
     title.textContent = name;
     title.title = name;
 
     const meta = document.createElement('p');
-    meta.className = 'text-xs text-slate-400';
+    meta.className = 'text-xs text-slate-500 dark:text-slate-400';
     meta.textContent = `${sizeLabel} • ${frameCount} frames • ${delay}ms`;
 
     const btn = document.createElement('button');
@@ -183,7 +183,7 @@ function createMarketItem(id, rawData) {
         frameCount,
         delay: data.delay || 100,
         actionLabel: 'Download',
-        actionClass: 'mt-auto w-full rounded-lg border border-emerald-400/20 bg-emerald-500/15 px-3 py-1.5 text-xs font-semibold text-emerald-100 transition hover:bg-emerald-500/25',
+        actionClass: 'mt-auto w-full rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-xs font-semibold text-emerald-700 transition hover:bg-emerald-500/20 dark:border-emerald-400/20 dark:bg-emerald-500/15 dark:text-emerald-100 dark:hover:bg-emerald-500/25',
         onAction: () => downloadMarketAnimation(data)
     });
 }
@@ -229,7 +229,7 @@ function filterAndRenderMarketplace() {
         });
 
     if (filtered.length === 0) {
-        marketList.innerHTML = '<p class="col-span-full text-sm text-slate-400">No animations match this filter.</p>';
+        marketList.innerHTML = '<p class="col-span-full text-sm text-slate-500 dark:text-slate-400">No animations match this filter.</p>';
         return;
     }
 
@@ -241,7 +241,7 @@ function filterAndRenderMarketplace() {
 async function loadMarketplace() {
     const marketList = document.getElementById('market-list');
     stopAllPreviews();
-    marketList.innerHTML = '<p class="col-span-full text-sm text-slate-400">Loading marketplace data...</p>';
+    marketList.innerHTML = '<p class="col-span-full text-sm text-slate-500 dark:text-slate-400">Loading marketplace data...</p>';
 
     try {
         const querySnapshot = await getDocs(collection(db, "animations"));
@@ -286,7 +286,7 @@ function renderUploadModalList() {
     const names = Object.keys(animationsData);
 
     if (names.length === 0) {
-        list.innerHTML = '<p class="col-span-full text-sm text-slate-400">No local animations found. Create one in the Animation Maker first.</p>';
+        list.innerHTML = '<p class="col-span-full text-sm text-slate-500 dark:text-slate-400">No local animations found. Create one in the Animation Maker first.</p>';
         return;
     }
 
@@ -302,7 +302,7 @@ function renderUploadModalList() {
             frameCount,
             delay: data.delay || 100,
             actionLabel: 'Share',
-            actionClass: 'mt-auto w-full rounded-lg border border-cyan-400/20 bg-cyan-500/15 px-3 py-1.5 text-xs font-semibold text-cyan-100 transition hover:bg-cyan-500/25',
+            actionClass: 'mt-auto w-full rounded-lg border border-cyan-500/30 bg-cyan-500/10 px-3 py-1.5 text-xs font-semibold text-cyan-700 transition hover:bg-cyan-500/20 dark:border-cyan-400/20 dark:bg-cyan-500/15 dark:text-cyan-100 dark:hover:bg-cyan-500/25',
             onAction: () => shareLocalAnimation(name),
             previewMap: uploadModalPreviews
         });
