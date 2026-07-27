@@ -49,8 +49,10 @@ npm start
 - Serial port connection via browser
 - Static color control with RGB and hex input modes
 - Brightness control
+- Builtin Patterns
 - Animation system with localStorage persistence
 - Animation Maker for creating custom animations
+- Anmation Marketplace wih ratings
 - Collapsible panels for a compact layout
 
 ## Credits
