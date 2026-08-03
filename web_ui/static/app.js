@@ -426,7 +426,13 @@ async function sendSelectedAnimation() {
 
         // Set display mode to animation mode (mode 2)
         if (window.sendDisplayMode) {
-            try { window.sendDisplayMode(2); } catch (e) { }
+            try { 
+                await window.sendDisplayMode(2); 
+                appendConsole(`[animation] Set display mode to 2\n`);
+            } catch (e) { 
+                console.error('Error setting display mode:', e);
+                appendConsole(`[animation] Error setting display mode: ${e.message}\n`);
+            }
         }
 
         setSelectedMode(2);
@@ -434,29 +440,53 @@ async function sendSelectedAnimation() {
 
         // Send frame count
         if (window.sendAnimationFrameCount) {
-            try { window.sendAnimationFrameCount(animation.frames.length); } catch (e) { }
+            try { 
+                await window.sendAnimationFrameCount(animation.frames.length); 
+                appendConsole(`[animation] Sent frame count: ${animation.frames.length}\n`);
+            } catch (e) { 
+                console.error('Error sending frame count:', e);
+                appendConsole(`[animation] Error sending frame count: ${e.message}\n`);
+            }
         }
 
-        // Send each frame
-        if (window.sendAnimationFrame) {
-            animation.frames.forEach((frame, index) => {
-                const frameData = frame.join('');
-                try { window.sendAnimationFrame(index, frameData); } catch (e) { }
-            });
+        // Send each frame with delay to avoid overwhelming serial buffer
+        async function sendFramesWithDelay() {
+            if (window.sendAnimationFrame) {
+                for (let index = 0; index < animation.frames.length; index++) {
+                    try {
+                        appendConsole(`[animation] Sending frame ${index + 1}/${animation.frames.length}\n`);
+                        await window.sendAnimationFrame(index, animation.frames[index]);
+                        await new Promise(resolve => setTimeout(resolve, 200)); // 200ms delay between frames
+                        appendConsole(`[animation] Frame ${index + 1} sent successfully\n`);
+                    } catch (e) {
+                        console.error('Error sending frame:', e);
+                        appendConsole(`[animation] Error sending frame ${index}: ${e.message}\n`);
+                        throw e; // Re-throw to stop sending if there's an error
+                    }
+                }
+            }
         }
+        
+        // Send frames first, then delay
+        await sendFramesWithDelay();
 
-        // Send delay
+        // Send delay after frames are uploaded
         if (window.sendAnimationDelay) {
-            try { window.sendAnimationDelay(animation.delay || 100); } catch (e) { }
+            try {
+                await window.sendAnimationDelay(animation.delay || 100);
+                appendConsole(`[animation] Sent animation delay: ${animation.delay || 100}ms\n`);
+            } catch (e) {
+                console.error('Error sending animation delay:', e);
+                appendConsole(`[animation] Error sending animation delay: ${e.message}\n`);
+            }
         }
-
 
         // Wait a bit for Arduino to process all frames, then start playing
         setTimeout(() => {
-            if (window.toggleAnimation) {
-                try { window.toggleAnimation(); } catch (e) { }
+            if (window.startAnimation) {
+                try { window.startAnimation(); } catch (e) { }
             }
-        }, 500);
+        }, 200);
 
         appendConsole(`[animation] sent "${animationName}" with ${animation.frames.length} frames\n`);
     } catch (error) {

@@ -35,10 +35,8 @@ class SerialManager {
             await this.port.open({ baudRate: this.baudRate });
             this.connected = true;
 
-            // Set up writer
-            const encoder = new TextEncoderStream();
-            this.writableStreamClosed = encoder.readable.pipeTo(this.port.writable);
-            this.writer = encoder.writable.getWriter();
+            // Set up raw writer for both text and binary data
+            this.writer = this.port.writable.getWriter();
 
             // Set up reader
             const decoder = new TextDecoderStream();
@@ -102,7 +100,8 @@ class SerialManager {
         }
 
         try {
-            await this.writer.write(command + '\n');
+            const encoder = new TextEncoder();
+            await this.writer.write(encoder.encode(command + '\n'));
             return true;
         } catch (error) {
             console.error('Error sending command:', error);
@@ -116,16 +115,39 @@ class SerialManager {
         }
 
         try {
-            // For raw bytes, we need to bypass the TextEncoderStream
-            // This is a limitation of the current setup
-            // For now, we'll send as hex string
-            const hexString = Array.from(data)
-                .map(b => b.toString(16).padStart(2, '0'))
-                .join('');
-            await this.writer.write(hexString + '\n');
+            // Send raw binary data
+            const uint8Array = data instanceof Uint8Array ? data : new Uint8Array(data);
+            await this.writer.write(uint8Array);
             return true;
         } catch (error) {
             console.error('Error sending bytes:', error);
+            throw error;
+        }
+    }
+
+    async sendCommandWithBinary(command, binaryData) {
+        if (!this.connected || !this.writer) {
+            throw new Error('Not connected');
+        }
+
+        try {
+            // Send text command
+            const encoder = new TextEncoder();
+            await this.writer.write(encoder.encode(command + '\n'));
+
+            // Send binary data
+            if (binaryData && binaryData.length > 0) {
+                const uint8Array = binaryData instanceof Uint8Array ? binaryData : new Uint8Array(binaryData);
+                await this.writer.write(uint8Array);
+                // Wait for binary data to be transmitted
+                await new Promise(resolve => setTimeout(resolve, 50));
+                // Send newline after binary data
+                await this.writer.write(encoder.encode('\n'));
+            }
+
+            return true;
+        } catch (error) {
+            console.error('Error sending command with binary:', error);
             throw error;
         }
     }

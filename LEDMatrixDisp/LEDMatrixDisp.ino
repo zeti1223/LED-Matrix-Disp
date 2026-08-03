@@ -327,16 +327,28 @@ void setup() {
 }
 
 uint8_t getPixelInAnimationBuffer(uint8_t frame, uint8_t index) {
+    if (frame >= MAX_FRAMES) return 0;
     uint8_t b = animationBuffer[frame][index >> 1];
     if (index & 1) {
         return b >> 4;
     } else {
         return b & 0x0F;
     }
-    if (frame >= MAX_FRAMES) return;
 }
 
 void convertAnimationFrameBuffer(int frameIndex){
+    static unsigned long lastDebugTime = 0;
+    if (millis() - lastDebugTime > 500) {
+        Serial.print("Frame ");
+        Serial.print(frameIndex);
+        Serial.print(" first few pixels: ");
+        for (int i = 0; i < 16; i++) {
+            Serial.print(getPixelInAnimationBuffer(frameIndex, i));
+            Serial.print(" ");
+        }
+        Serial.println();
+        lastDebugTime = millis();
+    }
     for (int i = 0; i<NUM_LEDS; i++){
         leds[i] = palette[getPixelInAnimationBuffer(frameIndex,i)];
     }
@@ -443,7 +455,8 @@ void renderEffects(){
 
 
 void parseSerialInput(){
-    char buf[63];
+    char buf[256]; // Even larger buffer for hex strings
+    Serial.setTimeout(5000); // Increase timeout to 5 seconds for long strings
     size_t len = Serial.readBytesUntil('\n', buf, sizeof(buf) - 1);
     buf[len] = '\0';
 
@@ -505,10 +518,21 @@ void parseSerialInput(){
                     break;
                 case 'f':{
                     uint8_t frameData[NUM_LEDS / 2];
-                    size_t len = Serial.readBytesUntil('\n', frameData, sizeof(frameData));
+                    size_t len = Serial.readBytes(frameData, sizeof(frameData));
+                    Serial.print("Frame ");
+                    Serial.print(ia);
+                    Serial.print(" received bytes: ");
+                    Serial.println(len);
                     if (len == sizeof(frameData)) {
                         if (ia > MAX_FRAMES-1) return;
                         memcpy(animationBuffer[ia], frameData, sizeof(frameData));
+                        Serial.print("Frame ");
+                        Serial.print(ia);
+                        Serial.println(" stored successfully");
+                    } else {
+                        Serial.print("Frame ");
+                        Serial.print(ia);
+                        Serial.println(" size mismatch!");
                     }
                     break;
                 }
@@ -592,6 +616,12 @@ void loop() {
         parseSerialInput();
     }
     if (animationIsPlaying && displayMode == 2){
+        static unsigned long lastDebugTime = 0;
+        if (millis() - lastDebugTime > 500) {
+            Serial.print("Playing frame: ");
+            Serial.println(animationCurrentFrame);
+            lastDebugTime = millis();
+        }
         convertAnimationFrameBuffer(animationCurrentFrame);
         animationCurrentFrame++;
         if (animationCurrentFrame >= animationFrameCount) {

@@ -81,41 +81,62 @@ function sendState(state) {
 
 window.sendState = sendState;
 
-// New Arduino protocol command senders
+// New Arduino protocol command senders - delegate to commands.js if available
 function sendBrightness(brightness) {
-    if (!socket || !socket.connected) return;
-    socket.emit('set_brightness', { brightness });
+    if (window.sendBrightness && typeof window.sendBrightness === 'function') {
+        window.sendBrightness(brightness);
+    } else if (socket && socket.connected) {
+        socket.emit('set_brightness', { brightness });
+    }
 }
 
 function sendFillColor(r, g, b) {
-    if (!socket || !socket.connected) return;
-    socket.emit('fill_color', { r, g, b });
+    if (window.sendFillColor && typeof window.sendFillColor === 'function') {
+        window.sendFillColor(r, g, b);
+    } else if (socket && socket.connected) {
+        socket.emit('fill_color', { r, g, b });
+    }
 }
 
 function sendDisplayMode(mode) {
-    if (!socket || !socket.connected) return;
-    socket.emit('set_display_mode', { mode });
+    if (window.sendDisplayMode && typeof window.sendDisplayMode === 'function') {
+        window.sendDisplayMode(mode);
+    } else if (socket && socket.connected) {
+        socket.emit('set_display_mode', { mode });
+    }
 }
 
-// Animation commands
+// Animation commands - delegate to commands.js if available
 function sendAnimationFrameCount(count) {
-    if (!socket || !socket.connected) return;
-    socket.emit('set_animation_frame_count', { count });
+    if (window.sendAnimationFrameCount && typeof window.sendAnimationFrameCount === 'function') {
+        window.sendAnimationFrameCount(count);
+    } else if (socket && socket.connected) {
+        socket.emit('set_animation_frame_count', { count });
+    }
 }
 
 function sendAnimationFrame(frameIndex, data) {
-    if (!socket || !socket.connected) return;
-    socket.emit('set_animation_frame', { frame_index: frameIndex, data });
+    if (window.sendAnimationFrame && typeof window.sendAnimationFrame === 'function') {
+        window.sendAnimationFrame(frameIndex, data);
+    } else if (socket && socket.connected) {
+        socket.emit('set_animation_frame', { frame_index: frameIndex, data });
+    }
 }
 
 function sendAnimationDelay(delay) {
-    if (!socket || !socket.connected) return;
-    socket.emit('set_animation_delay', { delay });
+    if (window.sendAnimationDelay && typeof window.sendAnimationDelay === 'function') {
+        window.sendAnimationDelay(delay);
+    } else if (socket && socket.connected) {
+        socket.emit('set_animation_delay', { delay });
+    }
 }
 
 function toggleAnimation() {
-    if (!socket || !socket.connected) return;
-    socket.emit('toggle_animation', {});
+    if (window.toggleAnimation && typeof window.toggleAnimation === 'function') {
+        window.toggleAnimation();
+    } else if (socket && socket.connected) {
+        socket.emit('toggle_animation', {});
+    }
 }
 
 window.sendBrightness = sendBrightness;
