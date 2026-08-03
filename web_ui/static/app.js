@@ -437,26 +437,32 @@ async function sendSelectedAnimation() {
             try { window.sendAnimationFrameCount(animation.frames.length); } catch (e) { }
         }
 
-        // Send each frame
-        if (window.sendAnimationFrame) {
-            animation.frames.forEach((frame, index) => {
-                const frameData = frame.join('');
-                try { window.sendAnimationFrame(index, frameData); } catch (e) { }
-            });
+        // Send each frame with delay to avoid overwhelming serial buffer
+        async function sendFramesWithDelay() {
+            if (window.sendAnimationFrame) {
+                for (let index = 0; index < animation.frames.length; index++) {
+                    try { 
+                        await window.sendAnimationFrame(index, animation.frames[index]); 
+                        await new Promise(resolve => setTimeout(resolve, 50)); // 50ms delay between frames
+                    } catch (e) { }
+                }
+            }
         }
-
+        
         // Send delay
         if (window.sendAnimationDelay) {
             try { window.sendAnimationDelay(animation.delay || 100); } catch (e) { }
         }
 
+        // Send frames, then start playing
+        await sendFramesWithDelay();
 
         // Wait a bit for Arduino to process all frames, then start playing
         setTimeout(() => {
             if (window.toggleAnimation) {
                 try { window.toggleAnimation(); } catch (e) { }
             }
-        }, 500);
+        }, 200);
 
         appendConsole(`[animation] sent "${animationName}" with ${animation.frames.length} frames\n`);
     } catch (error) {
