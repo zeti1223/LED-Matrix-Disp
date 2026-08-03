@@ -126,15 +126,18 @@ async function sendAnimationFrameCount(count) {
 async function sendAnimationFrame(frameIndex, data) {
     if (!window.serialManager || !window.serialManager.isConnected()) return;
     try {
+        // Debug: log original frame data
+        appendConsole(`[debug] Frame ${frameIndex} original: ${data.join('')}\n`);
+
         // Convert frame data (array of color codes '0'-'7') to packed binary format
         // Arduino expects 2 pixels per byte (4 bits each)
         const numLeds = data.length;
         const packedData = new Uint8Array(Math.ceil(numLeds / 2));
-        
+
         for (let i = 0; i < numLeds; i++) {
             const colorCode = parseInt(data[i], 10);
             const byteIndex = Math.floor(i / 2);
-            
+
             if (i % 2 === 0) {
                 // First pixel in byte (lower 4 bits)
                 packedData[byteIndex] = (packedData[byteIndex] & 0xF0) | (colorCode & 0x0F);
@@ -143,8 +146,12 @@ async function sendAnimationFrame(frameIndex, data) {
                 packedData[byteIndex] = (packedData[byteIndex] & 0x0F) | ((colorCode & 0x0F) << 4);
             }
         }
-        
-        // Send command with binary data
+
+        // Debug: log the packed data
+        const hexString = Array.from(packedData).map(b => b.toString(16).padStart(2, '0')).join(' ');
+        appendConsole(`[debug] Frame ${frameIndex} data: ${hexString}\n`);
+
+        // Send binary with increased delay between writes
         await window.serialManager.sendCommandWithBinary(`af ${frameIndex}`, packedData);
         appendConsole(`[sent] af ${frameIndex} with ${packedData.length} bytes\n`);
     } catch (error) {

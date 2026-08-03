@@ -134,15 +134,17 @@ class SerialManager {
             // Send text command
             const encoder = new TextEncoder();
             await this.writer.write(encoder.encode(command + '\n'));
-            
+
             // Send binary data
             if (binaryData && binaryData.length > 0) {
                 const uint8Array = binaryData instanceof Uint8Array ? binaryData : new Uint8Array(binaryData);
                 await this.writer.write(uint8Array);
+                // Wait for binary data to be transmitted
+                await new Promise(resolve => setTimeout(resolve, 50));
                 // Send newline after binary data
                 await this.writer.write(encoder.encode('\n'));
             }
-            
+
             return true;
         } catch (error) {
             console.error('Error sending command with binary:', error);
