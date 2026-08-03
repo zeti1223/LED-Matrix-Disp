@@ -49,10 +49,10 @@ npm start
 - Serial port connection via browser
 - Static color control with RGB and hex input modes
 - Brightness control
-- Builtin Patterns
+- Builtin Patterns (10 effects: Rainbow, Checker, Scammer, Pulse, Snake, Rainbow fill, Fire, Twinkle, Waves, Spiral)
 - Animation system with localStorage persistence
 - Animation Maker for creating custom animations
-- Anmation Marketplace wih ratings
+- Animation Marketplace with ratings
 - Collapsible panels for a compact layout
 
 ## Credits

@@ -43,6 +43,10 @@ Changes the color of specific selected pixels in the buffer at the given coordin
 * `3`: Pulse
 * `4`: Snake (uses custom color)
 * `5`: Rainbow fill
+* `6`: Fire (classic fire animation rising up)
+* `7`: Twinkle (random LED twinkling like stars)
+* `8`: Waves (color waves across the matrix)
+* `9`: Spiral (spiral pattern from center)
 
 * ### `ec <r> <g> <b>` — Effect Color
 

@@ -23,7 +23,7 @@ int rainbowStartingHue = 0;
 char text[64];
 uint8_t animationBuffer[MAX_FRAMES][NUM_LEDS/2];
 int animationFrameCount = 0;
-CRGB effectColor = CRGB(255,128,64);
+CRGB effectColor = CRGB(255,20,255);
 int textColor = 0;
 
 
@@ -426,6 +426,96 @@ void rainbowFill(){
     fill_solid(leds,NUM_LEDS,CHSV(rainbowStartingHue, 255, 255));
 }
 
+void fireEffect(){
+    // Fade all LEDs to create trail effect
+    fadeToBlackBy(leds, NUM_LEDS, 40);
+    
+    // Randomly ignite new pixels at the bottom
+    for (int x = 0; x < X; x++) {
+        if (random8() < 64) { // 25% chance to ignite
+            int ledIndex = coordinatesToLedAddress(x, Y - 1);
+            // Fire colors: red/orange/yellow
+            leds[ledIndex] = CHSV(random8(0, 30), 255, 255);
+        }
+    }
+    
+    // Fire rises up (copy pixels from row below)
+    for (int y = 0; y < Y - 1; y++) {
+        for (int x = 0; x < X; x++) {
+            int sourceIndex = coordinatesToLedAddress(x, y + 1);
+            int targetIndex = coordinatesToLedAddress(x, y);
+            leds[targetIndex] = leds[sourceIndex];
+        }
+    }
+}
+
+void twinkleEffect(){
+    // Randomly turn LEDs on/off
+    for (int i = 0; i < NUM_LEDS; i++) {
+        if (random8() < 10) { // Low chance to change state
+            if (leds[i]) {
+                leds[i] = CRGB(0, 0, 0); // Turn off
+            } else {
+                // Turn on with random color or effect color
+                if (random8() < 50) {
+                    leds[i] = effectColor;
+                } else {
+                    leds[i] = CHSV(random8(), 255, 255);
+                }
+            }
+        }
+    }
+}
+
+void wavesEffect(){
+    static uint8_t waveOffset = 0;
+    
+    for (int y = 0; y < Y; y++) {
+        for (int x = 0; x < X; x++) {
+            int ledIndex = coordinatesToLedAddress(x, y);
+            // Create wave pattern using sine
+            uint8_t brightness = sin8(((x + y) * 32) + waveOffset);
+            // Use effect color with varying brightness
+            leds[ledIndex] = CRGB(
+                (effectColor.r * brightness) / 255,
+                (effectColor.g * brightness) / 255,
+                (effectColor.b * brightness) / 255
+            );
+        }
+    }
+    
+    waveOffset += 8; // Move the wave
+}
+
+void spiralEffect(){
+    static uint8_t spiralAngle = 0;
+    static uint8_t spiralRadius = 0;
+    
+    // Clear with fade
+    fadeToBlackBy(leds, NUM_LEDS, 50);
+    
+    // Draw spiral from center
+    int centerX = X / 2;
+    int centerY = Y / 2;
+    
+    for (int i = 0; i < 8; i++) {
+        uint8_t angle = spiralAngle + (i * 32);
+        uint8_t radius = (spiralRadius + i) % ((X / 2) + 1);
+        
+        int x = centerX + (cos8(angle) - 128) * radius / 128;
+        int y = centerY + (sin8(angle) - 128) * radius / 128;
+        
+        if (x >= 0 && x < X && y >= 0 && y < Y) {
+            int ledIndex = coordinatesToLedAddress(x, y);
+            leds[ledIndex] = CHSV(angle, 255, 255);
+        }
+    }
+    
+    spiralAngle += 16;
+    spiralRadius++;
+    if (spiralRadius > X / 2) spiralRadius = 0;
+}
+
 void renderEffects(){
     switch (effectMode){
         case 0:
@@ -449,6 +539,18 @@ void renderEffects(){
         case 5:
             rainbowFill();
             rainbowStartingHue++;
+            break;
+        case 6:
+            fireEffect();
+            break;
+        case 7:
+            twinkleEffect();
+            break;
+        case 8:
+            wavesEffect();
+            break;
+        case 9:
+            spiralEffect();
             break;
         }
 }
